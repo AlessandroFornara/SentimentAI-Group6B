@@ -1,12 +1,14 @@
 package polimi.aui.sentimentaigroup6b.entities;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import java.util.List;
 
 @Entity
-@Table(name = "hr")
+@Table(name = "worker")
 @Setter
 @Getter
-public class HR {
+public class Worker {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,5 +23,15 @@ public class HR {
     private String password;
 
     private String company;
+
+    private int level;
+
+    private int points;
+
+    @ElementCollection
+    private List<Integer> badge;
+
+    @ElementCollection
+    private List<Integer> badgeStatus;
 
 }
