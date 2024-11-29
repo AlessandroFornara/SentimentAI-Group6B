@@ -1,15 +1,16 @@
 package polimi.aui.sentimentaigroup6b.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Entity
 @Table(name = "badge")
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+
 public class Badge {
 
     @Id
@@ -22,4 +23,9 @@ public class Badge {
 
     @ManyToMany(mappedBy = "badges")
     private List<Worker> workers;
+
+    public Badge(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 }

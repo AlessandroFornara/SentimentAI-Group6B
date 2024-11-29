@@ -1,13 +1,15 @@
 package polimi.aui.sentimentaigroup6b.entities;
+
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
 @Entity
 @Table(name = "worker")
-@Setter
-@Getter
+@Data
+@NoArgsConstructor
 public class Worker {
 
     @Id
@@ -42,5 +44,13 @@ public class Worker {
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Session> sessions;
 
-
+    public Worker(String name, String surname, String email, String password, String company, int level, int points) {
+        this.name = name;
+        this.surname = surname;
+        this.email = email;
+        this.password = password;
+        this.company = company;
+        this.level = level;
+        this.points = points;
+    }
 }

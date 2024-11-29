@@ -1,15 +1,15 @@
 package polimi.aui.sentimentaigroup6b.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "audio")
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
 public class Audio {
 
     @Id
@@ -20,8 +20,6 @@ public class Audio {
     @JoinColumn(name = "session_id", nullable = false)
     private Session session;
 
-    private Date date;
-
     @ElementCollection
     private List<Float> detectedEmotions;
 
@@ -29,4 +27,9 @@ public class Audio {
     private byte[] audioData;
 
     private String dominantEmotion;
+
+    public Audio(Session session, byte[] audioData) {
+        this.session = session;
+        this.audioData = audioData;
+    }
 }
