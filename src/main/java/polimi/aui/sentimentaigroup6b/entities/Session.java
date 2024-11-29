@@ -19,11 +19,9 @@ public class Session {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "userid", nullable = false)
-    private Long userId;
+    @JoinColumn(name = "user_id", nullable = false)
+    private Worker userId;
 
-    @OneToOne
-    @JoinColumn(name = "date", nullable = false)
     private Date date;
 
     private String topic;

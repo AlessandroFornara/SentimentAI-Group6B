@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Table(name = "badge")
 @Getter
@@ -17,4 +19,7 @@ public class Badge {
     private String name;
 
     private String description;
+
+    @ManyToMany(mappedBy = "badges")
+    private List<Worker> workers;
 }

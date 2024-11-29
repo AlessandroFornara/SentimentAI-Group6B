@@ -28,10 +28,19 @@ public class Worker {
 
     private int points;
 
-    @ElementCollection
-    private List<Integer> badge;
+    @ManyToMany
+    @JoinTable(
+            name = "worker_badge",
+            joinColumns = @JoinColumn(name = "worker_id"),
+            inverseJoinColumns = @JoinColumn(name = "badge_id")
+    )
+    private List<Badge> badges;
 
     @ElementCollection
     private List<Integer> badgeStatus;
+
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Session> sessions;
+
 
 }
