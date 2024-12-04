@@ -10,6 +10,7 @@ import polimi.aui.sentimentaigroup6b.entities.Worker;
 import polimi.aui.sentimentaigroup6b.repositories.SessionRepo;
 import polimi.aui.sentimentaigroup6b.repositories.WorkerRepo;
 import polimi.aui.sentimentaigroup6b.services.SessionService;
+import polimi.aui.sentimentaigroup6b.utils.OpenAIRequestGenerator;
 
 import java.util.Date;
 
@@ -21,6 +22,7 @@ public class MessageController {
     private final WorkerRepo workerRepo;
     private final SessionRepo sessionRepo;
     private final SessionService sessionService;
+    private final OpenAIRequestGenerator openAIRequestGenerator;
 
     @GetMapping("/hello")
     public String hello() {
@@ -30,6 +32,8 @@ public class MessageController {
     @GetMapping("/test")
     public String testWorkerRepo() {
 
+        Worker worker1 = new Worker("a","a","a","a","a",0,0);
+        workerRepo.save(worker1);
         Worker worker = workerRepo.findById(1L).get();
 
         Session session = new Session(
@@ -45,4 +49,9 @@ public class MessageController {
         sessionService.sendEmotionDetectionRequest("Hello from Java");
     }
 
+    @PostMapping("/test_open_ai")
+    public void testOpenAi(){
+        String response = openAIRequestGenerator.sendRequestToAzureOpenAI();
+        System.out.println(response);
+    }
 }
