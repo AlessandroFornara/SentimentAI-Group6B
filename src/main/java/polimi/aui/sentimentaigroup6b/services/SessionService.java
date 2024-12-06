@@ -34,6 +34,14 @@ public class SessionService {
 
          */
     }
+
+    public void endSession(){
+        /*
+        Salva timestamp nel database di fine sessione
+        Calcola badge, activities e restituisce all'utente
+         */
+    }
+
     //TODO: Cambiare String a byte[]
     public void sendEmotionDetectionRequest(String audio){
         runner.runPythonFunction(audio);
