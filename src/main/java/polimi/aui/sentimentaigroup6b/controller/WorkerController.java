@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import polimi.aui.sentimentaigroup6b.entities.Worker;
 import polimi.aui.sentimentaigroup6b.services.ProfileService;
 import polimi.aui.sentimentaigroup6b.services.SessionService;
 
@@ -16,15 +17,13 @@ public class WorkerController {
     private final ProfileService profileService;
 
     @PostMapping("/create_session")
-    public void createSession(){
-        //TODO
-        sessionService.createSession();
+    public void createSession(Worker worker){
+        sessionService.createSession(worker);
     }
 
     @PostMapping("/start_session")
-    public void startSession(){
-        //TODO
-        sessionService.startSession();
+    public void startSession(Long sessionId){
+        sessionService.startSession(sessionId);
     }
 
     @PostMapping("handle_audio")
