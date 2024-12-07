@@ -2,6 +2,8 @@ package polimi.aui.sentimentaigroup6b.services;
 
 import jakarta.annotation.Resource;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,9 +11,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import polimi.aui.sentimentaigroup6b.entities.Session;
 import polimi.aui.sentimentaigroup6b.entities.Worker;
 import polimi.aui.sentimentaigroup6b.models.ImageResponse;
+import polimi.aui.sentimentaigroup6b.models.RequestPayloadAI;
 import polimi.aui.sentimentaigroup6b.models.ServerResponse;
 import polimi.aui.sentimentaigroup6b.repositories.SessionRepo;
 import polimi.aui.sentimentaigroup6b.repositories.WorkerRepo;
+import polimi.aui.sentimentaigroup6b.utils.OpenAIRequestGenerator;
 import polimi.aui.sentimentaigroup6b.utils.PythonRunner;
 
 import java.io.IOException;
@@ -31,6 +35,8 @@ public class SessionService {
     private final PythonRunner runner;
     private final SessionRepo sessionRepo;
     private final WorkerRepo workerRepo;
+    private final OpenAIRequestGenerator openAIRequestGenerator;
+    private final CacheManager cacheManager;
 
     public List<ImageResponse> createSession(Worker worker) {
 
@@ -69,18 +75,18 @@ public class SessionService {
     public ServerResponse startSession(Long sessionId){
 
         sessionRepo.findById(sessionId).ifPresent(session -> {
-            session.setDate(new Date());
+            //session.setDate(new Date());
             sessionRepo.save(session);
         });
 
         return ServerResponse.SESSION_STARTED;
     }
 
-    public void handleAudio(String audio) {
+    public void handleAudio(String audio, String audioTranscript) {
         sendEmotionDetectionRequest(audio);
-        /*
+        //addMessageToChat()
+        openAIRequestGenerator.sendRequestToAzureOpenAI();
 
-         */
     }
 
     public void endSession(){
@@ -109,8 +115,24 @@ public class SessionService {
         }
     }
 
+    private List<RequestPayloadAI.Message> addMessageToChat(String sessionId, String role, String content) {
+        Cache cache = cacheManager.getCache("chatSessions");
 
+        List<RequestPayloadAI.Message> chatMessages = cache != null ? cache.get(sessionId, List.class) : null;
 
+        if (chatMessages == null) {
+            chatMessages = new ArrayList<>();
+        }
+
+        chatMessages.add(new RequestPayloadAI.Message(role, content));
+
+        if (cache != null) {
+            cache.put(sessionId, chatMessages);
+        }
+
+        return chatMessages;
+
+    }
 
 
 }

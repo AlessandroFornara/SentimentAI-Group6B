@@ -46,12 +46,12 @@ public class MessageController {
 
     @PostMapping("/test_python_runner")
     public void testJep(){
-        sessionService.sendEmotionDetectionRequest("Hello from Java");
+        //sessionService.sendEmotionDetectionRequest("Hello from Java");
     }
 
     @PostMapping("/test_open_ai")
     public void testOpenAi(){
-        String response = openAIRequestGenerator.sendRequestToAzureOpenAI();
-        System.out.println(response);
+        //String response = openAIRequestGenerator.sendRequestToAzureOpenAI();
+        //System.out.println(response);
     }
 }
