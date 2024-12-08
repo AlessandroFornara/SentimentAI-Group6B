@@ -8,11 +8,10 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import polimi.aui.sentimentaigroup6b.entities.Badge;
 import polimi.aui.sentimentaigroup6b.entities.Session;
 import polimi.aui.sentimentaigroup6b.entities.Worker;
-import polimi.aui.sentimentaigroup6b.models.ImageResponse;
-import polimi.aui.sentimentaigroup6b.models.RequestPayloadAI;
-import polimi.aui.sentimentaigroup6b.models.ServerResponse;
+import polimi.aui.sentimentaigroup6b.models.*;
 import polimi.aui.sentimentaigroup6b.repositories.SessionRepo;
 import polimi.aui.sentimentaigroup6b.repositories.WorkerRepo;
 import polimi.aui.sentimentaigroup6b.utils.OpenAIRequestGenerator;
@@ -89,11 +88,26 @@ public class SessionService {
 
     }
 
-    public void endSession(){
-        /*
-        Salva timestamp nel database di fine sessione
-        Calcola badge, activities e restituisce all'utente
-         */
+    public FinalResponse endSession(Long sessionId){
+
+        String dominantEmotion = detectDominantEmotion(sessionId);
+        ActivityResponse activity = chooseActivity(sessionId);
+        List<Badge> badges = badgeService.assignBadges(sessionId);
+
+        return new FinalResponse(dominantEmotion,
+                activity.getActivityCategory(),
+                activity.getActivityText(),
+                badges);
+    }
+
+    public String detectDominantEmotion(Long sessionId){
+
+        return null;
+    }
+
+    public ActivityResponse chooseActivity(Long sessionId){
+
+        return null;
     }
 
     //TODO: Cambiare String a byte[]
