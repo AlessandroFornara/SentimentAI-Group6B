@@ -34,6 +34,6 @@ public class WorkerController {
     @PostMapping("/end_session")
     public void endSession(){
         //TODO
-        sessionService.endSession();
+        //sessionService.endSession();
     }
 }

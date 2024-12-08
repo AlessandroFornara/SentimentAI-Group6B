@@ -1,19 +1,17 @@
 package polimi.aui.sentimentaigroup6b.services;
 
-import jakarta.annotation.Resource;
 import lombok.AllArgsConstructor;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import polimi.aui.sentimentaigroup6b.entities.Badge;
 import polimi.aui.sentimentaigroup6b.entities.Session;
 import polimi.aui.sentimentaigroup6b.entities.Worker;
 import polimi.aui.sentimentaigroup6b.models.*;
+import polimi.aui.sentimentaigroup6b.models.ai.Message;
+import polimi.aui.sentimentaigroup6b.models.ai.RequestPayloadAI;
 import polimi.aui.sentimentaigroup6b.repositories.SessionRepo;
-import polimi.aui.sentimentaigroup6b.repositories.WorkerRepo;
+import polimi.aui.sentimentaigroup6b.utils.CachingComponent;
 import polimi.aui.sentimentaigroup6b.utils.OpenAIRequestGenerator;
 import polimi.aui.sentimentaigroup6b.utils.PythonRunner;
 
@@ -22,20 +20,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
 @AllArgsConstructor
+@Service
 public class SessionService {
 
     private final BadgeService badgeService;
     private final PythonRunner runner;
     private final SessionRepo sessionRepo;
-    private final WorkerRepo workerRepo;
     private final OpenAIRequestGenerator openAIRequestGenerator;
-    private final CacheManager cacheManager;
+    private final CachingComponent cachingComponent;
+
+    private final String aiInstructions;
 
     public List<ImageResponse> createSession(Worker worker) {
 
@@ -78,14 +76,26 @@ public class SessionService {
             sessionRepo.save(session);
         });
 
+        List<Message> chatMessages = cachingComponent.getChatMessages(sessionId);
+        chatMessages.add(new Message("system", aiInstructions));
+
         return ServerResponse.SESSION_STARTED;
     }
 
-    public void handleAudio(String audio, String audioTranscript) {
-        sendEmotionDetectionRequest(audio);
-        //addMessageToChat()
-        openAIRequestGenerator.sendRequestToAzureOpenAI();
+    //TODO: passare l'emozione all'ai generativo
+    public void handleAudio(Long sessionId, String audio, String audioTranscript) {
+        //sendEmotionDetectionRequest(audio);
 
+        List<Message> chatMessages = cachingComponent.getChatMessages(sessionId);
+        chatMessages.add(new Message("user", audioTranscript));
+
+        Message answer = openAIRequestGenerator.sendRequestToAzureOpenAI(chatMessages);
+        chatMessages.add(answer);
+
+        cachingComponent.saveChat(sessionId, chatMessages);
+
+        List<Message> chat = cachingComponent.getChatMessages(sessionId);
+        System.out.println(chat);
     }
 
     public FinalResponse endSession(Long sessionId){
@@ -129,24 +139,7 @@ public class SessionService {
         }
     }
 
-    private List<RequestPayloadAI.Message> addMessageToChat(String sessionId, String role, String content) {
-        Cache cache = cacheManager.getCache("chatSessions");
 
-        List<RequestPayloadAI.Message> chatMessages = cache != null ? cache.get(sessionId, List.class) : null;
-
-        if (chatMessages == null) {
-            chatMessages = new ArrayList<>();
-        }
-
-        chatMessages.add(new RequestPayloadAI.Message(role, content));
-
-        if (cache != null) {
-            cache.put(sessionId, chatMessages);
-        }
-
-        return chatMessages;
-
-    }
 
 
 }

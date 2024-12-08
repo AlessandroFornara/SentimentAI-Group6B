@@ -1,14 +1,17 @@
 package polimi.aui.sentimentaigroup6b.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import polimi.aui.sentimentaigroup6b.models.RequestPayloadAI;
+import polimi.aui.sentimentaigroup6b.models.ai.Message;
+import polimi.aui.sentimentaigroup6b.models.ai.RequestPayloadAI;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class OpenAIRequestGenerator {
@@ -21,13 +24,10 @@ public class OpenAIRequestGenerator {
     @Autowired
     private RestTemplate restTemplate;
 
-    public String sendRequestToAzureOpenAI() {
+    public Message sendRequestToAzureOpenAI(List<Message> chatMessages) {
 
         RequestPayloadAI requestPayloadAI = new RequestPayloadAI();
-        requestPayloadAI.setMessages(Arrays.asList(
-                new RequestPayloadAI.Message("system", "You are a helpful assistant."),
-                new RequestPayloadAI.Message("user", "Does Azure OpenAI support customer managed keys?")
-        ));
+        requestPayloadAI.setMessages(chatMessages);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -42,19 +42,23 @@ public class OpenAIRequestGenerator {
                 String.class
         );
 
-        return response.getBody();
-    }
-
-    public RequestPayloadAI.Message extractResponseAI(String jsonResponse){
-
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(jsonResponse, RequestPayloadAI.Message.class);
+            JsonNode rootNode = objectMapper.readTree(response.getBody());
+
+            JsonNode choicesNode = rootNode.path("choices");
+
+            if (choicesNode.isArray() && !choicesNode.isEmpty()) {
+                JsonNode messageNode = choicesNode.get(0).path("message");
+
+                String role = messageNode.path("role").asText();
+                String content = messageNode.path("content").asText();
+
+                return new Message(role, content);
+            }
         } catch (Exception e) {
-            //e.printStackTrace();
             System.out.println("Error: " + e.getMessage());
         }
         return null;
     }
-
 }
