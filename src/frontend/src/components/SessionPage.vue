@@ -1,6 +1,13 @@
 <template>
   <div class="session-page">
-    <h1>Session Page</h1>
+
+
+    <!-- Pulsante "Back" in alto a sinistra -->
+    <div class = "upper-left">
+      <button @click="goBack">Back</button>
+    </div>
+
+    <h1 class="title">Welcome to the session</h1>
     <div class="image-container">
       <!-- Ogni immagine è un bottone selezionabile -->
       <button
@@ -22,6 +29,9 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router'; // Importa il router
+
+const router = useRouter(); // Ottieni l'istanza del router
 
 // Elenco delle immagini
 const images = ref([
@@ -44,6 +54,12 @@ function freeModeOption() {
   console.log('Free Mode Option Selected');
   // Aggiungi logica per il pulsante Free Mode
 }
+
+// Funzione per tornare alla homepage
+function goBack() {
+  console.log('Navigating back to HomePage...');
+  router.push('/'); // Naviga alla HomePage
+}
 </script>
 
 <style scoped>
@@ -58,8 +74,9 @@ function freeModeOption() {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  background-color: #f5f5f5;
+  background-color: #87ceeb;
   padding: 20px;
+  overflow: hidden;
 }
 
 /* Contenitore per le immagini */
@@ -70,6 +87,7 @@ function freeModeOption() {
   flex-wrap: wrap;
   width: 100%;
   height: 70%;
+  bottom: 40px;
   position: relative;
 }
 
@@ -112,7 +130,8 @@ function freeModeOption() {
 .bottom-center button {
   padding: 15px 30px;
   font-size: 18px;
-  background-color: #007bff;
+  font-family: Copperplate;
+  background-color: mediumpurple;
   color: white;
   border: none;
   border-radius: 10px;
@@ -121,6 +140,40 @@ function freeModeOption() {
 }
 
 .bottom-center button:hover {
-  background-color: #0056b3;
+  background-color: indigo;
 }
+
+.title {
+  font-size: 60px;
+  font-weight: bold;
+  margin: 0;
+  font-family: Copperplate;
+  color: mediumpurple;
+}
+
+.upper-left {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  width: 100%;
+}
+
+.upper-left button {
+  padding: 15px 30px;
+  font-size: 18px;
+  font-family: Copperplate;
+  background-color: mediumpurple;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.upper-left button:hover {
+  background-color: indigo;
+}
+
+
 </style>
