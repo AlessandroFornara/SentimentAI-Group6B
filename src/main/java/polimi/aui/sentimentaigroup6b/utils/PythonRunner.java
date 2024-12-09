@@ -4,10 +4,7 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 
 @Component
 public class PythonRunner {
@@ -29,7 +26,9 @@ public class PythonRunner {
     public void runPythonFunction(String audioData) {
         try {
 
-            ProcessBuilder pb = new ProcessBuilder(pythonExecutable, pythonScript);
+            File tempScriptFile = extractPythonScript();
+
+            ProcessBuilder pb = new ProcessBuilder(pythonExecutable, tempScriptFile.getAbsolutePath());
 
             Process process = pb.start();
 
@@ -51,6 +50,26 @@ public class PythonRunner {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private File extractPythonScript() throws IOException {
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(pythonScript);
+        if (inputStream == null) {
+            throw new FileNotFoundException("Python script not found in classpath: " + pythonScript);
+        }
+
+        File tempFile = File.createTempFile("python_script", ".py");
+        tempFile.deleteOnExit();
+
+        try (OutputStream outputStream = new FileOutputStream(tempFile)) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+        }
+
+        return tempFile;
     }
 
     private void checkPath(String path) {
