@@ -1,5 +1,8 @@
 package polimi.aui.sentimentaigroup6b.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hibernate.Remove;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +12,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class EmotionAIRequestGenerator {
@@ -27,7 +36,7 @@ public class EmotionAIRequestGenerator {
     @Autowired
     private RestTemplate restTemplate;
 
-    private String uploadAudioToAIServer(byte[] audio) {
+    public String uploadAudioToAIServer(byte[] audio){
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("accept", "*/*");
@@ -37,12 +46,7 @@ public class EmotionAIRequestGenerator {
         headers.set("token", API_TOKEN);
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-        ByteArrayResource fileResource = new ByteArrayResource(audio) {
-            @Override
-            public String getFilename() {
-                return "audio.wav";
-            }
-        };
+        ByteArrayResource fileResource = new ByteArrayResource(audio);
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("fileAttachment", fileResource);
@@ -53,7 +57,6 @@ public class EmotionAIRequestGenerator {
         serviceData.put("serviceParams", new JSONObject());
 
         body.add("service", serviceData.toString());
-
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
@@ -67,6 +70,7 @@ public class EmotionAIRequestGenerator {
             System.out.println("File upload successful");
             JSONObject jsonResponse = new JSONObject(response.getBody());
             fileUri = jsonResponse.getJSONObject("resp").getString("fileUri");
+            //fileUri = response.getHeaders().getLocation().toString();
             System.out.println("File URI: " + fileUri);
             return fileUri;
         } else {
@@ -74,5 +78,11 @@ public class EmotionAIRequestGenerator {
             System.out.println("Response content: " + response.getBody());
             return null;
         }
+    }
+
+    public byte[] readAudioFileToByteArray(String filePath) throws IOException {
+        Path path = Paths.get(filePath);
+
+        return Files.readAllBytes(path);
     }
 }
