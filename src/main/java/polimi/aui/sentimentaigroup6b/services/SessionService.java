@@ -12,6 +12,7 @@ import polimi.aui.sentimentaigroup6b.models.ai.Message;
 import polimi.aui.sentimentaigroup6b.models.ai.RequestPayloadAI;
 import polimi.aui.sentimentaigroup6b.repositories.SessionRepo;
 import polimi.aui.sentimentaigroup6b.utils.CachingComponent;
+import polimi.aui.sentimentaigroup6b.utils.ImageManager;
 import polimi.aui.sentimentaigroup6b.utils.OpenAIRequestGenerator;
 import polimi.aui.sentimentaigroup6b.utils.PythonRunner;
 
@@ -20,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,47 +34,21 @@ public class SessionService {
     private final SessionRepo sessionRepo;
     private final OpenAIRequestGenerator openAIRequestGenerator;
     private final CachingComponent cachingComponent;
-
     private final String aiInstructions;
+    private final ImageManager imageManager;
 
     public List<ImageResponse> createSession(Worker worker) {
 
         Session session = new Session(worker, null);
         sessionRepo.save(session);
 
-        List<ImageResponse> images = new ArrayList<>();
-
-        try {
-            // Accedi alla directory delle immagini
-            ClassPathResource resource = new ClassPathResource("static/images");
-            Path imagesPath = resource.getFile().toPath();
-
-            /*TODO: genera immagini con AI*/
-
-            // Scansiona i file nella directory
-            Files.list(imagesPath).forEach(filePath -> {
-                try {
-                    // Leggi il contenuto di ogni immagine
-                    byte[] imageBytes = Files.readAllBytes(filePath);
-                    String contentType = Files.probeContentType(filePath);
-                    // Crea una risposta con metadati e contenuto
-                    images.add(new ImageResponse(filePath.getFileName().toString(), contentType, imageBytes));
-                } catch (IOException e) {
-                    e.printStackTrace(); // Gestione degli errori (puoi aggiungere log o ignorare)
-                }
-            });
-
-            return images;
-
-        } catch (IOException e) {
-            return null;
-        }
+        return imageManager.extractImages();
     }
 
     public ServerResponse startSession(Long sessionId){
 
         sessionRepo.findById(sessionId).ifPresent(session -> {
-            //session.setDate(new Date());
+            session.setDate(new Date());
             sessionRepo.save(session);
         });
 
