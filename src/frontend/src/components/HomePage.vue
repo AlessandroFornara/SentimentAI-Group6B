@@ -19,17 +19,19 @@
   </div>
 </template>
 
-
 <script setup>
+import { useRouter } from 'vue-router'; // Importa il index
+
+const router = useRouter(); // Ottieni l'istanza del index
+
 function navigateTo(page) {
   console.log(`Navigating to ${page}...`);
-  // Puoi aggiungere logica per cambiare pagina, ad esempio:
-  // this.$router.push(`/${page}`);
+  router.push(`/${page}`); // Naviga dinamicamente verso la pagina specificata
 }
 
 function startSession() {
   console.log('Starting a new session...');
-  // Puoi aggiungere la logica per avviare una nuova sessione
+  router.push('/SessionPage'); // Naviga alla pagina "session"
 }
 </script>
 
@@ -104,6 +106,7 @@ function startSession() {
   background-color: #1c7430;
 }
 </style>
+
 
 
 

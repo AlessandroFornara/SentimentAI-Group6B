@@ -1,18 +1,15 @@
 <template>
-  <HelloWorld />
+  <div id="app">
+    <router-view /> <!-- Punto di montaggio per i componenti dinamici -->
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HomePage.vue'
-
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+  name: 'App'
+};
 </script>
 
 <style>
-
+/* Stili globali */
 </style>
