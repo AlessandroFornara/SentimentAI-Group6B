@@ -1,6 +1,6 @@
 <template>
   <div class="session-page">
-    <h1>Session Page</h1>
+    <h1 class="title">Welcome to the session</h1>
     <div class="image-container">
       <!-- Ogni immagine è un bottone selezionabile -->
       <button
@@ -58,8 +58,9 @@ function freeModeOption() {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  background-color: #f5f5f5;
+  background-color: #87ceeb;
   padding: 20px;
+  overflow: hidden;
 }
 
 /* Contenitore per le immagini */
@@ -112,7 +113,8 @@ function freeModeOption() {
 .bottom-center button {
   padding: 15px 30px;
   font-size: 18px;
-  background-color: #007bff;
+  font-family: Copperplate;
+  background-color: mediumpurple;
   color: white;
   border: none;
   border-radius: 10px;
@@ -121,6 +123,15 @@ function freeModeOption() {
 }
 
 .bottom-center button:hover {
-  background-color: #0056b3;
+  background-color: indigo;
 }
+
+.title {
+  font-size: 60px;
+  font-weight: bold;
+  margin: 0;
+  font-family: Copperplate;
+  color: mediumpurple;
+}
+
 </style>
