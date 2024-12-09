@@ -1,15 +1,12 @@
 package polimi.aui.sentimentaigroup6b.services;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import polimi.aui.sentimentaigroup6b.entities.Badge;
 import polimi.aui.sentimentaigroup6b.entities.Session;
 import polimi.aui.sentimentaigroup6b.entities.Worker;
 import polimi.aui.sentimentaigroup6b.models.*;
-import polimi.aui.sentimentaigroup6b.models.ai.Message;
-import polimi.aui.sentimentaigroup6b.models.ai.RequestPayloadAI;
+import polimi.aui.sentimentaigroup6b.models.llm.Message;
 import polimi.aui.sentimentaigroup6b.repositories.SessionRepo;
 import polimi.aui.sentimentaigroup6b.utils.CachingComponent;
 import polimi.aui.sentimentaigroup6b.utils.ImageManager;
@@ -20,7 +17,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
