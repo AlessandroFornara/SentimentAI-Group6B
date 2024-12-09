@@ -2,8 +2,6 @@ package polimi.aui.sentimentaigroup6b.utils;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
-import polimi.aui.sentimentaigroup6b.entities.Session;
-import polimi.aui.sentimentaigroup6b.entities.Worker;
 import polimi.aui.sentimentaigroup6b.models.ImageResponse;
 
 import java.io.IOException;

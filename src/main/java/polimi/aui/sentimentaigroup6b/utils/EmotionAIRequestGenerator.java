@@ -1,8 +1,7 @@
 package polimi.aui.sentimentaigroup6b.utils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hibernate.Remove;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,18 +11,20 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import polimi.aui.sentimentaigroup6b.models.EmotionAIResponse;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 public class EmotionAIRequestGenerator {
 
-    @Value("${ai.emotion.url}")
-    private String API_URL;
+    @Value("${ai.emotion.upload.url}")
+    private String API_UPLOAD_URL;
+    @Value("${ai.emotion.analyze.url}")
+    private String API_ANALYZE_URL;
     @Value("${ai.emotion.applicationId}")
     private String API_APPLICATION_ID;
     @Value("${ai.emotion.conversationId}")
@@ -32,6 +33,8 @@ public class EmotionAIRequestGenerator {
     private String API_CONVERSATIONAL_STEP_ID;
     @Value("${ai.emotion.token}")
     private String API_TOKEN;
+    @Value("${ai.emotion.name}")
+    private String API_NAME;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -60,7 +63,7 @@ public class EmotionAIRequestGenerator {
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                API_URL,
+                API_UPLOAD_URL,
                 HttpMethod.POST,
                 requestEntity,
                 String.class);
@@ -78,6 +81,65 @@ public class EmotionAIRequestGenerator {
             System.out.println("Response content: " + response.getBody());
             return null;
         }
+    }
+
+    public EmotionAIResponse sendEmotionDetectionRequest(String fileUri){
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("accept", "*/*");
+        headers.set("applicationId", API_APPLICATION_ID);
+        headers.set("conversationId", API_CONVERSATION_ID);
+        headers.set("conversationalStepId", API_CONVERSATIONAL_STEP_ID);
+        headers.set("token", API_TOKEN);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        JSONObject payload = new JSONObject();
+
+        JSONObject speech = new JSONObject();
+        speech.put("type", "URI");
+        speech.put("data", fileUri);
+        payload.put("speech", speech);
+
+        payload.put("language", "en-US");
+
+        JSONObject service = new JSONObject();
+        service.put("name", API_NAME);
+        service.put("account", new JSONObject());
+        service.put("serviceParams", new JSONObject());
+        payload.put("service", service);
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(payload.toString(), headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                API_ANALYZE_URL,
+                HttpMethod.POST,
+                requestEntity,
+                String.class
+        );
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(response.getBody());
+
+            JsonNode dataNode = rootNode.path("data");
+
+            if (!dataNode.isEmpty()) {
+                JsonNode rawNode = dataNode.path("raw");
+
+                return new EmotionAIResponse(
+                        rawNode.path("anger").asDouble(),
+                        rawNode.path("disgust").asDouble(),
+                        rawNode.path("fear").asDouble(),
+                        rawNode.path("joy").asDouble(),
+                        rawNode.path("neutrality").asDouble(),
+                        rawNode.path("sadness").asDouble(),
+                        rawNode.path("surprise").asDouble()
+                        );
+            }
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        return null;
     }
 
     public byte[] readAudioFileToByteArray(String filePath) throws IOException {

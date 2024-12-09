@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import java.io.*;
 
 @Component
+@Deprecated
 public class PythonRunner {
 
     @Value("${python.executable}")

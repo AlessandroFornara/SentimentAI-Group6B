@@ -5,13 +5,15 @@ import org.springframework.stereotype.Service;
 import polimi.aui.sentimentaigroup6b.entities.Badge;
 import polimi.aui.sentimentaigroup6b.entities.Session;
 import polimi.aui.sentimentaigroup6b.entities.Worker;
-import polimi.aui.sentimentaigroup6b.models.*;
+import polimi.aui.sentimentaigroup6b.models.ActivityResponse;
+import polimi.aui.sentimentaigroup6b.models.FinalResponse;
+import polimi.aui.sentimentaigroup6b.models.ImageResponse;
+import polimi.aui.sentimentaigroup6b.models.ServerResponse;
 import polimi.aui.sentimentaigroup6b.models.llm.Message;
 import polimi.aui.sentimentaigroup6b.repositories.SessionRepo;
 import polimi.aui.sentimentaigroup6b.utils.CachingComponent;
 import polimi.aui.sentimentaigroup6b.utils.ImageManager;
 import polimi.aui.sentimentaigroup6b.utils.OpenAIRequestGenerator;
-import polimi.aui.sentimentaigroup6b.utils.PythonRunner;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,7 +28,6 @@ import java.util.stream.Collectors;
 public class SessionService {
 
     private final BadgeService badgeService;
-    private final PythonRunner runner;
     private final SessionRepo sessionRepo;
     private final OpenAIRequestGenerator openAIRequestGenerator;
     private final CachingComponent cachingComponent;
@@ -92,11 +93,6 @@ public class SessionService {
         return null;
     }
 
-    //TODO: Cambiare String a byte[]
-    public void sendEmotionDetectionRequest(String audio){
-        runner.runPythonFunction(audio);
-    }
-
     public List<String> getAllImages() {
         Path imagesPath = Paths.get("src/main/resources/static/images");
         try {
@@ -110,8 +106,4 @@ public class SessionService {
             return List.of();
         }
     }
-
-
-
-
 }

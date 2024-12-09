@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import polimi.aui.sentimentaigroup6b.entities.Session;
 import polimi.aui.sentimentaigroup6b.entities.Worker;
+import polimi.aui.sentimentaigroup6b.models.EmotionAIResponse;
 import polimi.aui.sentimentaigroup6b.repositories.SessionRepo;
 import polimi.aui.sentimentaigroup6b.repositories.WorkerRepo;
 import polimi.aui.sentimentaigroup6b.services.SessionService;
@@ -62,12 +63,15 @@ public class MessageController {
     public void testEmotionAI() throws IOException {
         byte[] audio = emotionAIRequestGenerator.readAudioFileToByteArray("C:/Users/alefo/Desktop/audio.wav");
         if (audio == null || audio.length == 0) {
-            System.out.println("Errore: il file audio è vuoto o non è stato letto correttamente.");
+            System.out.println(" Errore: il file audio è vuoto o non è stato letto correttamente.");
             return;
         } else {
             System.out.println("File audio letto correttamente, dimensione: " + audio.length + " byte.");
         }
-        String response = emotionAIRequestGenerator.uploadAudioToAIServer(audio);
-        System.out.println(response);
+        String fileURI = emotionAIRequestGenerator.uploadAudioToAIServer(audio);
+        System.out.println(fileURI);
+
+        EmotionAIResponse emotionAIResponse = emotionAIRequestGenerator.sendEmotionDetectionRequest(fileURI);
+        System.out.println(emotionAIResponse);
     }
 }
