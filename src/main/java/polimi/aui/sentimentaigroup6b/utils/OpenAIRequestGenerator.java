@@ -7,10 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import polimi.aui.sentimentaigroup6b.models.ai.Message;
-import polimi.aui.sentimentaigroup6b.models.ai.RequestPayloadAI;
+import polimi.aui.sentimentaigroup6b.models.llm.Message;
+import polimi.aui.sentimentaigroup6b.models.llm.RequestPayloadAI;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Component

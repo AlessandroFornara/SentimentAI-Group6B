@@ -3,7 +3,7 @@ package polimi.aui.sentimentaigroup6b.utils;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.Cache;
 import org.springframework.stereotype.Component;
-import polimi.aui.sentimentaigroup6b.models.ai.Message;
+import polimi.aui.sentimentaigroup6b.models.llm.Message;
 
 import java.util.ArrayList;
 import java.util.List;
