@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import polimi.aui.sentimentaigroup6b.models.EmotionAIResponse;
+import polimi.aui.sentimentaigroup6b.models.emotionAI.EmotionAIResponse;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -73,7 +73,6 @@ public class EmotionAIRequestGenerator {
             System.out.println("File upload successful");
             JSONObject jsonResponse = new JSONObject(response.getBody());
             fileUri = jsonResponse.getJSONObject("resp").getString("fileUri");
-            //fileUri = response.getHeaders().getLocation().toString();
             System.out.println("File URI: " + fileUri);
             return fileUri;
         } else {

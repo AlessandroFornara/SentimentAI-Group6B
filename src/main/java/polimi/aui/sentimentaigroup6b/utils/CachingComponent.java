@@ -26,7 +26,7 @@ public class CachingComponent {
         cache.put(sessionId, chatMessages);
     }
 
-    public void deleteChat(String sessionId) {
+    public void deleteChat(Long sessionId) {
         cache.evict(sessionId);
     }
 }

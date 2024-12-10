@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import polimi.aui.sentimentaigroup6b.entities.Session;
 import polimi.aui.sentimentaigroup6b.entities.Worker;
-import polimi.aui.sentimentaigroup6b.models.EmotionAIResponse;
+import polimi.aui.sentimentaigroup6b.models.emotionAI.EmotionAIResponse;
 import polimi.aui.sentimentaigroup6b.repositories.SessionRepo;
 import polimi.aui.sentimentaigroup6b.repositories.WorkerRepo;
 import polimi.aui.sentimentaigroup6b.services.SessionService;

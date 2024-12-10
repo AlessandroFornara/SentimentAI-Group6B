@@ -1,4 +1,4 @@
-package polimi.aui.sentimentaigroup6b.models;
+package polimi.aui.sentimentaigroup6b.models.emotionAI;
 
 import lombok.*;
 

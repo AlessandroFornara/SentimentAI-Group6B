@@ -6,6 +6,7 @@ import polimi.aui.sentimentaigroup6b.entities.Badge;
 import polimi.aui.sentimentaigroup6b.entities.Session;
 import polimi.aui.sentimentaigroup6b.entities.Worker;
 import polimi.aui.sentimentaigroup6b.models.*;
+import polimi.aui.sentimentaigroup6b.models.emotionAI.EmotionAIResponse;
 import polimi.aui.sentimentaigroup6b.models.llm.Message;
 import polimi.aui.sentimentaigroup6b.repositories.SessionRepo;
 import polimi.aui.sentimentaigroup6b.utils.CachingComponent;
@@ -27,11 +28,14 @@ public class SessionService {
 
     private final BadgeService badgeService;
     private final SessionRepo sessionRepo;
+
     private final OpenAIRequestGenerator openAIRequestGenerator;
     private final EmotionAIRequestGenerator emotionAIRequestGenerator;
+
     private final CachingComponent cachingComponent;
-    private final String aiInstructions;
     private final ImageManager imageManager;
+
+    private final String aiInstructions;
 
     public List<ImageResponse> createSession(Worker worker) {
 
@@ -77,6 +81,7 @@ public class SessionService {
         String dominantEmotion = detectDominantEmotion(sessionId);
         ActivityResponse activity = chooseActivity(sessionId);
         List<Badge> badges = badgeService.assignBadges(sessionId);
+        cachingComponent.deleteChat(sessionId);
 
         return new FinalResponse(dominantEmotion,
                 activity.getActivityCategory(),
