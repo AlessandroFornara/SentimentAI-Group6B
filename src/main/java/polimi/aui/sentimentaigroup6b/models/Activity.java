@@ -14,105 +14,63 @@ public enum Activity {
         this.description = description;
     }
 
-    public String getDescription(Emotion detectedEmotion) {
+    public String getDescription() {
+        return description;
+    }
+
+    public String assignActivity(Emotion detectedEmotion) {
         return switch (detectedEmotion) {
             case JOY -> switch (this) {
-                case PERSONALIZED_QUOTE ->
-                        "Happiness is not a destination, but a journey. Enjoy every step!";
-                case SELF_CARE_SUGGESTION ->
-                        "You are feeling joyful! Here is a self-care suggestion to keep you feeling good";
-                case CREATIVE_MINI_ACTIVITY ->
-                        "Take a photo of something that represents your happiness and save it as a memory";
-                case SHORT_GUIDED_MEDITATION ->
-                        "You are feeling joyful! Here is a short guided meditation to keep you relaxed";
-                case CHALLENGE ->
-                        "Today, give someone a sincere compliment or thank a person who made your day better.";
+                case PERSONALIZED_QUOTE -> "Happiness is not a destination, but a journey. Enjoy every step!";
+                case SELF_CARE_SUGGESTION -> "You are feeling joyful! Take some time to enjoy your favorite activity today.";
+                case CREATIVE_MINI_ACTIVITY -> "Take a photo of something that represents your happiness and save it as a memory.";
+                case SHORT_GUIDED_MEDITATION -> "You are feeling joyful! Here is a short guided meditation to keep you relaxed.";
+                case CHALLENGE -> "Today, give someone a sincere compliment or thank a person who made your day better.";
                 case RECOMMENDED_MUSIC -> "A playlist with cheerful songs to extend your good mood.";
             };
             case SADNESS -> switch (this) {
-                case PERSONALIZED_QUOTE ->
-                        "Sadness is a part of life, but also an opportunity to rediscover what truly matters";
-                case SELF_CARE_SUGGESTION ->
-                        "You are feeling sad! Here is a self-care suggestion to keep you feeling good";
-                case CREATIVE_MINI_ACTIVITY ->
-                        "Write a paragraph about a happy moment that makes you feel grateful, even when you’re feeling sad";
-                case SHORT_GUIDED_MEDITATION ->
-                        "A short 3–5 minute meditation to ease sadness and regain some peace of mind.";
-                case CHALLENGE ->
-                        "Today, write down three things you’re grateful for. Focusing on the good in your life can help improve your mood.";
+                case PERSONALIZED_QUOTE -> "Sadness is a part of life, but also an opportunity to rediscover what truly matters.";
+                case SELF_CARE_SUGGESTION -> "Today, take 15 minutes to listen to your favorite music or read a chapter of your favorite book.";
+                case CREATIVE_MINI_ACTIVITY -> "Write a paragraph about a happy moment that makes you feel grateful, even when you’re feeling sad.";
+                case SHORT_GUIDED_MEDITATION -> "A short 3–5 minute meditation to ease sadness and regain some peace of mind.";
+                case CHALLENGE -> "Today, write down three things you’re grateful for. Focusing on the good in your life can help improve your mood.";
                 case RECOMMENDED_MUSIC -> "A playlist with calming tracks to encourage relaxation.";
             };
             case ANGER -> switch (this) {
-                case PERSONALIZED_QUOTE ->
-                        "You are feeling angry! Here is an inspirational quote to keep you motivated";
-                case SELF_CARE_SUGGESTION ->
-                        "A 1–2 minute guided breathing exercise to reduce tension.";
-                case CREATIVE_MINI_ACTIVITY ->
-                        "Take 5 minutes to step away from what made you angry and focus on an activity that relaxes you.";
-                case SHORT_GUIDED_MEDITATION ->
-                        "A targeted meditation to calm anger and refocus the mind";
-                case CHALLENGE ->
-                        "You are feeling angry! Here is a gratitude challenge to keep you feeling positive";
-                case RECOMMENDED_MUSIC ->
-                        "You are feeling angry! Here is some recommended music to keep you entertained";
-            };
-            case FEAR -> switch (this) {
-                case PERSONALIZED_QUOTE ->
-                        "You are feeling fearful! Here is an inspirational quote to keep you motivated";
-                case SELF_CARE_SUGGESTION ->
-                        "You are feeling fearful! Here is a self-care suggestion to keep you feeling good";
-                case CREATIVE_MINI_ACTIVITY ->
-                        "You are feeling fearful! Here is a creative mini activity to keep you entertained";
-                case SHORT_GUIDED_MEDITATION ->
-                        "You are feeling fearful! Here is a short guided meditation to keep you relaxed";
-                case CHALLENGE ->
-                        "You are feeling fearful! Here is a motivational challenge to keep you feeling motivated";
-                case RECOMMENDED_MUSIC ->
-                        "You are feeling fearful! Here is some recommended music to keep you entertained";
+                case PERSONALIZED_QUOTE -> "Calmness is the power to stay balanced even when everything around you is in chaos.";
+                case SELF_CARE_SUGGESTION -> "Take 5 minutes to step away from what made you angry and focus on an activity that relaxes you.";
+                case CREATIVE_MINI_ACTIVITY -> "Write down what made you angry today and try to identify a positive aspect or a lesson to learn.";
+                case SHORT_GUIDED_MEDITATION -> "A targeted meditation to calm anger and refocus the mind.";
+                case CHALLENGE -> "Find a small positive thing today and focus on it, even if it’s simple.";
+                case RECOMMENDED_MUSIC -> "A playlist with calming music to ease tension and help you relax.";
             };
             case DISGUST -> switch (this) {
-                case PERSONALIZED_QUOTE ->
-                        "You are feeling disgusted! Here is an inspirational quote to keep you motivated";
-                case SELF_CARE_SUGGESTION ->
-                        "You are feeling disgusted! Here is a self-care suggestion to keep you feeling good";
-                case CREATIVE_MINI_ACTIVITY ->
-                        "You are feeling disgusted! Here is a creative mini activity to keep you entertained";
-                case SHORT_GUIDED_MEDITATION ->
-                        "You are feeling disgusted! Here is a short guided meditation to keep you relaxed";
-                case CHALLENGE ->
-                        "You are feeling disgusted! Here is a gratitude challenge to keep you feeling positive";
-                case RECOMMENDED_MUSIC ->
-                        "You are feeling disgusted! Here is some recommended music to keep you entertained";
+                case PERSONALIZED_QUOTE -> "Acceptance is the key to inner peace.";
+                case SELF_CARE_SUGGESTION -> "Spend a few minutes on a pleasant activity, like listening to your favorite music or reading something interesting.";
+                case CREATIVE_MINI_ACTIVITY -> "Visualize a place or situation that brings peace and try to draw or write about it.";
+                case SHORT_GUIDED_MEDITATION -> "A meditation to help distance yourself from feelings of disgust or discomfort.";
+                case CHALLENGE -> "Find one small positive thing about today and focus on it.";
+                case RECOMMENDED_MUSIC -> "A playlist with soothing tracks to help you find balance and relaxation.";
             };
-            case SURPRISE -> switch (this) {
-                case PERSONALIZED_QUOTE ->
-                        "You are feeling surprised! Here is an inspirational quote to keep you motivated";
-                case SELF_CARE_SUGGESTION ->
-                        "You are feeling surprised! Here is a self-care suggestion to keep you feeling good";
-                case CREATIVE_MINI_ACTIVITY ->
-                        "You are feeling surprised! Here is a creative mini activity to keep you entertained";
-                case SHORT_GUIDED_MEDITATION ->
-                        "You are feeling surprised! Here is a short guided meditation to keep you relaxed";
-                case CHALLENGE ->
-                        "You are feeling surprised! Here is a motivational challenge to keep you feeling motivated";
-                case RECOMMENDED_MUSIC ->
-                        "You are feeling surprised! Here is some recommended music to keep you entertained";
+            case FEAR -> switch (this) {
+                case PERSONALIZED_QUOTE -> "Courage is not the absence of fear, but the decision to move forward anyway.";
+                case SELF_CARE_SUGGESTION -> "Take a moment to list the things that make you feel safe and protected.";
+                case CREATIVE_MINI_ACTIVITY -> "Write about a time when you overcame a difficult situation to remind yourself of your strength.";
+                case SHORT_GUIDED_MEDITATION -> "A guided meditation to calm the mind and reduce anxiety.";
+                case CHALLENGE -> "Set a small, achievable goal today to boost your confidence.";
+                case RECOMMENDED_MUSIC -> "A playlist with soothing and calming tracks to ease the mind.";
             };
             case NEUTRALITY -> switch (this) {
-                case PERSONALIZED_QUOTE ->
-                        "You are feeling neutral! Here is an inspirational quote to keep you motivated";
-                case SELF_CARE_SUGGESTION ->
-                        "You are feeling neutral! Here is a self-care suggestion to keep you feeling good";
-                case CREATIVE_MINI_ACTIVITY ->
-                        "You are feeling neutral! Here is a creative mini activity to keep you entertained";
-                case SHORT_GUIDED_MEDITATION ->
-                        "You are feeling neutral! Here is a short guided meditation to keep you relaxed";
-                case CHALLENGE ->
-                        "You are feeling neutral! Here is a motivational challenge to keep you feeling motivated";
-                case RECOMMENDED_MUSIC ->
-                        "You are feeling neutral! Here is some recommended music to keep you entertained";
+                case PERSONALIZED_QUOTE -> "Serenity is an inner achievement. Find beauty in the simplicity of your day.";
+                case SELF_CARE_SUGGESTION -> "Spend a few minutes on a small pleasurable activity, like reading a chapter of a book or listening to a podcast.";
+                case CREATIVE_MINI_ACTIVITY -> "Think of one thing that makes you happy or satisfied and write it down to remember it.";
+                case SHORT_GUIDED_MEDITATION -> "A short meditation to encourage relaxation and mindfulness.";
+                case CHALLENGE -> "Write down one small positive thing you noticed today, even if it’s simple.";
+                case RECOMMENDED_MUSIC -> "A soft playlist to encourage reflection or relaxation.";
             };
+            default -> throw new IllegalStateException("Unexpected emotion value: " + this);
         };
     }
+
 
 }

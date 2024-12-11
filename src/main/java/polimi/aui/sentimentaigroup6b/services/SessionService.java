@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -78,25 +79,27 @@ public class SessionService {
 
     public FinalResponse endSession(Long sessionId){
 
-        String dominantEmotion = detectDominantEmotion(sessionId);
-        ActivityResponse activity = chooseActivity(sessionId);
+        Emotion dominantEmotion = detectDominantEmotion(sessionId);
+        ActivityResponse activity = chooseActivity(dominantEmotion);
         List<Badge> badges = badgeService.assignBadges(sessionId);
         cachingComponent.deleteChat(sessionId);
 
-        return new FinalResponse(dominantEmotion,
+        return new FinalResponse(dominantEmotion.toString(),
                 activity.getActivityCategory(),
                 activity.getActivityText(),
                 badges);
     }
 
-    public String detectDominantEmotion(Long sessionId){
+    public Emotion detectDominantEmotion(Long sessionId){
 
         return null;
     }
 
-    public ActivityResponse chooseActivity(Long sessionId){
-
-        return null;
+    public ActivityResponse chooseActivity(Emotion emotion){
+        Activity[] activities = Activity.values();
+        Random random = new Random();
+        Activity randomActivity = activities[random.nextInt(activities.length)];
+        return new ActivityResponse(randomActivity.getDescription(), randomActivity.assignActivity(emotion));
     }
 
     public List<String> getAllImages() {
