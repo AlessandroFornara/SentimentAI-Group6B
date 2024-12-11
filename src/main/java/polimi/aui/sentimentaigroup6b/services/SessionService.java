@@ -6,12 +6,13 @@ import polimi.aui.sentimentaigroup6b.entities.Badge;
 import polimi.aui.sentimentaigroup6b.entities.Session;
 import polimi.aui.sentimentaigroup6b.entities.Worker;
 import polimi.aui.sentimentaigroup6b.models.*;
+import polimi.aui.sentimentaigroup6b.models.emotionAI.EmotionAIResponse;
 import polimi.aui.sentimentaigroup6b.models.llm.Message;
 import polimi.aui.sentimentaigroup6b.repositories.SessionRepo;
 import polimi.aui.sentimentaigroup6b.utils.CachingComponent;
+import polimi.aui.sentimentaigroup6b.utils.EmotionAIRequestGenerator;
 import polimi.aui.sentimentaigroup6b.utils.ImageManager;
 import polimi.aui.sentimentaigroup6b.utils.OpenAIRequestGenerator;
-import polimi.aui.sentimentaigroup6b.utils.PythonRunner;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,12 +27,15 @@ import java.util.stream.Collectors;
 public class SessionService {
 
     private final BadgeService badgeService;
-    private final PythonRunner runner;
     private final SessionRepo sessionRepo;
+
     private final OpenAIRequestGenerator openAIRequestGenerator;
+    private final EmotionAIRequestGenerator emotionAIRequestGenerator;
+
     private final CachingComponent cachingComponent;
-    private final String aiInstructions;
     private final ImageManager imageManager;
+
+    private final String aiInstructions;
 
     public List<ImageResponse> createSession(Worker worker) {
 
@@ -55,19 +59,21 @@ public class SessionService {
     }
 
     //TODO: passare l'emozione all'ai generativo
-    public void handleAudio(Long sessionId, String audio, String audioTranscript) {
-        //sendEmotionDetectionRequest(audio);
+    public void handleAudio(Long sessionId, byte[] audio, String audioTranscript) {
+        //Upload audio and analyze emotions
+        String fileURI = emotionAIRequestGenerator.uploadAudioToAIServer(audio);
+        EmotionAIResponse response = emotionAIRequestGenerator.sendEmotionDetectionRequest(fileURI);
 
+        //Add new audio to the chat as a message from the user
         List<Message> chatMessages = cachingComponent.getChatMessages(sessionId);
         chatMessages.add(new Message("user", audioTranscript));
 
+        //Generate response using the llm and add it to the chat as a message
         Message answer = openAIRequestGenerator.sendRequestToAzureOpenAI(chatMessages);
         chatMessages.add(answer);
 
+        //Save the updated chat to the cache
         cachingComponent.saveChat(sessionId, chatMessages);
-
-        List<Message> chat = cachingComponent.getChatMessages(sessionId);
-        System.out.println(chat);
     }
 
     public FinalResponse endSession(Long sessionId){
@@ -75,6 +81,7 @@ public class SessionService {
         String dominantEmotion = detectDominantEmotion(sessionId);
         ActivityResponse activity = chooseActivity(sessionId);
         List<Badge> badges = badgeService.assignBadges(sessionId);
+        cachingComponent.deleteChat(sessionId);
 
         return new FinalResponse(dominantEmotion,
                 activity.getActivityCategory(),
@@ -92,11 +99,6 @@ public class SessionService {
         return null;
     }
 
-    //TODO: Cambiare String a byte[]
-    public void sendEmotionDetectionRequest(String audio){
-        runner.runPythonFunction(audio);
-    }
-
     public List<String> getAllImages() {
         Path imagesPath = Paths.get("src/main/resources/static/images");
         try {
@@ -110,8 +112,4 @@ public class SessionService {
             return List.of();
         }
     }
-
-
-
-
 }
