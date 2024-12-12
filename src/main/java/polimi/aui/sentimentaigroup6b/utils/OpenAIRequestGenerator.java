@@ -23,7 +23,7 @@ public class OpenAIRequestGenerator {
     @Autowired
     private RestTemplate restTemplate;
 
-    public Message sendRequestToAzureOpenAI(List<Message> chatMessages) {
+    public Message sendRequestToAzureOpenAI(List<Message> chatMessages) throws Exception {
 
         RequestPayloadAI requestPayloadAI = new RequestPayloadAI();
         requestPayloadAI.setMessages(chatMessages);
@@ -41,23 +41,21 @@ public class OpenAIRequestGenerator {
                 String.class
         );
 
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode rootNode = objectMapper.readTree(response.getBody());
 
-            JsonNode choicesNode = rootNode.path("choices");
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(response.getBody());
 
-            if (choicesNode.isArray() && !choicesNode.isEmpty()) {
-                JsonNode messageNode = choicesNode.get(0).path("message");
+        JsonNode choicesNode = rootNode.path("choices");
 
-                String role = messageNode.path("role").asText();
-                String content = messageNode.path("content").asText();
+        if (choicesNode.isArray() && !choicesNode.isEmpty()) {
+            JsonNode messageNode = choicesNode.get(0).path("message");
 
-                return new Message(role, content);
-            }
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
+            String role = messageNode.path("role").asText();
+            String content = messageNode.path("content").asText();
+
+            return new Message(role, content);
         }
+
         return null;
     }
 }

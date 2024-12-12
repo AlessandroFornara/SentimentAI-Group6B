@@ -39,7 +39,7 @@ public class EmotionAIRequestGenerator {
     @Autowired
     private RestTemplate restTemplate;
 
-    public String uploadAudioToAIServer(byte[] audio){
+    public String uploadAudioToAIServer(byte[] audio) throws Exception{
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("accept", "*/*");
@@ -82,7 +82,7 @@ public class EmotionAIRequestGenerator {
         }
     }
 
-    public EmotionAIResponse sendEmotionDetectionRequest(String fileUri){
+    public EmotionAIResponse sendEmotionDetectionRequest(String fileUri) throws Exception{
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("accept", "*/*");
@@ -116,28 +116,25 @@ public class EmotionAIRequestGenerator {
                 String.class
         );
 
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode rootNode = objectMapper.readTree(response.getBody());
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(response.getBody());
 
-            JsonNode dataNode = rootNode.path("data");
+        JsonNode dataNode = rootNode.path("data");
 
-            if (!dataNode.isEmpty()) {
-                JsonNode rawNode = dataNode.path("raw");
+        if (!dataNode.isEmpty()) {
+            JsonNode rawNode = dataNode.path("raw");
 
-                return new EmotionAIResponse(
-                        rawNode.path("anger").asDouble(),
-                        rawNode.path("disgust").asDouble(),
-                        rawNode.path("fear").asDouble(),
-                        rawNode.path("joy").asDouble(),
-                        rawNode.path("neutrality").asDouble(),
-                        rawNode.path("sadness").asDouble(),
-                        rawNode.path("surprise").asDouble()
-                        );
-            }
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
+            return new EmotionAIResponse(
+                    rawNode.path("anger").asDouble(),
+                    rawNode.path("disgust").asDouble(),
+                    rawNode.path("fear").asDouble(),
+                    rawNode.path("joy").asDouble(),
+                    rawNode.path("neutrality").asDouble(),
+                    rawNode.path("sadness").asDouble(),
+                    rawNode.path("surprise").asDouble()
+                    );
         }
+
         return null;
     }
 

@@ -13,11 +13,13 @@ import java.util.List;
 public class CachingComponent {
 
     private final Cache cache;
+    private final String aiInstructions;
 
     public List<Message> getChatMessages(Long sessionId){
         List<Message> chatMessages = cache != null ? cache.get(sessionId, List.class) : null;
         if (chatMessages == null) {
             chatMessages = new ArrayList<>();
+            chatMessages.add(new Message("system", aiInstructions));
         }
         return chatMessages;
     }

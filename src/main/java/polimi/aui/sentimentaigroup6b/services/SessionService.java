@@ -2,6 +2,7 @@ package polimi.aui.sentimentaigroup6b.services;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import polimi.aui.sentimentaigroup6b.entities.Audio;
 import polimi.aui.sentimentaigroup6b.entities.Badge;
 import polimi.aui.sentimentaigroup6b.entities.Session;
 import polimi.aui.sentimentaigroup6b.entities.Worker;
@@ -9,6 +10,7 @@ import polimi.aui.sentimentaigroup6b.models.*;
 import polimi.aui.sentimentaigroup6b.models.emotionAI.Emotion;
 import polimi.aui.sentimentaigroup6b.models.emotionAI.EmotionAIResponse;
 import polimi.aui.sentimentaigroup6b.models.llm.Message;
+import polimi.aui.sentimentaigroup6b.repositories.AudioRepo;
 import polimi.aui.sentimentaigroup6b.repositories.SessionRepo;
 import polimi.aui.sentimentaigroup6b.utils.CachingComponent;
 import polimi.aui.sentimentaigroup6b.utils.EmotionAIRequestGenerator;
@@ -23,6 +25,7 @@ import java.util.Random;
 @Service
 public class SessionService {
 
+    private final AudioRepo audioRepo;
     private final BadgeService badgeService;
     private final SessionRepo sessionRepo;
 
@@ -30,47 +33,79 @@ public class SessionService {
     private final EmotionAIRequestGenerator emotionAIRequestGenerator;
 
     private final CachingComponent cachingComponent;
-    private final ImageManager imageManager;
 
-    private final String aiInstructions;
+    //TODO: check user is not in a session already (?)
+    public ServerResponse createSession(Worker worker) {
 
-    public List<ImageResponse> createSession(Worker worker) {
-
-        Session session = new Session(worker, null);
-        sessionRepo.save(session);
-
-        return imageManager.extractImages();
+        return ServerResponse.SESSION_CREATED;
     }
 
-    public ServerResponse startSession(Long sessionId){
-
-        sessionRepo.findById(sessionId).ifPresent(session -> {
-            session.setDate(new Date());
+    public ServerResponse startSession(Worker worker){
+        // Create a new session
+        Session session = new Session(worker, new Date());
+        try {
             sessionRepo.save(session);
-        });
-
-        List<Message> chatMessages = cachingComponent.getChatMessages(sessionId);
-        chatMessages.add(new Message("system", aiInstructions));
-
+        } catch (Exception e) {
+            System.err.println("Error saving session: " + e.getMessage());
+            return ServerResponse.SESSION_CREATION_ERROR;
+        }
         return ServerResponse.SESSION_STARTED;
     }
 
     //TODO: passare l'emozione all'ai generativo
-    public void handleAudio(Long sessionId, byte[] audio, String audioTranscript) {
-        //Upload audio and analyze emotions
-        String fileURI = emotionAIRequestGenerator.uploadAudioToAIServer(audio);
-        EmotionAIResponse response = emotionAIRequestGenerator.sendEmotionDetectionRequest(fileURI);
+    public Message handleAudio(Session session, byte[] audio, String audioTranscript) {
+        Audio audioEntity = new Audio(session, audio);
+        try {
+            audioRepo.save(audioEntity);
+        } catch (Exception e) {
+            System.err.println("Error saving audio: " + e.getMessage());
+            return null;
+        }
+        String fileURI;
+        EmotionAIResponse response;
+        try {
+            //Upload audio and analyze emotions
+            fileURI = emotionAIRequestGenerator.uploadAudioToAIServer(audio);
+            response = emotionAIRequestGenerator.sendEmotionDetectionRequest(fileURI);
+            if (response == null)
+                throw new Exception("response is null");
+            audioEntity.setDetectedEmotions(response.getEmotionsAsList());
+            audioEntity.setDominantEmotion(response.getDominantEmotion().getEmotion());
+            audioRepo.save(audioEntity);
+        } catch (Exception e) {
+            System.err.println("Error analyzing audio: " + e.getMessage());
+            return null;
+        }
 
-        //Add new audio to the chat as a message from the user
-        List<Message> chatMessages = cachingComponent.getChatMessages(sessionId);
-        chatMessages.add(new Message("user", audioTranscript));
+        List<Message> chatMessages = null;
+        try {
+            //Add new audio to the chat as a message from the user
+            chatMessages = cachingComponent.getChatMessages(session.getId());
+            chatMessages.add(new Message("user", audioTranscript));
+        } catch (Exception e) {
+            System.err.println("Error saving audio to chat: " + e.getMessage());
+        }
 
-        //Generate response using the llm and add it to the chat as a message
-        Message answer = openAIRequestGenerator.sendRequestToAzureOpenAI(chatMessages);
-        chatMessages.add(answer);
+        Message answer;
+        try {
+            //Generate response using the llm and add it to the chat as a message
+            answer = openAIRequestGenerator.sendRequestToAzureOpenAI(chatMessages);
+            if (answer == null || answer.getContent() == null || answer.getContent().isEmpty())
+                throw new Exception("response is null");
+        } catch (Exception e) {
+            System.err.println("Error generating response: " + e.getMessage());
+            return null;
+        }
 
-        //Save the updated chat to the cache
-        cachingComponent.saveChat(sessionId, chatMessages);
+        try {
+            //Save the updated chat to the cache
+            chatMessages.add(answer);
+            cachingComponent.saveChat(session.getId(), chatMessages);
+        } catch (Exception e) {
+            System.err.println("Error saving chat: " + e.getMessage());
+            return null;
+        }
+        return answer;
     }
 
     public FinalResponse endSession(Long sessionId){
