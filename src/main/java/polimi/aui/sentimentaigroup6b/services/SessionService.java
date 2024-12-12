@@ -52,8 +52,18 @@ public class SessionService {
         return ServerResponse.SESSION_STARTED;
     }
 
-    //TODO: passare l'emozione all'ai generativo
-    public Message handleAudio(Session session, byte[] audio, String audioTranscript) {
+    public Message handleAudio(Long sessionId, byte[] audio, String audioTranscript) {
+        Session session;
+        try {
+            session = sessionRepo.findById(sessionId).orElse(null);
+            if (session == null) {
+                throw new Exception("session not found for id: " + sessionId);
+            }
+        } catch (Exception e) {
+            System.err.println("Error retrieving session: " + e.getMessage());
+            return null;
+        }
+
         Audio audioEntity = new Audio(session, audio);
         try {
             audioRepo.save(audioEntity);
@@ -79,7 +89,7 @@ public class SessionService {
         List<Message> chatMessages = null;
         try {
             //Add new audio to the chat as a message from the user
-            chatMessages = cachingComponent.getChatMessages(session.getId());
+            chatMessages = cachingComponent.getChatMessages(sessionId);
             chatMessages.add(new Message("user", "Detected emotions: " + emotionValues
                     + "\nUser message: " + audioTranscript));
         } catch (Exception e) {
@@ -100,7 +110,7 @@ public class SessionService {
         try {
             //Save the updated chat to the cache
             chatMessages.add(answer);
-            cachingComponent.saveChat(session.getId(), chatMessages);
+            cachingComponent.saveChat(sessionId, chatMessages);
         } catch (Exception e) {
             System.err.println("Error saving chat: " + e.getMessage());
             return null;
@@ -110,7 +120,7 @@ public class SessionService {
 
     public FinalResponse endSession(Long sessionId){
 
-        Emotion dominantEmotion = getDominantEmotion();
+        Emotion dominantEmotion = getDominantEmotion(sessionId);
         ActivityResponse activity = chooseActivity(dominantEmotion);
         List<Badge> badges = badgeService.assignBadges(sessionId);
         cachingComponent.deleteChat(sessionId);
@@ -120,8 +130,22 @@ public class SessionService {
                 badges);
     }
 
-    public Emotion getDominantEmotion(EmotionAIResponse emotionAIResponse){
-        return emotionAIResponse.getDominantEmotion();
+    public Emotion getDominantEmotion(Long sessionId) {
+        Session session;
+        try {
+            session = sessionRepo.findById(sessionId).orElse(null);
+            if (session == null) {
+                throw new Exception("session not found for id: " + sessionId);
+            }
+            List<Audio> audios = audioRepo.findAllBySession(session);
+            if (audios.isEmpty()) {
+                throw new Exception("audios not found for session_id: " + sessionId);
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error in computing session dominant emotion: " + e.getMessage());
+            return null;
+        }
     }
 
     public ActivityResponse chooseActivity(Emotion emotion){
