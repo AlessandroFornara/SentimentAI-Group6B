@@ -21,7 +21,7 @@ public class Audio {
     private Session session;
 
     @ElementCollection
-    private List<Float> detectedEmotions;
+    private List<Double> detectedEmotions;
 
     @Lob
     private byte[] audioData;

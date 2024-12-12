@@ -10,7 +10,6 @@ import java.util.List;
 @Table(name = "badge")
 @Data
 @NoArgsConstructor
-
 public class Badge {
 
     @Id

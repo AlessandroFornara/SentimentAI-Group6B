@@ -1,5 +1,10 @@
 package polimi.aui.sentimentaigroup6b.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
 public enum ServerResponse {
 
     SESSION_CREATED("Sessione creata con successo"),
@@ -9,13 +14,4 @@ public enum ServerResponse {
     SESSION_CREATION_ERROR("Error while creating session");
 
     private final String message;
-
-    ServerResponse(String message) {
-        this.message = message;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
 }

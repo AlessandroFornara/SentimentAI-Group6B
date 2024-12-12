@@ -1,20 +1,16 @@
 package polimi.aui.sentimentaigroup6b.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@ToString
 public class ActivityResponse {
 
     private String activityCategory;
     private String activityText;
-
-    public ActivityResponse(String activityCategory, String activityText) {
-        this.activityCategory = activityCategory;
-        this.activityText = activityText;
-    }
-
-    public String getActivityCategory() {
-        return activityCategory;
-    }
-
-    public String getActivityText() {
-        return activityText;
-    }
 }

@@ -6,6 +6,7 @@ import polimi.aui.sentimentaigroup6b.entities.Badge;
 import polimi.aui.sentimentaigroup6b.entities.Session;
 import polimi.aui.sentimentaigroup6b.entities.Worker;
 import polimi.aui.sentimentaigroup6b.models.*;
+import polimi.aui.sentimentaigroup6b.models.emotionAI.Emotion;
 import polimi.aui.sentimentaigroup6b.models.emotionAI.EmotionAIResponse;
 import polimi.aui.sentimentaigroup6b.models.llm.Message;
 import polimi.aui.sentimentaigroup6b.repositories.SessionRepo;
@@ -14,14 +15,9 @@ import polimi.aui.sentimentaigroup6b.utils.EmotionAIRequestGenerator;
 import polimi.aui.sentimentaigroup6b.utils.ImageManager;
 import polimi.aui.sentimentaigroup6b.utils.OpenAIRequestGenerator;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -79,40 +75,24 @@ public class SessionService {
 
     public FinalResponse endSession(Long sessionId){
 
-        Emotion dominantEmotion = detectDominantEmotion(sessionId);
+        Emotion dominantEmotion = getDominantEmotion();
         ActivityResponse activity = chooseActivity(dominantEmotion);
         List<Badge> badges = badgeService.assignBadges(sessionId);
         cachingComponent.deleteChat(sessionId);
 
-        return new FinalResponse(dominantEmotion.toString(),
-                activity.getActivityCategory(),
-                activity.getActivityText(),
+        return new FinalResponse(dominantEmotion.getEmotion(),
+                activity,
                 badges);
     }
 
-    public Emotion detectDominantEmotion(Long sessionId){
-
-        return null;
+    public Emotion getDominantEmotion(EmotionAIResponse emotionAIResponse){
+        return emotionAIResponse.getDominantEmotion();
     }
 
     public ActivityResponse chooseActivity(Emotion emotion){
         Activity[] activities = Activity.values();
         Random random = new Random();
         Activity randomActivity = activities[random.nextInt(activities.length)];
-        return new ActivityResponse(randomActivity.getDescription(), randomActivity.assignActivity(emotion));
-    }
-
-    public List<String> getAllImages() {
-        Path imagesPath = Paths.get("src/main/resources/static/images");
-        try {
-            return Files.list(imagesPath)
-                    .filter(Files::isRegularFile)
-                    .map(Path::getFileName)
-                    .map(Path::toString)
-                    .collect(Collectors.toList());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return List.of();
-        }
+        return new ActivityResponse(randomActivity.getCategoryDescription(), randomActivity.assignActivity(emotion));
     }
 }

@@ -1,5 +1,10 @@
-package polimi.aui.sentimentaigroup6b.models;
+package polimi.aui.sentimentaigroup6b.models.emotionAI;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
 public enum Emotion {
 
     ANGER("Anger"),
@@ -11,13 +16,4 @@ public enum Emotion {
     NEUTRALITY("Neutrality");
 
     private final String emotion;
-
-    Emotion(String emotion) {
-        this.emotion = emotion;
-    }
-
-    public String getEmotion() {
-        return emotion;
-    }
-
 }

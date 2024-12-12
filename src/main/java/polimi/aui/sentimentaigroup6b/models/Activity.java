@@ -1,5 +1,11 @@
 package polimi.aui.sentimentaigroup6b.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import polimi.aui.sentimentaigroup6b.models.emotionAI.Emotion;
+
+@AllArgsConstructor
+@Getter
 public enum Activity {
     PERSONALIZED_QUOTE("Personalized Inspirational Quote"),
     SELF_CARE_SUGGESTION("Self-Care Suggestion"),
@@ -8,15 +14,7 @@ public enum Activity {
     CHALLENGE("Challenge"),
     RECOMMENDED_MUSIC("Recommended Music"),;
 
-    private final String description;
-
-    Activity(String description) {
-        this.description = description;
-    }
-
-    public String getDescription() {
-        return description;
-    }
+    private final String categoryDescription;
 
     public String assignActivity(Emotion detectedEmotion) {
         return switch (detectedEmotion) {
@@ -67,6 +65,14 @@ public enum Activity {
                 case SHORT_GUIDED_MEDITATION -> "A short meditation to encourage relaxation and mindfulness.";
                 case CHALLENGE -> "Write down one small positive thing you noticed today, even if it’s simple.";
                 case RECOMMENDED_MUSIC -> "A soft playlist to encourage reflection or relaxation.";
+            };
+            case SURPRISE -> switch (this) {
+                case PERSONALIZED_QUOTE -> "Life is full of surprises. Embrace the unexpected!";
+                case SELF_CARE_SUGGESTION -> "Take a moment to enjoy the surprise and reflect on what it means to you.";
+                case CREATIVE_MINI_ACTIVITY -> "Capture the surprise in a drawing or a short story.";
+                case SHORT_GUIDED_MEDITATION -> "A meditation to help you process and enjoy the surprise.";
+                case CHALLENGE -> "Share the surprise with a friend or family member and see their reaction.";
+                case RECOMMENDED_MUSIC -> "A playlist with upbeat and surprising tracks to match your mood.";
             };
             default -> throw new IllegalStateException("Unexpected emotion value: " + this);
         };
