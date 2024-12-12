@@ -26,8 +26,6 @@ public class Audio {
     @Lob
     private byte[] audioData;
 
-    private String dominantEmotion;
-
     public Audio(Session session, byte[] audioData) {
         this.session = session;
         this.audioData = audioData;

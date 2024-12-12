@@ -14,12 +14,9 @@ import polimi.aui.sentimentaigroup6b.repositories.AudioRepo;
 import polimi.aui.sentimentaigroup6b.repositories.SessionRepo;
 import polimi.aui.sentimentaigroup6b.utils.CachingComponent;
 import polimi.aui.sentimentaigroup6b.utils.EmotionAIRequestGenerator;
-import polimi.aui.sentimentaigroup6b.utils.ImageManager;
 import polimi.aui.sentimentaigroup6b.utils.OpenAIRequestGenerator;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @AllArgsConstructor
 @Service
@@ -79,7 +76,6 @@ public class SessionService {
             response = emotionAIRequestGenerator.sendEmotionDetectionRequest(fileURI);
             emotionValues = response.getEmotions().toString();
             audioEntity.setDetectedEmotions(response.getEmotionsAsList());
-            audioEntity.setDominantEmotion(response.getDominantEmotion().getEmotion());
             audioRepo.save(audioEntity);
         } catch (Exception e) {
             System.err.println("Error analyzing audio: " + e.getMessage());
@@ -141,11 +137,28 @@ public class SessionService {
             if (audios.isEmpty()) {
                 throw new Exception("audios not found for session_id: " + sessionId);
             }
-
+            return computeDominantEmotion(audios);
         } catch (Exception e) {
             System.err.println("Error in computing session dominant emotion: " + e.getMessage());
             return null;
         }
+    }
+
+    private Emotion computeDominantEmotion(List<Audio> audios) {
+        Map<Emotion, Double> emotionsScores = new HashMap<>();
+        for(Emotion e: Emotion.values()){
+            emotionsScores.put(e, 0.0);
+        }
+        for (Audio audio : audios) {
+            for(Emotion e: Emotion.values()){
+                emotionsScores.put(e, emotionsScores.get(e) + audio.getDetectedEmotions().get(e.ordinal()));
+            }
+        }
+
+        return emotionsScores.entrySet().stream()
+                .max(Comparator.comparingDouble(Map.Entry::getValue))
+                .map(Map.Entry::getKey)
+                .orElse(null);
     }
 
     public ActivityResponse chooseActivity(Emotion emotion){

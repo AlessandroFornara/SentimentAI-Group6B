@@ -22,13 +22,6 @@ public class EmotionAIResponse {
         this.emotions.put(Emotion.NEUTRALITY, neutrality);
     }
 
-    public Emotion getDominantEmotion() {
-        return emotions.entrySet().stream()
-                .max(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
-                .orElse(Emotion.NEUTRALITY);
-    }
-
     public List<Double> getEmotionsAsList(){
         return new ArrayList<>(emotions.values());
     }
