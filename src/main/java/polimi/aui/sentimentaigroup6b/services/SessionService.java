@@ -61,14 +61,13 @@ public class SessionService {
             System.err.println("Error saving audio: " + e.getMessage());
             return null;
         }
-        String fileURI;
+        String fileURI, emotionValues;
         EmotionAIResponse response;
         try {
             //Upload audio and analyze emotions
             fileURI = emotionAIRequestGenerator.uploadAudioToAIServer(audio);
             response = emotionAIRequestGenerator.sendEmotionDetectionRequest(fileURI);
-            if (response == null)
-                throw new Exception("response is null");
+            emotionValues = response.getEmotions().toString();
             audioEntity.setDetectedEmotions(response.getEmotionsAsList());
             audioEntity.setDominantEmotion(response.getDominantEmotion().getEmotion());
             audioRepo.save(audioEntity);
@@ -81,7 +80,8 @@ public class SessionService {
         try {
             //Add new audio to the chat as a message from the user
             chatMessages = cachingComponent.getChatMessages(session.getId());
-            chatMessages.add(new Message("user", audioTranscript));
+            chatMessages.add(new Message("user", "Detected emotions: " + emotionValues
+                    + "\nUser message: " + audioTranscript));
         } catch (Exception e) {
             System.err.println("Error saving audio to chat: " + e.getMessage());
         }
