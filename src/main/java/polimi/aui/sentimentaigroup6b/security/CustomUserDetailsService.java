@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import polimi.aui.sentimentaigroup6b.entities.User;
+import polimi.aui.sentimentaigroup6b.entities.UserRoles;
 import polimi.aui.sentimentaigroup6b.repositories.UserRepo;
 
 import java.util.Collections;
@@ -29,13 +30,13 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepo.findByEmail(email).orElse(null);
 
         if (user != null) {
-            String userRole = user.getClass().toString();
+            UserRoles userRole = user.getRole();
 
-            if (userRole.isBlank()) {
+            if (userRole == null) {
                 throw new UsernameNotFoundException("User does not have a role assigned: " + email);
             }
 
-            List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + userRole));
+            List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + userRole.name()));
 
             UserDetails userDetails =
                     org.springframework.security.core.userdetails.User.builder()
