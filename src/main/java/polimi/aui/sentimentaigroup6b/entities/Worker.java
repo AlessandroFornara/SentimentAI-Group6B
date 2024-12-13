@@ -7,24 +7,10 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Entity
-@Table(name = "worker")
+@DiscriminatorValue("worker")
 @Data
 @NoArgsConstructor
-public class Worker {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String name;
-
-    private String surname;
-
-    private String email;
-
-    private String password;
-
-    private String company;
+public class Worker extends User {
 
     private int level;
 

@@ -16,6 +16,8 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import polimi.aui.sentimentaigroup6b.security.CustomUserDetailsService;
+import polimi.aui.sentimentaigroup6b.security.JwtAuthorizationFilter;
 
 /**
  * This class is the configuration of the Web Security Backend offered by Spring framework.

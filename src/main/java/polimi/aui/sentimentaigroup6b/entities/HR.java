@@ -5,24 +5,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "hr")
+@DiscriminatorValue("hr")
 @Data
 @NoArgsConstructor
-public class HR {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String name;
-
-    private String surname;
-
-    private String email;
-
-    private String password;
-
-    private String company;
+public class HR extends User {
 
     public HR(String name, String surname, String email, String password, String company) {
         this.name = name;
