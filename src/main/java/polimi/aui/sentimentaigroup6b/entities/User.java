@@ -1,29 +1,61 @@
 package polimi.aui.sentimentaigroup6b.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Getter
+import java.util.List;
+
 @Entity
-@Table(name = "user",
-        uniqueConstraints = {@UniqueConstraint(columnNames = "email")}
-)
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
-public abstract class User {
+@Table(name = "\"user\"")
+@Data
+@NoArgsConstructor
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Long id;
+    private Long id;
 
-    protected String name;
+    private String name;
 
-    protected String surname;
+    private String surname;
 
-    protected String email;
+    private String email;
 
-    protected String password;
+    private String password;
 
-    protected String company;
+    private String company;
+
+    private int level;
+
+    private int points;
+
+    private UserRoles role;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_badge",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "badge_id")
+    )
+    private List<Badge> badges;
+
+    @ElementCollection
+    private List<Integer> badgeStatus;
+
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Session> sessions;
+
+    public User(String name, String surname, String email, String password, String company, int level, int points, UserRoles role) {
+        this.name = name;
+        this.surname = surname;
+        this.email = email;
+        this.password = password;
+        this.company = company;
+        this.level = level;
+        this.points = points;
+        this.role = role;
+    }
 
 }

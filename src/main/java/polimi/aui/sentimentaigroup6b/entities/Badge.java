@@ -21,7 +21,7 @@ public class Badge {
     private String description;
 
     @ManyToMany(mappedBy = "badges")
-    private List<Worker> workers;
+    private List<User> workers;
 
     public Badge(String name, String description) {
         this.name = name;

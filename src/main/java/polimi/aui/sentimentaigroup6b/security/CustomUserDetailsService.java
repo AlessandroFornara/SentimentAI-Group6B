@@ -8,9 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import polimi.aui.sentimentaigroup6b.entities.User;
-import polimi.aui.sentimentaigroup6b.repositories.HRRepo;
 import polimi.aui.sentimentaigroup6b.repositories.UserRepo;
-import polimi.aui.sentimentaigroup6b.repositories.WorkerRepo;
 
 import java.util.Collections;
 import java.util.List;

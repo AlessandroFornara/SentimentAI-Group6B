@@ -19,7 +19,7 @@ public class Session {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private Worker userId;
+    private User userId;
 
     private Date date;
 
@@ -36,7 +36,7 @@ public class Session {
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Audio> audios;
 
-    public Session(Worker userId, Date date) {
+    public Session(User userId, Date date) {
         this.userId = userId;
         this.date = date;
     }

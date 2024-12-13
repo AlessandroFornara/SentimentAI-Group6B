@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import polimi.aui.sentimentaigroup6b.entities.Worker;
+import polimi.aui.sentimentaigroup6b.entities.User;
 import polimi.aui.sentimentaigroup6b.models.llm.Message;
 import polimi.aui.sentimentaigroup6b.services.ProfileService;
 import polimi.aui.sentimentaigroup6b.services.SessionService;
@@ -21,7 +21,7 @@ public class WorkerController {
     private final ImageManager imageManager;
 
     @PostMapping("/create_session")
-    public void createSession(Worker worker){
+    public void createSession(User worker){
         //TODO
         //Extract images from the static folder
         imageManager.extractImages();

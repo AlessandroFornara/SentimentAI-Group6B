@@ -5,8 +5,11 @@ import org.springframework.stereotype.Service;
 import polimi.aui.sentimentaigroup6b.entities.Audio;
 import polimi.aui.sentimentaigroup6b.entities.Badge;
 import polimi.aui.sentimentaigroup6b.entities.Session;
-import polimi.aui.sentimentaigroup6b.entities.Worker;
-import polimi.aui.sentimentaigroup6b.models.*;
+import polimi.aui.sentimentaigroup6b.entities.User;
+import polimi.aui.sentimentaigroup6b.models.Activity;
+import polimi.aui.sentimentaigroup6b.models.ActivityResponse;
+import polimi.aui.sentimentaigroup6b.models.FinalResponse;
+import polimi.aui.sentimentaigroup6b.models.ServerResponse;
 import polimi.aui.sentimentaigroup6b.models.emotionAI.Emotion;
 import polimi.aui.sentimentaigroup6b.models.emotionAI.EmotionAIResponse;
 import polimi.aui.sentimentaigroup6b.models.llm.Message;
@@ -32,12 +35,12 @@ public class SessionService {
     private final CachingComponent cachingComponent;
 
     //TODO: check user is not in a session already (?)
-    public ServerResponse createSession(Worker worker) {
+    public ServerResponse createSession(User worker) {
 
         return ServerResponse.SESSION_CREATED;
     }
 
-    public ServerResponse startSession(Worker worker){
+    public ServerResponse startSession(User worker){
         // Create a new session
         Session session = new Session(worker, new Date());
         try {
