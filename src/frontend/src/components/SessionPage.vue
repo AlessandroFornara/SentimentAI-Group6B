@@ -44,15 +44,19 @@ const images = ref([
 
 // Funzione per selezionare un'immagine
 function selectImage(index) {
-  console.log(`Selected Image ${index + 1}`);
-  // Aggiungi la logica per gestire la selezione dell'immagine
-}
+  const selectedImage = images.value[index]; // Ottieni l'immagine selezionata
+  console.log(`Selected Image: ${selectedImage}`);
 
+  // Naviga alla pagina AudioPage con l'immagine selezionata come query parameter
+  router.push({ name: 'AudioPage', query: { background: selectedImage } });
+}
 
 // Funzione per il pulsante Free Mode Option
 function freeModeOption() {
   console.log('Free Mode Option Selected');
-  // Aggiungi logica per il pulsante Free Mode
+
+  // Naviga alla pagina AudioPage senza immagine come sfondo
+  router.push({ name: 'AudioPage' });
 }
 
 // Funzione per tornare alla homepage
