@@ -8,7 +8,10 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Entity
-@Table(name = "\"user\"")
+@Table(
+        name = "\"user\"",
+        uniqueConstraints = @UniqueConstraint(columnNames = "email")
+)
 @Data
 @NoArgsConstructor
 public class User {
@@ -31,6 +34,7 @@ public class User {
 
     private int points;
 
+    @Enumerated(EnumType.STRING)
     private UserRoles role;
 
     @ManyToMany
@@ -58,4 +62,9 @@ public class User {
         this.role = role;
     }
 
+    public User(String email, String password, UserRoles role) {
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
 }

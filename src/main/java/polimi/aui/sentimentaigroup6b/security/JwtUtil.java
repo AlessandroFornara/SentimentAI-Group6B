@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
  * This class contains the methods necessary to manage JWT
  */
 @Component("JwtUtil")
+@SuppressWarnings("deprecation")
 public class JwtUtil {
 
 
@@ -29,13 +30,13 @@ public class JwtUtil {
     }
 
     public String createToken(User user) {
-        Claims claims = Jwts.claims().setSubject(user.getEmail()).build();
-        claims.put("role", user.getClass().getSimpleName());
         Date tokenCreateTime = new Date();
         Date tokenValidity = new Date(tokenCreateTime.getTime() + TimeUnit.MINUTES.toMillis(accessTokenValidity));
 
         return Jwts.builder()
-                .setClaims(claims)
+                .setSubject(user.getEmail())
+                .claim("role", user.getRole())
+                .setIssuedAt(tokenCreateTime)
                 .setExpiration(tokenValidity)
                 .signWith(SignatureAlgorithm.HS256, secret_key)
                 .compact();
@@ -65,7 +66,7 @@ public class JwtUtil {
 
         String bearerToken = request.getHeader(TOKEN_HEADER);
         if (bearerToken != null && bearerToken.startsWith(TOKEN_PREFIX)) {
-            return bearerToken.substring(TOKEN_PREFIX.length());
+            return bearerToken.substring(TOKEN_PREFIX.length()).trim();
         }
         return null;
     }

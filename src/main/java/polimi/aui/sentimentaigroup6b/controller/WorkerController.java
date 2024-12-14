@@ -1,6 +1,7 @@
 package polimi.aui.sentimentaigroup6b.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +21,7 @@ public class WorkerController {
 
     private final ImageManager imageManager;
 
+    @PreAuthorize("hasRole('WORKER')")
     @PostMapping("/create_session")
     public void createSession(User worker){
         //TODO

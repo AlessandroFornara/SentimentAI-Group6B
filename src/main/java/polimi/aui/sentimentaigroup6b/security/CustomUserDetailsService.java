@@ -38,13 +38,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 
             List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + userRole.name()));
 
-            UserDetails userDetails =
-                    org.springframework.security.core.userdetails.User.builder()
-                            .username(user.getEmail())
-                            .password(user.getPassword())
-                            .authorities(authorities)
-                            .build();
-            return userDetails;
+            return org.springframework.security.core.userdetails.User.builder()
+                    .username(user.getEmail())
+                    .password(user.getPassword())
+                    .authorities(authorities)
+                    .build();
         } else {
             throw new UsernameNotFoundException("User not found with username: " + email);
         }
