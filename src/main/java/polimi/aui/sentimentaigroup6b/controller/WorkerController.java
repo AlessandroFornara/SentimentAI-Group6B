@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import polimi.aui.sentimentaigroup6b.entities.User;
 import polimi.aui.sentimentaigroup6b.models.ImageResponse;
+import polimi.aui.sentimentaigroup6b.models.ServerResponse;
 import polimi.aui.sentimentaigroup6b.models.llm.Message;
 import polimi.aui.sentimentaigroup6b.repositories.UserRepo;
 import polimi.aui.sentimentaigroup6b.services.ProfileService;
@@ -46,13 +47,17 @@ public class WorkerController {
 
     @PreAuthorize("hasRole('WORKER')")
     @PostMapping("/start_session")
-    public void startSession(){
+    public ResponseEntity<?> startSession(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = (String) authentication.getPrincipal();
 
         User user = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
 
-        sessionService.startSession(user);
+        ServerResponse response = sessionService.startSession(user);
+        if(response != ServerResponse.SESSION_STARTED){
+            return ResponseEntity.unprocessableEntity().body(response.getMessage());
+        }
+        return ResponseEntity.ok(response.getMessage());
     }
 
     @PreAuthorize("hasRole('WORKER')")
