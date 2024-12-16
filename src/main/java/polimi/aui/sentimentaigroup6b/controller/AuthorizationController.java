@@ -11,10 +11,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 import polimi.aui.sentimentaigroup6b.entities.User;
 import polimi.aui.sentimentaigroup6b.entities.UserRoles;
-import polimi.aui.sentimentaigroup6b.models.LoginDTO;
-import polimi.aui.sentimentaigroup6b.models.RegisterDTO;
+import polimi.aui.sentimentaigroup6b.models.authorization.LoginDTO;
+import polimi.aui.sentimentaigroup6b.models.authorization.RegisterDTO;
 import polimi.aui.sentimentaigroup6b.models.ServerResponse;
-import polimi.aui.sentimentaigroup6b.models.UserTokenDTO;
+import polimi.aui.sentimentaigroup6b.models.authorization.UserTokenDTO;
 import polimi.aui.sentimentaigroup6b.repositories.UserRepo;
 import polimi.aui.sentimentaigroup6b.security.JwtUtil;
 

@@ -8,5 +8,5 @@ import lombok.Getter;
 public class ImageResponse {
     private String name;
     private String contentType;
-    private byte[] data;
+    private String data;
 }
