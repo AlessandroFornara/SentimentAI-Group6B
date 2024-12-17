@@ -1,21 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import HomePage from '@/components/HomePage.vue';
+import SessionPage from '@/components/SessionPage.vue';
+import AudioPage from '@/components/AudioPage.vue';
+import LoginPage from '@/components/LoginPage.vue';
 
-// Importa le tue pagine o componenti
-import HomePage from './components/HomePage.vue'; // La tua pagina attuale
-import SessionPage from './components/SessionPage.vue'; // La pagina di sessione
-import AudioPage from './components/AudioPage.vue'; // La pagina audio
-
-// Definisci le rotte
 const routes = [
-    { path: '/', name: 'HomePage', component: HomePage }, // Pagina iniziale
-    { path: '/SessionPage', name: 'SessionPage', component: SessionPage }, // Pagina sessione
-    { path: '/AudioPage', name: 'AudioPage', component: AudioPage } // Pagina audio
+    { path: '/', name: 'LoginPage', component: LoginPage }, // Pagina di Login come predefinita
+    { path: '/home', name: 'HomePage', component: HomePage }, // HomePage spostata su '/home'
+    { path: '/session', name: 'SessionPage', component: SessionPage },
+    { path: '/audio', name: 'AudioPage', component: AudioPage }
 ];
 
-// Crea il index
 const router = createRouter({
-    history: createWebHistory(process.env.BASE_URL),
+    history: createWebHistory(),
     routes
 });
 
 export default router;
+

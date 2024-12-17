@@ -13,6 +13,11 @@
         <h2 class="subtitle">Welcome, "User"</h2>
       </div>
 
+      <!-- Pulsante Logout in alto a destra -->
+      <div class="top-right">
+        <button class="logout-button" @click="logout">Logout</button>
+      </div>
+
       <!-- Foto in alto a sinistra -->
       <div class="top-left">
         <img src="path-to-your-image.jpg" alt="Profile Photo" class="profile-photo" />
@@ -33,23 +38,29 @@
   </div>
 </template>
 
-
 <script setup>
-import { useRouter } from 'vue-router'; // Importa il index
+import { useRouter } from 'vue-router'; // Importa il router
 
-const router = useRouter(); // Ottieni l'istanza del index
+const router = useRouter(); // Ottieni l'istanza del router
 
+// Funzione per navigare tra le pagine
 function navigateTo(page) {
   console.log(`Navigating to ${page}...`);
   router.push(`/${page}`); // Naviga dinamicamente verso la pagina specificata
 }
 
+// Funzione per iniziare la sessione
 function startSession() {
   console.log('Starting a new session...');
   router.push('/SessionPage'); // Naviga alla pagina "session"
 }
-</script>
 
+// Funzione per gestire il logout
+function logout() {
+  console.log('User logged out');
+  router.push('/'); // Riporta l'utente alla schermata di login
+}
+</script>
 
 <style scoped>
 /* Contenitore per l'intera homepage */
@@ -59,13 +70,11 @@ function startSession() {
   justify-content: space-between; /* Distribuisci uniformemente gli elementi */
   align-items: center;
   height: 100vh; /* Altezza fissa alla finestra del browser */
-  padding: 0; /* Rimuovi padding extra */
+  padding: 0;
   font-family: Arial, sans-serif;
   position: relative;
-  overflow: hidden; /* Impedisce lo scrolling */
-
+  overflow: hidden;
 }
-
 
 /* Contenitore delle nuvole animate */
 .sky {
@@ -73,13 +82,12 @@ function startSession() {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh; /* Copre l'intera finestra */
+  height: 100vh;
   z-index: -1;
   background: #87ceeb; /* Sfondo azzurro cielo */
   overflow: hidden;
 }
 
-/* Stile per le singole nuvole */
 .cloud {
   position: absolute;
   top: 20px;
@@ -91,7 +99,6 @@ function startSession() {
   animation: float 10s linear infinite;
 }
 
-/* Personalizza la seconda nuvola */
 .cloud:nth-child(2) {
   top: 50px;
   left: 80%;
@@ -100,7 +107,6 @@ function startSession() {
   animation-delay: 5s;
 }
 
-/* Animazione del movimento delle nuvole */
 @keyframes float {
   0% {
     left: -200px;
@@ -110,7 +116,54 @@ function startSession() {
   }
 }
 
-/* Stile per la foto in alto a sinistra */
+/* Titolo e sottotitolo */
+.header {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.title {
+  font-size: 90px;
+  font-weight: bold;
+  margin: 0;
+  font-family: "Roboto Light";
+  color: mediumpurple;
+}
+
+.subtitle {
+  font-size: 25px;
+  font-weight: normal;
+  font-family: Copperplate;
+  margin: 30px 0 0 0;
+  color: steelblue;
+}
+
+/* Pulsante Logout in alto a destra */
+.top-right {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.logout-button {
+  padding: 10px 20px;
+  font-size: 18px;
+  background-color: #ff6347; /* Rosso */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: #cc4c39; /* Rosso scuro */
+}
+
+/* Foto in alto a sinistra */
 .top-left {
   position: absolute;
   top: 20px;
@@ -125,38 +178,37 @@ function startSession() {
   border: 2px solid #ccc;
 }
 
-/* Bottoni al centro disposti in riga */
+/* Bottoni centrali */
 .center-buttons {
-  display: flex; /* Flexbox per disporre gli elementi */
-  flex-direction: row; /* Elementi in una riga */
-  gap: 60px; /* Spazio tra i bottoni */
-  justify-content: center; /* Centrare i bottoni orizzontalmente */
-  align-items: center; /* Centrare i bottoni verticalmente */
-  width: 100%; /* Occupa tutta la larghezza */
-  height: 100%; /* Occupa tutta l'altezza */
+  display: flex;
+  flex-direction: row;
+  gap: 60px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
 }
 
 .center-buttons button {
-  padding: 20px 40px; /* Aumenta il padding */
-  font-size: 24px; /* Aumenta la dimensione del testo */
+  padding: 20px 40px;
+  font-size: 24px;
   font-family: Copperplate;
   cursor: pointer;
   border: none;
-  background: linear-gradient(90deg, #007bff, lightblue); /* Gradiente di sfondo */
+  background: linear-gradient(90deg, #007bff, lightblue);
   color: white;
   border-radius: 15px;
   transition: all 0.3s ease;
-  min-width: 200px; /* Larghezza minima per uniformità */
-  min-height: 60px; /* Altezza minima per uniformità */
+  min-width: 200px;
+  min-height: 60px;
 }
 
 .center-buttons button:hover {
-  /* Effetto al passaggio del mouse */
   transform: scale(1.1);
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
 
-/* Stile per il bottone in basso */
+/* Bottone in basso al centro */
 .bottom-center {
   position: absolute;
   bottom: 20px;
@@ -173,36 +225,11 @@ function startSession() {
   color: white;
   border-radius: 15px;
   transition: background-color 0.3s ease;
-  min-width: 200px; /* Larghezza minima per uniformità */
-  min-height: 60px; /* Altezza minima per uniformità */
+  min-width: 200px;
+  min-height: 60px;
 }
 
 .bottom-center button:hover {
   background-color: indigo;
-}
-
-/* Stile per il contenitore del titolo e sottotitolo */
-.header {
-  position: absolute;
-  top: 20px; /* Posiziona in alto */
-  left: 50%; /* Centra orizzontalmente */
-  transform: translateX(-50%); /* Correggi il posizionamento centrale */
-  text-align: center; /* Centra il testo */
-}
-
-.title {
-  font-size: 90px;
-  font-weight: bold;
-  margin: 0;
-  font-family: "Roboto Light";
-  color:  mediumpurple;
-}
-
-.subtitle {
-  font-size: 25px;
-  font-weight: normal;
-  font-family: Copperplate;
-  margin: 30px 0 0 0;
-  color: steelblue;
 }
 </style>
