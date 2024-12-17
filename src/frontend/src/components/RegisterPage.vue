@@ -1,8 +1,17 @@
 <template>
-  <div class="login-page">
-    <h1 class="title">Login</h1>
+  <div class="register-page">
+    <h1 class="title">Register</h1>
 
-    <form @submit.prevent="handleLogin" class="login-form">
+    <form @submit.prevent="handleRegister" class="register-form">
+      <!-- Input Ruolo -->
+      <div class="form-group">
+        <label for="role">Role</label>
+        <select id="role" v-model="role" required>
+          <option value="WORKER">WORKER</option>
+          <option value="HR">HR</option>
+        </select>
+      </div>
+
       <!-- Input Username -->
       <div class="form-group">
         <label for="username">Username</label>
@@ -27,61 +36,61 @@
         />
       </div>
 
-      <!-- Pulsante di Login -->
-      <button type="submit" class="login-button">Login</button>
+      <!-- Pulsante di Registrazione -->
+      <button type="submit" class="register-button">Register</button>
     </form>
 
-    <!-- Pulsante di Registrazione -->
-    <button class="register-button" @click="navigateToRegister">Register</button>
-
-    <!-- Messaggio di errore -->
+    <!-- Messaggio di errore o successo -->
     <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+    <p v-if="successMessage" class="success-message">{{ successMessage }}</p>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router'; // Importa il router
+import { useRouter } from 'vue-router';
 
-const router = useRouter(); // Ottieni l'istanza del router
-
-// Variabili reattive
+const router = useRouter();
+const role = ref('');
 const username = ref('');
 const password = ref('');
 const errorMessage = ref('');
+const successMessage = ref('');
 
-// Funzione per gestire il login
-function handleLogin() {
-  const registeredUsers = JSON.parse(localStorage.getItem('users')) || [];
+// Simulazione di un "database" in memoria
+const registeredUsers = JSON.parse(localStorage.getItem('users')) || [];
 
-  // Verifica delle credenziali
-  const user = registeredUsers.find(
-      (u) => u.username === username.value && u.password === password.value
-  );
-
-  if (user) {
-    console.log('Login successful!');
-    errorMessage.value = '';
-    router.push('/home'); // Reindirizza alla homepage
+// Funzione per la registrazione
+function handleRegister() {
+  if (registeredUsers.some((u) => u.username === username.value)) {
+    errorMessage.value = 'Username already exists.';
+    successMessage.value = '';
   } else {
-    errorMessage.value = 'Invalid username or password. Please try again.';
-  }
-}
+    registeredUsers.push({
+      role: role.value,
+      username: username.value,
+      password: password.value,
+    });
+    localStorage.setItem('users', JSON.stringify(registeredUsers));
+    successMessage.value = 'Registration successful! Redirecting to login...';
+    errorMessage.value = '';
 
-// Navigazione alla pagina di registrazione
-function navigateToRegister() {
-  router.push('/register'); // Naviga alla pagina di registrazione
+    // Reindirizza alla pagina di login dopo 2 secondi
+    setTimeout(() => {
+      router.push('/');
+    }, 2000);
+  }
 }
 </script>
 
 <style scoped>
-.login-page {
+.register-page {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #87ceeb; /* Sfondo azzurro */
+  background-color: #87ceeb;
   font-family: Arial, sans-serif;
 }
 
@@ -91,7 +100,7 @@ function navigateToRegister() {
   color: mediumpurple;
 }
 
-.login-form {
+.register-form {
   display: flex;
   flex-direction: column;
   background: white;
@@ -111,7 +120,7 @@ label {
   display: block;
 }
 
-input {
+input, select {
   width: 100%;
   padding: 8px;
   border: 1px solid #ccc;
@@ -119,7 +128,7 @@ input {
   font-size: 16px;
 }
 
-.login-button {
+.register-button {
   padding: 10px;
   background-color: mediumpurple;
   color: white;
@@ -130,29 +139,17 @@ input {
   transition: background-color 0.3s ease;
 }
 
-.login-button:hover {
-  background-color: indigo;
-}
-
-.register-button {
-  margin-top: 15px;
-  padding: 10px 20px;
-  background-color: lightblue;
-  color: black;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
-}
-
 .register-button:hover {
-  background-color: #007bff;
-  color: white;
+  background-color: indigo;
 }
 
 .error-message {
   color: red;
+  margin-top: 15px;
+}
+
+.success-message {
+  color: green;
   margin-top: 15px;
 }
 </style>

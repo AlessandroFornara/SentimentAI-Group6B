@@ -52,7 +52,7 @@ function navigateTo(page) {
 // Funzione per iniziare la sessione
 function startSession() {
   console.log('Starting a new session...');
-  router.push('/SessionPage'); // Naviga alla pagina "session"
+  router.push('/session'); // Naviga alla pagina "session"
 }
 
 // Funzione per gestire il logout
