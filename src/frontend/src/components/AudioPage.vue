@@ -5,7 +5,7 @@
     </div>
     <div class="audio-container">
       <div class="microphone">
-        <img src="/path-to-microphone-icon.png" alt="Microphone" />
+        <img src="/assets/microphone.jpeg" alt="Microphone" />
       </div>
       <div class="audio-visualizer">
         <div class="waveform">
