@@ -5,7 +5,7 @@
     </div>
     <div class="audio-container">
       <div class="microphone">
-        <img src="/assets/microphone.jpeg" alt="Microphone" />
+        <img :src="microphoneImage" alt="Microphone" />
       </div>
       <div class="audio-visualizer">
         <div class="waveform">
@@ -24,6 +24,8 @@
 </template>
 
 <script setup>
+
+import microphoneImage from '@/assets/microphone.jpeg';
 import { ref, onMounted, computed } from 'vue';
 
 const backgroundImage = ref('path/to/default-image.jpg');
