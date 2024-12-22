@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import polimi.aui.sentimentaigroup6b.entities.Badge;
 
 import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
 public class FinalResponse {
@@ -12,5 +13,7 @@ public class FinalResponse {
 
     private ActivityResponse activityResponse;
 
-    private List<Badge> badges;
+    private Map<Badge, Integer> badges;
+
+    private int points;
 }

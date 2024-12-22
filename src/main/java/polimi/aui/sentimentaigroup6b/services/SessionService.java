@@ -12,6 +12,7 @@ import polimi.aui.sentimentaigroup6b.models.FinalResponse;
 import polimi.aui.sentimentaigroup6b.models.ServerResponse;
 import polimi.aui.sentimentaigroup6b.models.emotionAI.Emotion;
 import polimi.aui.sentimentaigroup6b.models.emotionAI.EmotionAIResponse;
+import polimi.aui.sentimentaigroup6b.models.gamification.PointsManager;
 import polimi.aui.sentimentaigroup6b.models.llm.Message;
 import polimi.aui.sentimentaigroup6b.repositories.AudioRepo;
 import polimi.aui.sentimentaigroup6b.repositories.SessionRepo;
@@ -33,6 +34,8 @@ public class SessionService {
     private final EmotionAIRequestGenerator emotionAIRequestGenerator;
 
     private final CachingComponent cachingComponent;
+
+    private final PointsManager pointsManager;
 
     //TODO: check user is not in a session already (?)
     public ServerResponse createSession(User worker) {
@@ -121,12 +124,14 @@ public class SessionService {
 
         Emotion dominantEmotion = getDominantEmotion(sessionId);
         ActivityResponse activity = chooseActivity(dominantEmotion);
-        List<Badge> badges = badgeService.assignBadges(sessionId);
+        Map<Badge, Integer> badges = badgeService.assignBadges(sessionId);
+        int points = pointsManager.calculateXPForSession(Objects.requireNonNull(sessionRepo.findById(sessionId).orElse(null)));
         cachingComponent.deleteChat(sessionId);
 
         return new FinalResponse(dominantEmotion.getEmotion(),
                 activity,
-                badges);
+                badges,
+                points);
     }
 
     public Emotion getDominantEmotion(Long sessionId) {
