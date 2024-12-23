@@ -3,14 +3,14 @@ package polimi.aui.sentimentaigroup6b.services;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import polimi.aui.sentimentaigroup6b.entities.Audio;
-import polimi.aui.sentimentaigroup6b.entities.Badge;
+import polimi.aui.sentimentaigroup6b.entities.BadgeType;
 import polimi.aui.sentimentaigroup6b.entities.Session;
 import polimi.aui.sentimentaigroup6b.entities.User;
 import polimi.aui.sentimentaigroup6b.models.Activity;
 import polimi.aui.sentimentaigroup6b.models.ActivityResponse;
-import polimi.aui.sentimentaigroup6b.models.FinalResponse;
 import polimi.aui.sentimentaigroup6b.models.ServerResponse;
 import polimi.aui.sentimentaigroup6b.models.emotionAI.Emotion;
+import polimi.aui.sentimentaigroup6b.models.FinalResponse;
 import polimi.aui.sentimentaigroup6b.models.emotionAI.EmotionAIResponse;
 import polimi.aui.sentimentaigroup6b.models.gamification.PointsManager;
 import polimi.aui.sentimentaigroup6b.models.llm.Message;
@@ -121,20 +121,17 @@ public class SessionService {
     }
 
     public FinalResponse endSession(Long sessionId){
-        /*
+
         Emotion dominantEmotion = getDominantEmotion(sessionId);
         ActivityResponse activity = chooseActivity(dominantEmotion);
-        Map<Badge, Integer> badges = badgeService.assignBadges(sessionId);
         int points = pointsManager.calculateXPForSession(Objects.requireNonNull(sessionRepo.findById(sessionId).orElse(null)));
+        Map<BadgeType, Integer> badges = badgeService.assignBadges(sessionId);
         cachingComponent.deleteChat(sessionId);
 
         return new FinalResponse(dominantEmotion.getEmotion(),
                 activity,
                 badges,
                 points);
-
-         */
-        return null;
     }
 
     public Emotion getDominantEmotion(Long sessionId) {

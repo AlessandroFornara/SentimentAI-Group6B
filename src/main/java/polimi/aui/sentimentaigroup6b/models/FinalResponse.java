@@ -1,9 +1,8 @@
 package polimi.aui.sentimentaigroup6b.models;
 
 import lombok.AllArgsConstructor;
-import polimi.aui.sentimentaigroup6b.entities.Badge;
+import polimi.aui.sentimentaigroup6b.entities.BadgeType;
 
-import java.util.List;
 import java.util.Map;
 
 @AllArgsConstructor
@@ -13,7 +12,7 @@ public class FinalResponse {
 
     private ActivityResponse activityResponse;
 
-    private Map<Badge, Integer> badges;
+    private Map<BadgeType, Integer> badges;
 
     private int points;
 }
