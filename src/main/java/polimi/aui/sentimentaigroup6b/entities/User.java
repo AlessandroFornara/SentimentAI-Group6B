@@ -50,6 +50,7 @@ public class User {
         this.level = level;
         this.points = points;
         this.role = role;
+        this.badges = new BadgeLevels(0,0,0,0);
     }
 
     public User(String email, String password, UserRoles role) {
