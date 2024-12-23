@@ -1,26 +1,21 @@
 <template>
   <div class="session-page">
-
-
-    <!-- Pulsante "Back" in alto a sinistra -->
-    <div class = "upper-left">
+    <div class="upper-left">
       <button @click="goBack">Back</button>
     </div>
 
     <h1 class="title">Welcome to the session</h1>
     <div class="image-container">
-      <!-- Ogni immagine è un bottone selezionabile -->
       <button
           v-for="(image, index) in images"
           :key="index"
           class="bubble"
           @click="selectImage(index)"
       >
-        <img :src="image" :alt="'Image ' + (index + 1)" />
+        <img :src="image" alt="'Image ' + (index + 1)" />
       </button>
     </div>
 
-    <!-- Pulsante in basso al centro -->
     <div class="bottom-center">
       <button @click="freeModeOption">Free Mode Option</button>
     </div>
@@ -28,42 +23,56 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router'; // Importa il router
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
-const router = useRouter(); // Ottieni l'istanza del router
+const router = useRouter();
+const images = ref([]);
 
-// Elenco delle immagini
-const images = ref([
-  'path-to-image1.jpg',
-  'path-to-image2.jpg',
-  'path-to-image3.jpg',
-  'path-to-image4.jpg',
-  'path-to-image5.jpg'
-]);
+// Funzione per caricare le immagini dal server
+async function loadImages() {
+  try {
+    const response = await fetch('/api/worker/create_session', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
 
-// Funzione per selezionare un'immagine
+    if (!response.ok) {
+      throw new Error('Errore durante il caricamento delle immagini.');
+    }
+
+    const data = await response.json();
+    console.log('Risposta dal server:', data);
+
+    // Converti Base64 in un formato utilizzabile
+    images.value = data.map((item) => `data:${item.contentType};base64,${item.base64Data}`);
+  } catch (error) {
+    console.error('Errore durante il caricamento delle immagini:', error);
+  }
+}
+
 function selectImage(index) {
-  const selectedImage = images.value[index]; // Ottieni l'immagine selezionata
+  const selectedImage = images.value[index];
   console.log(`Selected Image: ${selectedImage}`);
-
-  // Naviga alla pagina AudioPage con l'immagine selezionata come query parameter
   router.push({ name: 'AudioPage', query: { background: selectedImage } });
 }
 
-// Funzione per il pulsante Free Mode Option
 function freeModeOption() {
   console.log('Free Mode Option Selected');
-
-  // Naviga alla pagina AudioPage senza immagine come sfondo
-  router.push({ name: 'AudioPage' });
+  router.push({name: 'AudioPage'});
 }
 
-// Funzione per tornare alla homepage
 function goBack() {
   console.log('Navigating back to HomePage...');
-  router.push('/'); // Naviga alla HomePage
+  router.push('/home');
 }
+
+onMounted(() => {
+  loadImages();
+});
 </script>
 
 <style scoped>
@@ -83,7 +92,6 @@ function goBack() {
   overflow: hidden;
 }
 
-/* Contenitore per le immagini */
 .image-container {
   display: flex;
   justify-content: space-around;
@@ -95,7 +103,6 @@ function goBack() {
   position: relative;
 }
 
-/* Ogni immagine a forma di bolla */
 .bubble {
   width: 100px;
   height: 100px;
@@ -116,13 +123,11 @@ function goBack() {
   object-fit: cover;
 }
 
-/* Effetto al passaggio del mouse */
 .bubble:hover {
   transform: scale(1.1);
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
 
-/* Pulsante in basso al centro */
 .bottom-center {
   position: fixed;
   bottom: 20px;
@@ -178,6 +183,4 @@ function goBack() {
 .upper-left button:hover {
   background-color: indigo;
 }
-
-
 </style>
