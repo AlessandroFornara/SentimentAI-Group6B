@@ -121,7 +121,7 @@ public class SessionService {
     }
 
     public FinalResponse endSession(Long sessionId){
-
+        /*
         Emotion dominantEmotion = getDominantEmotion(sessionId);
         ActivityResponse activity = chooseActivity(dominantEmotion);
         Map<Badge, Integer> badges = badgeService.assignBadges(sessionId);
@@ -132,6 +132,9 @@ public class SessionService {
                 activity,
                 badges,
                 points);
+
+         */
+        return null;
     }
 
     public Emotion getDominantEmotion(Long sessionId) {

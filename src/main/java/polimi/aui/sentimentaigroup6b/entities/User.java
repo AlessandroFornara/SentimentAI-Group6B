@@ -38,7 +38,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRoles role;
 
-    /*
+
     @ManyToMany
     @JoinTable(
             name = "user_badge",
@@ -49,13 +49,15 @@ public class User {
 
     @ElementCollection
     private List<Integer> badgeStatus;
-    */
 
+
+    /*
     @ElementCollection
     @CollectionTable(name = "user_badges", joinColumns = @JoinColumn(name = "user_id"))
     @MapKeyJoinColumn(name = "badge_id")
     @Column(name = "badge_status")
     private Map<Badge, Integer> badges;
+    */
 
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Session> sessions;

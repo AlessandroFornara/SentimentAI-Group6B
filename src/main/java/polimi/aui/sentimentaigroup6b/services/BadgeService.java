@@ -28,6 +28,7 @@ public class BadgeService {
     private final TimeBasedBadge timeBasedBadge;
     private final TopicBasedBadge topicBasedBadge;
 
+    /*
 
     public Map<Badge, Integer> assignBadges(Long userId) {
 
@@ -167,4 +168,6 @@ public class BadgeService {
         }
 
     }
+
+     */
 }
