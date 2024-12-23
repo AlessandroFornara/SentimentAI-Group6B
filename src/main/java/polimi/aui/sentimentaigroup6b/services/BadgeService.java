@@ -3,13 +3,12 @@ package polimi.aui.sentimentaigroup6b.services;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import polimi.aui.sentimentaigroup6b.entities.BadgeType;
-import polimi.aui.sentimentaigroup6b.models.gamification.Badge;
 import polimi.aui.sentimentaigroup6b.entities.Session;
 import polimi.aui.sentimentaigroup6b.entities.User;
-import polimi.aui.sentimentaigroup6b.models.gamification.ActivityBasedBadge;
-import polimi.aui.sentimentaigroup6b.models.gamification.LevelBasedBadge;
-import polimi.aui.sentimentaigroup6b.models.gamification.TimeBasedBadge;
-import polimi.aui.sentimentaigroup6b.models.gamification.TopicBasedBadge;
+import polimi.aui.sentimentaigroup6b.utils.gamification.ActivityBasedBadge;
+import polimi.aui.sentimentaigroup6b.utils.gamification.LevelBasedBadge;
+import polimi.aui.sentimentaigroup6b.utils.gamification.TimeBasedBadge;
+import polimi.aui.sentimentaigroup6b.utils.gamification.TopicBasedBadge;
 import polimi.aui.sentimentaigroup6b.repositories.SessionRepo;
 import polimi.aui.sentimentaigroup6b.repositories.UserRepo;
 

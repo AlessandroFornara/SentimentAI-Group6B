@@ -3,7 +3,6 @@ package polimi.aui.sentimentaigroup6b.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import polimi.aui.sentimentaigroup6b.models.gamification.Badge;
 
 import java.util.List;
 

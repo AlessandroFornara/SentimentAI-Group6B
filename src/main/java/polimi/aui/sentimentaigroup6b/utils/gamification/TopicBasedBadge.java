@@ -1,4 +1,4 @@
-package polimi.aui.sentimentaigroup6b.models.gamification;
+package polimi.aui.sentimentaigroup6b.utils.gamification;
 
 import lombok.Getter;
 import org.springframework.stereotype.Component;

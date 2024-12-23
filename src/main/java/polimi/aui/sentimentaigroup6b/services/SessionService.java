@@ -12,7 +12,7 @@ import polimi.aui.sentimentaigroup6b.models.ServerResponse;
 import polimi.aui.sentimentaigroup6b.models.emotionAI.Emotion;
 import polimi.aui.sentimentaigroup6b.models.FinalResponse;
 import polimi.aui.sentimentaigroup6b.models.emotionAI.EmotionAIResponse;
-import polimi.aui.sentimentaigroup6b.models.gamification.PointsManager;
+import polimi.aui.sentimentaigroup6b.utils.gamification.PointsManager;
 import polimi.aui.sentimentaigroup6b.models.llm.Message;
 import polimi.aui.sentimentaigroup6b.repositories.AudioRepo;
 import polimi.aui.sentimentaigroup6b.repositories.SessionRepo;
