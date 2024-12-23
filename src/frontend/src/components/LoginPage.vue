@@ -48,24 +48,44 @@ const router = useRouter(); // Ottieni l'istanza del router
 // Variabili reattive
 const username = ref('');
 const password = ref('');
-const errorMessage = ref('');
+let errorMessage = ref('');
+const requestOptions = {
+  method: "POST",
+  headers: { 'Content-Type': 'application/json' },
+  body: null
+};
+
 
 // Funzione per gestire il login
 function handleLogin() {
-  const registeredUsers = JSON.parse(localStorage.getItem('users')) || [];
+  requestOptions.body = JSON.stringify({
+    email: username.value,
+    password: password.value,
 
-  // Verifica delle credenziali
-  const user = registeredUsers.find(
-      (u) => u.username === username.value && u.password === password.value
-  );
+  });
 
-  if (user) {
-    console.log('Login successful!');
-    errorMessage.value = '';
-    router.push('/home'); // Reindirizza alla homepage
-  } else {
-    errorMessage.value = 'Invalid username or password. Please try again.';
-  }
+  fetch("/api/auth/login", requestOptions)
+      .then(response => {
+        if (response.status === 200) {
+          return response.text().then(data => {
+
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("username", data.username);
+            localStorage.setItem("role", data.role)
+            errorMessage.value = '';
+            this.$router.push('/HomePage');
+          });
+        } else {
+          return response.text().then(error => {
+
+            errorMessage.value = error;
+          });
+        }
+      })
+      .catch(error => {
+        errorMessage.value = 'There was an error in sending the request';
+        console.error('There was an error in sending the request:', error);
+      });
 }
 
 // Navigazione alla pagina di registrazione

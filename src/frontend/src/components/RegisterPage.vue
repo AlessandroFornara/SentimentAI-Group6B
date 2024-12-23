@@ -14,12 +14,46 @@
 
       <!-- Input Username -->
       <div class="form-group">
-        <label for="username">Username</label>
+        <label for="username">Email</label>
         <input
             id="username"
             v-model="username"
             type="text"
-            placeholder="Enter your username"
+            placeholder="Enter your email"
+            required
+        />
+      </div>
+
+
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input
+            id="name"
+            v-model="name"
+            type="text"
+            placeholder="Enter your name"
+            required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="surname">Surname</label>
+        <input
+            id="surname"
+            v-model="surname"
+            type="text"
+            placeholder="Enter your surname"
+            required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="company">Company</label>
+        <input
+            id="company"
+            v-model="company"
+            type="text"
+            placeholder="Enter your company's name"
             required
         />
       </div>
@@ -54,6 +88,9 @@ import { ref } from 'vue';
 const role = ref('');
 const username = ref('');
 const password = ref('');
+const company = ref('');
+const name = ref('');
+const surname = ref('');
 let errorMessage = ref('');
 let successMessage = ref('');
 const requestOptions = {
@@ -72,9 +109,9 @@ function handleRegister() {
   requestOptions.body = JSON.stringify({
     email: username.value,
     password: password.value,
-    //name: this.name,
-    //surname: this.surname,
-    //company: this.company,
+    name: name.value,
+    surname: surname.value,
+    company: company.value,
     role: assignedRole
   });
 
