@@ -55,17 +55,11 @@ public class SessionService {
         return ServerResponse.SESSION_STARTED;
     }
 
-    public Message handleAudio(Long sessionId, byte[] audio, String audioTranscript) {
-        Session session;
-        try {
-            session = sessionRepo.findById(sessionId).orElse(null);
-            if (session == null) {
-                throw new Exception("session not found for id: " + sessionId);
-            }
-        } catch (Exception e) {
-            System.err.println("Error retrieving session: " + e.getMessage());
-            return null;
-        }
+    public Message handleAudio(User worker, byte[] audio, String audioTranscript) {
+        Session session = getUserActiveSession(worker);
+        if(session == null) return null;
+
+        Long sessionId = session.getId();
 
         Audio audioEntity = new Audio(session, audio);
         try {
@@ -120,8 +114,11 @@ public class SessionService {
         return answer;
     }
 
-    public FinalResponse endSession(Long sessionId){
+    public FinalResponse endSession(User worker){
+        Session session = getUserActiveSession(worker);
+        if(session == null) return null;
 
+        Long sessionId = session.getId();
         Emotion dominantEmotion = getDominantEmotion(sessionId);
         ActivityResponse activity = chooseActivity(dominantEmotion);
         int points = pointsManager.calculateXPForSession(Objects.requireNonNull(sessionRepo.findById(sessionId).orElse(null)));
@@ -174,5 +171,19 @@ public class SessionService {
         Random random = new Random();
         Activity randomActivity = activities[random.nextInt(activities.length)];
         return new ActivityResponse(randomActivity.getCategoryDescription(), randomActivity.assignActivity(emotion));
+    }
+
+    private Session getUserActiveSession(User worker) {
+        Session session;
+        try {
+            session = sessionRepo.findTopByUserIdOrderByDateDesc(worker).orElse(null);
+            if (session == null) {
+                throw new Exception("session not found for user id: " + worker.getId());
+            }
+        } catch (Exception e) {
+            System.err.println("Error retrieving session: " + e.getMessage());
+            return null;
+        }
+        return session;
     }
 }
