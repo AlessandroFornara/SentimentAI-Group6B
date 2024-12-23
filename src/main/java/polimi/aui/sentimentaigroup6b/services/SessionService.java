@@ -3,16 +3,16 @@ package polimi.aui.sentimentaigroup6b.services;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import polimi.aui.sentimentaigroup6b.entities.Audio;
-import polimi.aui.sentimentaigroup6b.entities.Badge;
+import polimi.aui.sentimentaigroup6b.entities.BadgeType;
 import polimi.aui.sentimentaigroup6b.entities.Session;
 import polimi.aui.sentimentaigroup6b.entities.User;
 import polimi.aui.sentimentaigroup6b.models.Activity;
 import polimi.aui.sentimentaigroup6b.models.ActivityResponse;
-import polimi.aui.sentimentaigroup6b.models.FinalResponse;
 import polimi.aui.sentimentaigroup6b.models.ServerResponse;
 import polimi.aui.sentimentaigroup6b.models.emotionAI.Emotion;
+import polimi.aui.sentimentaigroup6b.models.FinalResponse;
 import polimi.aui.sentimentaigroup6b.models.emotionAI.EmotionAIResponse;
-import polimi.aui.sentimentaigroup6b.models.gamification.PointsManager;
+import polimi.aui.sentimentaigroup6b.utils.gamification.PointsManager;
 import polimi.aui.sentimentaigroup6b.models.llm.Message;
 import polimi.aui.sentimentaigroup6b.repositories.AudioRepo;
 import polimi.aui.sentimentaigroup6b.repositories.SessionRepo;
@@ -55,17 +55,11 @@ public class SessionService {
         return ServerResponse.SESSION_STARTED;
     }
 
-    public Message handleAudio(Long sessionId, byte[] audio, String audioTranscript) {
-        Session session;
-        try {
-            session = sessionRepo.findById(sessionId).orElse(null);
-            if (session == null) {
-                throw new Exception("session not found for id: " + sessionId);
-            }
-        } catch (Exception e) {
-            System.err.println("Error retrieving session: " + e.getMessage());
-            return null;
-        }
+    public Message handleAudio(User worker, byte[] audio, String audioTranscript) {
+        Session session = getUserActiveSession(worker);
+        if(session == null) return null;
+
+        Long sessionId = session.getId();
 
         Audio audioEntity = new Audio(session, audio);
         try {
@@ -120,21 +114,21 @@ public class SessionService {
         return answer;
     }
 
-    public FinalResponse endSession(Long sessionId){
-        /*
+    public FinalResponse endSession(User worker){
+        Session session = getUserActiveSession(worker);
+        if(session == null) return null;
+
+        Long sessionId = session.getId();
         Emotion dominantEmotion = getDominantEmotion(sessionId);
         ActivityResponse activity = chooseActivity(dominantEmotion);
-        Map<Badge, Integer> badges = badgeService.assignBadges(sessionId);
         int points = pointsManager.calculateXPForSession(Objects.requireNonNull(sessionRepo.findById(sessionId).orElse(null)));
+        Map<BadgeType, Integer> badges = badgeService.assignBadges(sessionId);
         cachingComponent.deleteChat(sessionId);
 
         return new FinalResponse(dominantEmotion.getEmotion(),
                 activity,
                 badges,
                 points);
-
-         */
-        return null;
     }
 
     public Emotion getDominantEmotion(Long sessionId) {
@@ -177,5 +171,19 @@ public class SessionService {
         Random random = new Random();
         Activity randomActivity = activities[random.nextInt(activities.length)];
         return new ActivityResponse(randomActivity.getCategoryDescription(), randomActivity.assignActivity(emotion));
+    }
+
+    private Session getUserActiveSession(User worker) {
+        Session session;
+        try {
+            session = sessionRepo.findTopByUserIdOrderByDateDesc(worker).orElse(null);
+            if (session == null) {
+                throw new Exception("session not found for user id: " + worker.getId());
+            }
+        } catch (Exception e) {
+            System.err.println("Error retrieving session: " + e.getMessage());
+            return null;
+        }
+        return session;
     }
 }

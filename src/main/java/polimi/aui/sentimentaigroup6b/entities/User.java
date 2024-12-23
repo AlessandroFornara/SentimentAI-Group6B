@@ -2,11 +2,9 @@ package polimi.aui.sentimentaigroup6b.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Map;
 
 @Entity
 @Table(
@@ -38,26 +36,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRoles role;
 
-
-    @ManyToMany
-    @JoinTable(
-            name = "user_badge",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "badge_id")
-    )
-    private List<Badge> badges;
-
-    @ElementCollection
-    private List<Integer> badgeStatus;
-
-
-    /*
-    @ElementCollection
-    @CollectionTable(name = "user_badges", joinColumns = @JoinColumn(name = "user_id"))
-    @MapKeyJoinColumn(name = "badge_id")
-    @Column(name = "badge_status")
-    private Map<Badge, Integer> badges;
-    */
+    private BadgeLevels badges;
 
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Session> sessions;

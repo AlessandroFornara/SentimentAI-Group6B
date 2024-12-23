@@ -1,23 +1,22 @@
-package polimi.aui.sentimentaigroup6b.models.gamification;
+package polimi.aui.sentimentaigroup6b.utils.gamification;
 
 import lombok.Getter;
 import org.springframework.stereotype.Component;
-import polimi.aui.sentimentaigroup6b.entities.Badge;
 
 @Component
 @Getter
-public class TopicBasedBadge extends Badge {
+public class TimeBasedBadge extends Badge {
 
     private final int[] thresholds;
 
-    public TopicBasedBadge() {
-        super("Topic Badge", "You have discussed a new topic!");
+    public TimeBasedBadge() {
+        super("Persistence Badge", "You completed a new streak!");
         this.thresholds = new int[]{1, 5, 10, 20};
     }
 
-    public int getLevel(int count) {
+    public int getLevel(int streak) {
         for (int i = 0; i < thresholds.length; i++) {
-            if (count <= thresholds[i]) {
+            if (streak <= thresholds[i]) {
                 return i;
             }
         }

@@ -5,8 +5,9 @@ import polimi.aui.sentimentaigroup6b.entities.Session;
 import polimi.aui.sentimentaigroup6b.entities.User;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public interface SessionRepo extends JpaRepository<Session, Long> {
     Collection<Object> findAllByUserId(User user);
-    Collection<Object> findActivitiesTextByUserId(User user);
+    Optional<Session> findTopByUserIdOrderByDateDesc(User user);
 }

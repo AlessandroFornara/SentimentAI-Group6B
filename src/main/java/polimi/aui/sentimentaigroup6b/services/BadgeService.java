@@ -2,14 +2,13 @@ package polimi.aui.sentimentaigroup6b.services;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import polimi.aui.sentimentaigroup6b.entities.Badge;
+import polimi.aui.sentimentaigroup6b.entities.BadgeType;
 import polimi.aui.sentimentaigroup6b.entities.Session;
 import polimi.aui.sentimentaigroup6b.entities.User;
-import polimi.aui.sentimentaigroup6b.models.gamification.ActivityBasedBadge;
-import polimi.aui.sentimentaigroup6b.models.gamification.LevelBasedBadge;
-import polimi.aui.sentimentaigroup6b.models.gamification.TimeBasedBadge;
-import polimi.aui.sentimentaigroup6b.models.gamification.TopicBasedBadge;
-import polimi.aui.sentimentaigroup6b.repositories.BadgeRepo;
+import polimi.aui.sentimentaigroup6b.utils.gamification.ActivityBasedBadge;
+import polimi.aui.sentimentaigroup6b.utils.gamification.LevelBasedBadge;
+import polimi.aui.sentimentaigroup6b.utils.gamification.TimeBasedBadge;
+import polimi.aui.sentimentaigroup6b.utils.gamification.TopicBasedBadge;
 import polimi.aui.sentimentaigroup6b.repositories.SessionRepo;
 import polimi.aui.sentimentaigroup6b.repositories.UserRepo;
 
@@ -20,7 +19,6 @@ import java.util.*;
 public class BadgeService {
 
     private final SessionRepo sessionRepo;
-    private final BadgeRepo badgeRepo;
     private final UserRepo userRepo;
 
     private final ActivityBasedBadge activityBasedBadge;
@@ -28,43 +26,36 @@ public class BadgeService {
     private final TimeBasedBadge timeBasedBadge;
     private final TopicBasedBadge topicBasedBadge;
 
-    /*
 
-    public Map<Badge, Integer> assignBadges(Long userId) {
+    public Map<BadgeType, Integer> assignBadges(Long userId) {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        Map<Badge, Integer> newBadges = new HashMap<>();
+        Map<BadgeType, Integer> newBadges = new HashMap<>();
 
-        assignLevelBadge(userId, newBadges);
-        assignActivityBadge(userId, newBadges);
-        assignTimeBadge(userId, newBadges);
-        assignTopicBadge(userId, newBadges);
+        assignLevelBadge(user, newBadges);
+        assignActivityBadge(user, newBadges);
+        assignTimeBadge(user, newBadges);
+        assignTopicBadge(user, newBadges);
+
+        userRepo.save(user);
 
         return newBadges;
     }
 
-    public void assignLevelBadge(Long userId, Map<Badge, Integer> badges) {
-        User user = userRepo.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    public void assignLevelBadge(User user, Map<BadgeType, Integer> badges) {
 
         int actualBadgeLevel = levelBasedBadge.getLevel(user.getLevel());
 
-        Badge badge = badgeRepo.findByName("Level Badge")
-                .orElseThrow(() -> new IllegalArgumentException("Badge not found"));
-
-        int oldBadgeLevel = user.getBadges().get(badge);
+        int oldBadgeLevel = user.getBadges().getLevelBasedBadge();
 
         if (actualBadgeLevel > oldBadgeLevel) {
-            user.getBadges().put(badge, actualBadgeLevel);
-            userRepo.save(user);
-
-            badges.put(badge, actualBadgeLevel);
+            user.getBadges().setLevelBasedBadge(actualBadgeLevel);
+            badges.put(BadgeType.LEVEL_BASED, actualBadgeLevel);
         }
     }
 
-    public void assignActivityBadge(Long userId, Map<Badge, Integer> badges) {
-
-        User user = userRepo.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    public void assignActivityBadge(User user, Map<BadgeType, Integer> badges) {
 
         int actualBadgeLevel = activityBasedBadge.getLevel((int)
                 sessionRepo.findAllByUserId(user).stream()
@@ -73,24 +64,15 @@ public class BadgeService {
                 .count()
                 );
 
-        Badge badge = badgeRepo.findByName("Activity Badge")
-                .orElseThrow(() -> new IllegalArgumentException("Badge not found"));
-
-        int oldBadgeLevel = user.getBadges().get(badge);
+        int oldBadgeLevel = user.getBadges().getActivityBasedBadge();
 
         if (actualBadgeLevel > oldBadgeLevel) {
-            user.getBadges().put(badge, actualBadgeLevel);
-            userRepo.save(user);
-
-            badges.put(badge, actualBadgeLevel);
+            user.getBadges().setActivityBasedBadge(actualBadgeLevel);
+            badges.put(BadgeType.ACTIVITY_BASED, actualBadgeLevel);
         }
-
     }
 
-    public void assignTimeBadge(Long userId, Map<Badge, Integer> badges) {
-
-        User user = userRepo.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    public void assignTimeBadge(User user, Map<BadgeType, Integer> badges) {
 
         // Fetch all sessions and sort them by date descending
         List<Object> sessions = sessionRepo.findAllByUserId(user).stream()
@@ -118,16 +100,12 @@ public class BadgeService {
 
         int actualBadgeLevel = timeBasedBadge.getLevel(consecutiveDays);
 
-        Badge badge = badgeRepo.findByName("Time Badge")
-                .orElseThrow(() -> new IllegalArgumentException("Badge not found"));
-
-        int oldBadgeLevel = user.getBadges().get(badge);
+        int oldBadgeLevel = user.getBadges().getTimeBasedBadge();
 
         if (actualBadgeLevel > oldBadgeLevel) {
-            user.getBadges().put(badge, actualBadgeLevel);
-            userRepo.save(user);
+            user.getBadges().setTimeBasedBadge(actualBadgeLevel);
 
-            badges.put(badge, actualBadgeLevel);
+            badges.put(BadgeType.TIME_BASED, actualBadgeLevel);
         }
 
     }
@@ -144,9 +122,7 @@ public class BadgeService {
         return currentDate.equals(expectedDate);
     }
 
-    public void assignTopicBadge(Long userId, Map<Badge, Integer> badges) {
-        User user = userRepo.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    public void assignTopicBadge(User user, Map<BadgeType, Integer> badges) {
 
         int actualBadgeLevel = topicBasedBadge.getLevel((int)
                 sessionRepo.findAllByUserId(user).stream()
@@ -155,19 +131,13 @@ public class BadgeService {
                 .count()
                 );
 
-        Badge badge = badgeRepo.findByName("Topic Badge")
-                .orElseThrow(() -> new IllegalArgumentException("Badge not found"));
-
-        int oldBadgeLevel = user.getBadges().get(badge);
+        int oldBadgeLevel = user.getBadges().getTopicBasedBadge();
 
         if (actualBadgeLevel > oldBadgeLevel) {
-            user.getBadges().put(badge, actualBadgeLevel);
-            userRepo.save(user);
+            user.getBadges().setTopicBasedBadge(actualBadgeLevel);
 
-            badges.put(badge, actualBadgeLevel);
+            badges.put(BadgeType.TOPIC_BASED, actualBadgeLevel);
         }
 
     }
-
-     */
 }
