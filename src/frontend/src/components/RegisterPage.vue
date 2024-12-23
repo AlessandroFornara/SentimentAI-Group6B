@@ -48,38 +48,54 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+//import { useRouter } from 'vue-router';
 
-const router = useRouter();
+//const router = useRouter();
 const role = ref('');
 const username = ref('');
 const password = ref('');
-const errorMessage = ref('');
-const successMessage = ref('');
+let errorMessage = ref('');
+let successMessage = ref('');
+const requestOptions = {
+  method: "POST",
+  headers: { 'Content-Type': 'application/json' },
+  body: null
+};
 
 // Simulazione di un "database" in memoria
-const registeredUsers = JSON.parse(localStorage.getItem('users')) || [];
+//const registeredUsers = JSON.parse(localStorage.getItem('users')) || [];
 
 // Funzione per la registrazione
 function handleRegister() {
-  if (registeredUsers.some((u) => u.username === username.value)) {
-    errorMessage.value = 'Username already exists.';
-    successMessage.value = '';
-  } else {
-    registeredUsers.push({
-      role: role.value,
-      username: username.value,
-      password: password.value,
-    });
-    localStorage.setItem('users', JSON.stringify(registeredUsers));
-    successMessage.value = 'Registration successful! Redirecting to login...';
-    errorMessage.value = '';
+  let assignedRole = role.value === ("WORKER") ? "WORKER" : "HR";
+  console.log(assignedRole);
+  requestOptions.body = JSON.stringify({
+    email: username.value,
+    password: password.value,
+    //name: this.name,
+    //surname: this.surname,
+    //company: this.company,
+    role: assignedRole
+  });
 
-    // Reindirizza alla pagina di login dopo 2 secondi
-    setTimeout(() => {
-      router.push('/');
-    }, 2000);
-  }
+  fetch("/api/auth/register", requestOptions)
+      .then(response => {
+        if (response.status === 200) {
+          return response.text().then(data => {
+            successMessage.value = data;
+            errorMessage.value = '';
+          });
+        } else {
+          return response.text().then(error => {
+            successMessage.value = '';
+            errorMessage.value = error;
+          });
+        }
+      })
+      .catch(error => {
+        errorMessage.value = 'There was an error in sending the request';
+        console.error('There was an error in sending the request:', error);
+      });
 }
 </script>
 

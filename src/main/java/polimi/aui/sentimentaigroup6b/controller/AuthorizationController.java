@@ -59,7 +59,7 @@ public class AuthorizationController {
     @PostMapping ("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterDTO registerDTO){
         UserRoles role = registerDTO.getRole();
-        int level = role == UserRoles.WORKER ? 0 : null;
+        int level = 0;
 
         User u = new User(
                 registerDTO.getName(),
