@@ -82,9 +82,9 @@
 
 <script setup>
 import { ref } from 'vue';
-//import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 
-//const router = useRouter();
+const router = useRouter();
 const role = ref('');
 const username = ref('');
 const password = ref('');
@@ -121,6 +121,7 @@ function handleRegister() {
           return response.text().then(data => {
             successMessage.value = data;
             errorMessage.value = '';
+            router.push('/');
           });
         } else {
           return response.text().then(error => {

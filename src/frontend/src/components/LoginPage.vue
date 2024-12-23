@@ -68,16 +68,15 @@ function handleLogin() {
       .then(response => {
         if (response.status === 200) {
           return response.text().then(data => {
-
-            localStorage.setItem("token", data.token);
-            localStorage.setItem("username", data.username);
-            localStorage.setItem("role", data.role)
+            console.log("entro qui");
+            localStorage.setItem("email", data.email);
+            localStorage.setItem("role", data.role);
+            console.log("entro qui");
             errorMessage.value = '';
-            this.$router.push('/HomePage');
+            router.push('/home');
           });
         } else {
           return response.text().then(error => {
-
             errorMessage.value = error;
           });
         }
