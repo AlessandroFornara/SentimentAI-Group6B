@@ -67,11 +67,10 @@ function handleLogin() {
   fetch("/api/auth/login", requestOptions)
       .then(response => {
         if (response.status === 200) {
-          return response.text().then(data => {
-            console.log("entro qui");
+          return response.json().then(data => {
+            localStorage.setItem("token", data.token);
             localStorage.setItem("email", data.email);
-            localStorage.setItem("role", data.role);
-            console.log("entro qui");
+            localStorage.setItem("role", data.role)
             errorMessage.value = '';
             router.push('/home');
           });

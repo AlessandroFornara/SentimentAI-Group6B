@@ -12,7 +12,7 @@
           class="bubble"
           @click="selectImage(index)"
       >
-        <img :src="image" alt="'Image ' + (index + 1)" />
+        <img :src="image" :alt="`Image ${index + 1}`" />
       </button>
     </div>
 
@@ -44,11 +44,11 @@ async function loadImages() {
       throw new Error('Errore durante il caricamento delle immagini.');
     }
 
-    const data = await response.json();
-    console.log('Risposta dal server:', data);
+    const responseData = await response.json();
+    console.log('Risposta dal server:', responseData);
 
     // Converti Base64 in un formato utilizzabile
-    images.value = data.map((item) => `data:${item.contentType};base64,${item.base64Data}`);
+    images.value = responseData.map((item) => `data:${item.contentType};base64,${item.data}`);
   } catch (error) {
     console.error('Errore durante il caricamento delle immagini:', error);
   }
