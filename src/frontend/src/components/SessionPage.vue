@@ -57,6 +57,7 @@ async function loadImages() {
 function selectImage(index) {
   const selectedImage = images.value[index];
   console.log(`Selected Image: ${selectedImage}`);
+  sessionStorage.setItem('selectedImage', selectedImage);
   router.push({ name: 'AudioPage', query: { background: selectedImage } });
 }
 

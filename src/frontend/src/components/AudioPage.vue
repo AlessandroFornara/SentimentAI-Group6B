@@ -1,23 +1,26 @@
 <template>
   <div :style="backgroundStyle" class="audio-page">
+    <!-- Frase Generata -->
     <div class="question">
       <p>{{ question }}</p>
     </div>
-    <div class="audio-container">
-      <div class="microphone">
+
+    <!-- Immagine al centro in grande -->
+    <div class="image-bubble">
+      <img :src="selectedImage" alt="Selected Background" class="center-image" />
+    </div>
+
+    <!-- Barra Audio dinamica -->
+    <div v-if="isRecording" class="audio-visualizer">
+      <canvas ref="audioCanvas"></canvas>
+    </div>
+
+    <!-- Icona Microfono -->
+    <div class="bottom-container">
+      <div class="microphone-container">
         <img :src="microphoneImage" alt="Microphone" />
       </div>
     </div>
-
-    <!-- Bottone Start Recording -->
-    <button v-if="!isRecording" @click="startRecording" class="btn-center">
-      Start Recording
-    </button>
-
-    <!-- Bottone Finish Audio -->
-    <button v-if="showFinishButton" @click="finishRecording" class="btn-finish">
-      Finish Audio
-    </button>
 
     <!-- Timer -->
     <div class="timer">
@@ -26,27 +29,47 @@
       </div>
       <p class="time-remaining">{{ formattedTime }}</p>
     </div>
+
+    <!-- Bottoni -->
+    <div class="controls">
+      <button v-if="!isRecording && questionReady" @click="startRecording" class="btn-center">
+        Start Recording
+      </button>
+
+      <button v-if="showFinishButton" @click="finishRecording" class="btn-finish">
+        Finish Audio
+      </button>
+    </div>
   </div>
 </template>
 
 <script setup>
 import microphoneImage from '@/assets/microphone.jpeg';
-import { ref } from 'vue';
-import { computed } from 'vue';
-
+import { ref, computed, onMounted } from 'vue';
 
 // Stato iniziale
-const backgroundImage = ref('path/to/default-image.jpg');
-const question = ref('Your AI-generated question here');
+const selectedImage = ref(null); // Per memorizzare l'immagine selezionata
+const question = ref('How do you feel about this argument?'); // Prima domanda fissa
 const timeRemaining = ref(120);
 const isRecording = ref(false);
 const showFinishButton = ref(false);
+const questionReady = ref(true);
 const elapsedTime = ref(0);
 let timerInterval = null;
+const microphoneAccessError = ref(false);
+const audioCanvas = ref(null);
+let analyser;
+let audioChunks = [];
+let mediaRecorder;
+
+// Recupera l'immagine salvata in sessionStorage all'avvio
+onMounted(() => {
+  selectedImage.value = sessionStorage.getItem('selectedImage') || 'path/to/default-image.jpg';
+});
 
 // Stili dinamici
 const backgroundStyle = computed(() => ({
-  backgroundImage: `url(${backgroundImage.value})`,
+  backgroundColor: '#87CEEB', // Azzurro chiaro
   backgroundSize: 'cover',
   backgroundPosition: 'center',
 }));
@@ -66,8 +89,10 @@ const formattedTime = computed(() => {
 
 // Funzioni per la registrazione e timer
 const startRecording = () => {
+  microphoneAccessError.value = false;
   isRecording.value = true;
   showFinishButton.value = false;
+  questionReady.value = false;
   timeRemaining.value = 120; // Reset del timer
   elapsedTime.value = 0;
 
@@ -76,43 +101,158 @@ const startRecording = () => {
     if (timeRemaining.value > 0) {
       timeRemaining.value--;
       elapsedTime.value++;
+
+      // Mostra il pulsante Finish dopo 10 secondi
+      if (elapsedTime.value >= 10) {
+        showFinishButton.value = true;
+      }
+    } else {
+      clearInterval(timerInterval);
+      finishRecording();
     }
   }, 1000);
 
-  // Dopo 20 secondi, mostra il bottone Finish Audio
-  setTimeout(() => {
-    showFinishButton.value = true;
-  }, 20000);
-
-  // Simula la registrazione audio
+  // Avvia la registrazione audio
   setupMicrophone();
 };
 
-const finishRecording = () => {
+const finishRecording = async () => {
   isRecording.value = false;
   showFinishButton.value = false;
-
-  // Stoppa il timer e la registrazione
   clearInterval(timerInterval);
   console.log(`Audio registrato per ${elapsedTime.value} secondi.`);
 
-  // Genera una nuova domanda (default)
-  question.value = 'Here is your next question!';
+  // Stop la registrazione e invia l'audio al server
+  mediaRecorder.stop();
+
+  // Reset del timer immediato
+  timeRemaining.value = 120;
 };
 
-// Simulazione input microfono
+// Funzione per inviare l'audio e la trascrizione al server
+const sendAudioToServer = async (audioBlob, transcript) => {
+  const formData = new FormData();
+  formData.append('audio', audioBlob);
+  formData.append('audioTranscript', transcript);
+
+  try {
+    const response = await fetch('/api/worker/handle_audio', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error('Errore durante l\'invio dell\'audio al server');
+    }
+
+    const data = await response.json();
+    return data.newQuestion;
+  } catch (error) {
+    console.error('Errore durante l\'invio dell\'audio:', error);
+    return null;
+  }
+};
+
+// Configura il microfono e registra audio
 const setupMicrophone = async () => {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const analyser = audioContext.createAnalyser();
+    analyser = audioContext.createAnalyser();
     const microphone = audioContext.createMediaStreamSource(stream);
     microphone.connect(analyser);
+
+    mediaRecorder = new MediaRecorder(stream);
+    audioChunks = [];
+
+    mediaRecorder.ondataavailable = (event) => {
+      audioChunks.push(event.data);
+    };
+
+    mediaRecorder.onstop = async () => {
+      const audioBlob = new Blob(audioChunks, {type: 'audio/wav'});
+
+      // Trascrivi l'audio
+      const transcript = await transcribeAudio(audioBlob);
+
+      // Invia l'audio e la trascrizione al server
+      const newQuestion = await sendAudioToServer(audioBlob, transcript);
+      if (newQuestion) {
+        question.value = newQuestion;
+        questionReady.value = true;
+      }
+    };
+
+    mediaRecorder.start();
+
+    animateAudioVisualizer();
 
     console.log('Recording started...');
   } catch (error) {
     console.error('Error accessing microphone:', error);
+    microphoneAccessError.value = true;
+    isRecording.value = false;
+    clearInterval(timerInterval);
   }
+};
+
+// Funzione per trascrivere l'audio
+const transcribeAudio = async (audioBlob) => {
+  const formData = new FormData();
+  formData.append('audio', audioBlob);
+
+  try {
+    const response = await fetch('/api/transcribe', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error('Errore durante la trascrizione dell\'audio');
+    }
+
+    const data = await response.json();
+    return data.transcript;
+  } catch (error) {
+    console.error('Errore durante la trascrizione:', error);
+    return '';
+  }
+};
+
+// Animazione della barra audio
+const animateAudioVisualizer = () => {
+  const canvas = audioCanvas.value;
+  const ctx = canvas.getContext('2d');
+  analyser.fftSize = 256;
+  const bufferLength = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
+
+  canvas.width = 300;
+  canvas.height = 50;
+
+  const draw = () => {
+    analyser.getByteFrequencyData(dataArray);
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const barWidth = canvas.width / bufferLength;
+    let barHeight;
+    let x = 0;
+
+    for (let i = 0; i < bufferLength; i++) {
+      barHeight = dataArray[i] / 2;
+      ctx.fillStyle = 'rgb(255, 255, 255)'; // Bianco
+      ctx.fillRect(x, canvas.height - barHeight / 2, barWidth, barHeight);
+
+      x += barWidth + 1;
+    }
+
+    if (isRecording.value) {
+      requestAnimationFrame(draw);
+    }
+  };
+
+  draw();
 };
 </script>
 
@@ -121,7 +261,7 @@ const setupMicrophone = async () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   height: 100vh;
   width: 100vw;
   position: relative;
@@ -129,22 +269,111 @@ const setupMicrophone = async () => {
   background-color: #1e1e1e;
 }
 
+.audio-visualizer {
+  width: 300px;
+  height: 50px;
+  position: relative;
+  margin-top: 10px;
+}
+
+.audio-visualizer canvas {
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+}
+
 .question {
-  margin-bottom: 20px;
-  font-size: 1.5rem;
+  margin-top: 20px;
+  font-size: 2rem;
   text-align: center;
   color: white;
 }
 
-.microphone img {
-  width: 80px;
-  height: 80px;
+.image-bubble {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50%;
+  height: 50%;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.1);
+  margin: auto;
 }
 
-/* Bottone Start */
+.center-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bottom-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  position: absolute;
+  bottom: 60px;
+  left: 40px;
+}
+
+.microphone-container {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+  margin-right: 20px;
+}
+
+.microphone-container.recording {
+  transform: scale(1.2);
+  box-shadow: 0 0 15px red;
+}
+
+.microphone-container img {
+  width: 100%;
+  height: 100%;
+}
+
+.timer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  right: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 300px;
+  background: rgba(0, 128, 0, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  transition: height 1s linear;
+}
+
+.time-remaining {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: white;
+  text-align: center;
+}
+
+.controls {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
 .btn-center {
-  margin-top: 20px;
-  padding: 10px 20px;
+  padding: 15px 30px;
   font-size: 1.2rem;
   background-color: green;
   color: white;
@@ -157,10 +386,8 @@ const setupMicrophone = async () => {
   background-color: darkgreen;
 }
 
-/* Bottone Finish */
 .btn-finish {
-  margin-top: 20px;
-  padding: 10px 20px;
+  padding: 15px 30px;
   font-size: 1.2rem;
   background-color: red;
   color: white;
@@ -173,30 +400,23 @@ const setupMicrophone = async () => {
   background-color: darkred;
 }
 
-/* Timer */
-.timer {
-  position: absolute;
-  right: 40px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 30px;
-  height: 300px;
-  background: rgba(0, 128, 0, 0.2);
-  border-radius: 10px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+@media (max-width: 768px) {
+  .image-bubble {
+    width: 70%;
+    height: 70%;
+  }
 
-.progress-bar {
-  transition: height 1s linear;
-}
+  .microphone-container {
+    width: 60px;
+    height: 60px;
+  }
 
-.time-remaining {
-  margin-top: 10px;
-  font-size: 1rem;
-  color: white;
-  text-align: center;
+  .question {
+    font-size: 1.5rem;
+  }
+
+  .timer {
+    height: 200px;
+  }
 }
 </style>
