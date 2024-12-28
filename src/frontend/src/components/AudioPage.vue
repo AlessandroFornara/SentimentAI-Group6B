@@ -61,6 +61,8 @@ const audioCanvas = ref(null);
 let analyser;
 let audioChunks = [];
 let mediaRecorder;
+let recognition; // Per la trascrizione Web Speech API
+let liveTranscript = ''; // Accumula la trascrizione live
 
 // Recupera l'immagine salvata in sessionStorage all'avvio
 onMounted(() => {
@@ -102,8 +104,8 @@ const startRecording = () => {
       timeRemaining.value--;
       elapsedTime.value++;
 
-      // Mostra il pulsante Finish dopo 10 secondi
-      if (elapsedTime.value >= 10) {
+      // Mostra il pulsante Finish dopo 5 secondi
+      if (elapsedTime.value >= 5) {
         showFinishButton.value = true;
       }
     } else {
@@ -120,10 +122,13 @@ const finishRecording = async () => {
   isRecording.value = false;
   showFinishButton.value = false;
   clearInterval(timerInterval);
-  console.log(`Audio registrato per ${elapsedTime.value} secondi.`);
+  console.log('Registrazione terminata.');
 
-  // Stop la registrazione e invia l'audio al server
+  // Stop la registrazione e salva l'audio
   mediaRecorder.stop();
+
+  // Stop la trascrizione
+  recognition.stop();
 
   // Reset del timer immediato
   timeRemaining.value = 120;
@@ -134,15 +139,24 @@ const sendAudioToServer = async (audioBlob, transcript) => {
   const formData = new FormData();
   formData.append('audio', audioBlob);
   formData.append('audioTranscript', transcript);
-
+  console.log('sto per mandare l\'audio');
   try {
     const response = await fetch('/api/worker/handle_audio', {
       method: 'POST',
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
       body: formData,
     });
 
     if (!response.ok) {
-      throw new Error('Errore durante l\'invio dell\'audio al server');
+      if (response.status === 401) {
+        console.error('Token scaduto o non valido. Reindirizzamento alla pagina di login.');
+        alert('Sessione scaduta. Per favore, effettua nuovamente il login.');
+        window.location.href = '/login';
+        return null;
+      }
+      throw new Error(`Errore durante l'invio dell'audio al server: ${response.statusText}`);
     }
 
     const data = await response.json();
@@ -157,6 +171,8 @@ const sendAudioToServer = async (audioBlob, transcript) => {
 const setupMicrophone = async () => {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    checkMicrophoneInput(stream); // Controllo input microfono
+
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     analyser = audioContext.createAnalyser();
     const microphone = audioContext.createMediaStreamSource(stream);
@@ -165,21 +181,46 @@ const setupMicrophone = async () => {
     mediaRecorder = new MediaRecorder(stream);
     audioChunks = [];
 
+    // Configura la trascrizione live
+    recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'it-IT'; // Imposta la lingua in italiano
+    recognition.interimResults = true; // Risultati parziali
+
+    recognition.onresult = (event) => {
+      liveTranscript = Array.from(event.results)
+          .map((result) => result[0].transcript)
+          .join(' ');
+      console.log('Trascrizione live:', liveTranscript);
+    };
+
+    recognition.onerror = (event) => {
+      console.error('Errore nella trascrizione live:', event.error);
+    };
+
+    recognition.onend = () => {
+      console.log('Trascrizione live terminata.');
+    };
+
+    recognition.start();
+
     mediaRecorder.ondataavailable = (event) => {
       audioChunks.push(event.data);
     };
 
     mediaRecorder.onstop = async () => {
-      const audioBlob = new Blob(audioChunks, {type: 'audio/wav'});
+      const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
 
-      // Trascrivi l'audio
-      const transcript = await transcribeAudio(audioBlob);
+      try {
+        console.log('Trascrizione finale:', liveTranscript);
 
-      // Invia l'audio e la trascrizione al server
-      const newQuestion = await sendAudioToServer(audioBlob, transcript);
-      if (newQuestion) {
-        question.value = newQuestion;
-        questionReady.value = true;
+        // Invia l'audio e la trascrizione al server
+        const newQuestion = await sendAudioToServer(audioBlob, liveTranscript);
+        if (newQuestion) {
+          question.value = newQuestion;
+          questionReady.value = true;
+        }
+      } catch (error) {
+        console.error('Errore durante la trascrizione o l\'invio:', error);
       }
     };
 
@@ -187,35 +228,31 @@ const setupMicrophone = async () => {
 
     animateAudioVisualizer();
 
-    console.log('Recording started...');
+    console.log('Registrazione avviata...');
   } catch (error) {
-    console.error('Error accessing microphone:', error);
+    console.error('Errore durante l\'accesso al microfono:', error);
     microphoneAccessError.value = true;
     isRecording.value = false;
     clearInterval(timerInterval);
   }
 };
 
-// Funzione per trascrivere l'audio
-const transcribeAudio = async (audioBlob) => {
-  const formData = new FormData();
-  formData.append('audio', audioBlob);
+// Controllo input microfono
+const checkMicrophoneInput = (stream) => {
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  const source = audioContext.createMediaStreamSource(stream);
+  const analyser = audioContext.createAnalyser();
+  source.connect(analyser);
 
-  try {
-    const response = await fetch('/api/transcribe', {
-      method: 'POST',
-      body: formData,
-    });
+  const dataArray = new Uint8Array(analyser.fftSize);
+  analyser.getByteTimeDomainData(dataArray);
 
-    if (!response.ok) {
-      throw new Error('Errore durante la trascrizione dell\'audio');
-    }
-
-    const data = await response.json();
-    return data.transcript;
-  } catch (error) {
-    console.error('Errore durante la trascrizione:', error);
-    return '';
+  const isSilent = dataArray.every((value) => value === 128);
+  if (isSilent) {
+    console.warn('Microfono non riceve input. Verifica il dispositivo.');
+    alert('Il microfono non sembra funzionare. Verifica il dispositivo e riprova.');
+  } else {
+    console.log('Microfono funzionante, input rilevato.');
   }
 };
 
@@ -405,16 +442,13 @@ const animateAudioVisualizer = () => {
     width: 70%;
     height: 70%;
   }
-
   .microphone-container {
     width: 60px;
     height: 60px;
   }
-
   .question {
     font-size: 1.5rem;
   }
-
   .timer {
     height: 200px;
   }

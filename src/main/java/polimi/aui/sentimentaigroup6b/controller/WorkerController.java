@@ -66,7 +66,7 @@ public class WorkerController {
     public ResponseEntity<?> handleAudio(byte[] audio, String audioTranscript){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = (String) authentication.getPrincipal();
-
+        System.out.println(email);
         User user = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
         Message answer = sessionService.handleAudio(user, audio, audioTranscript);
         if(answer!=null){
