@@ -8,9 +8,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import polimi.aui.sentimentaigroup6b.entities.User;
 import polimi.aui.sentimentaigroup6b.models.FinalResponse;
 import polimi.aui.sentimentaigroup6b.models.ImageResponse;
@@ -21,6 +20,7 @@ import polimi.aui.sentimentaigroup6b.services.ProfileService;
 import polimi.aui.sentimentaigroup6b.services.SessionService;
 import polimi.aui.sentimentaigroup6b.utils.ImageManager;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -62,17 +62,29 @@ public class WorkerController {
     }
 
     @PreAuthorize("hasRole('WORKER')")
-    @PostMapping("handle_audio")
-    public ResponseEntity<?> handleAudio(byte[] audio, String audioTranscript){
+    @PostMapping(value = "/handle_audio", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> handleAudio(@RequestPart("audio") MultipartFile audio,
+                                         @RequestPart("audioTranscript") String audioTranscript) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = (String) authentication.getPrincipal();
         System.out.println(email);
         User user = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
-        Message answer = sessionService.handleAudio(user, audio, audioTranscript);
+        byte[] audioBytes;
+        try {
+            audioBytes = audio.getBytes();
+        } catch (IOException e) {
+            return ResponseEntity.unprocessableEntity().body(ServerResponse.AUDIO_HANDLING_ERROR.getMessage());
+        }
+
+        /*
+        Message answer = sessionService.handleAudio(user, audioBytes, audioTranscript);
         if(answer!=null){
             return ResponseEntity.ok(answer);
         }
-        return ResponseEntity.unprocessableEntity().body(ServerResponse.AUDIO_HANDLING_ERROR.getMessage());
+        */
+        //TODO: just for testing
+        return ResponseEntity.ok(new Message("roleeee", audioTranscript));
+        //return ResponseEntity.unprocessableEntity().body(ServerResponse.AUDIO_HANDLING_ERROR.getMessage());
     }
 
     @PreAuthorize("hasRole('WORKER')")

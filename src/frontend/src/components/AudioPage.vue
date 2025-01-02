@@ -160,7 +160,7 @@ const sendAudioToServer = async (audioBlob, transcript) => {
     }
 
     const data = await response.json();
-    return data.newQuestion;
+    return data.content;
   } catch (error) {
     console.error('Errore durante l\'invio dell\'audio:', error);
     return null;
@@ -247,13 +247,13 @@ const checkMicrophoneInput = (stream) => {
   const dataArray = new Uint8Array(analyser.fftSize);
   analyser.getByteTimeDomainData(dataArray);
 
-  const isSilent = dataArray.every((value) => value === 128);
+  /*const isSilent = dataArray.every((value) => value === 128);
   if (isSilent) {
     console.warn('Microfono non riceve input. Verifica il dispositivo.');
     alert('Il microfono non sembra funzionare. Verifica il dispositivo e riprova.');
   } else {
     console.log('Microfono funzionante, input rilevato.');
-  }
+  }*/
 };
 
 // Animazione della barra audio
