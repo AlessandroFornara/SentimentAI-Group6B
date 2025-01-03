@@ -99,7 +99,7 @@ public class EmotionAIRequestGenerator {
         speech.put("data", fileUri);
         payload.put("speech", speech);
 
-        payload.put("language", "en-US");
+        payload.put("language", "it-IT");
 
         JSONObject service = new JSONObject();
         service.put("name", API_NAME);

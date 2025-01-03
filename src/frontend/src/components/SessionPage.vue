@@ -54,11 +54,22 @@ async function loadImages() {
   }
 }
 
-function selectImage(index) {
+async function selectImage(index) {
   const selectedImage = images.value[index];
   console.log(`Selected Image: ${selectedImage}`);
   sessionStorage.setItem('selectedImage', selectedImage);
-  router.push({ name: 'AudioPage', query: { background: selectedImage } });
+  const response = await fetch('/api/worker/start_session', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  });
+  if (!response.ok) {
+    throw new Error('Errore durante l\'avvio della sessione.');
+  }else{
+    await router.push({name: 'AudioPage', query: {background: selectedImage}});
+  }
 }
 
 function freeModeOption() {
