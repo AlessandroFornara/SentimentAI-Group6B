@@ -46,6 +46,7 @@
 <script setup>
 import microphoneImage from '@/assets/microphone.jpeg';
 import { ref, computed, onMounted } from 'vue';
+import {useRoute} from "vue-router";
 
 // Stato iniziale
 const selectedImage = ref(null); // Per memorizzare l'immagine selezionata
@@ -66,7 +67,12 @@ let liveTranscript = ''; // Accumula la trascrizione live
 
 // Recupera l'immagine salvata in sessionStorage all'avvio
 onMounted(() => {
-  selectedImage.value = sessionStorage.getItem('selectedImage') || 'path/to/default-image.jpg';
+  const route = useRoute();
+  const backgroundImage = route.query.background;
+  if (backgroundImage) {
+    selectedImage.value = backgroundImage;  // Salva l'immagine nel ref
+    console.log('Selected image from query:', selectedImage.value);
+  }
 });
 
 // Stili dinamici
