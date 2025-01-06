@@ -64,6 +64,7 @@ let audioChunks = [];
 let mediaRecorder;
 let recognition; // Per la trascrizione Web Speech API
 let liveTranscript = ''; // Accumula la trascrizione live
+let completeTranscript = ''; // Trascrizione finale
 
 // Recupera l'immagine salvata in sessionStorage all'avvio
 onMounted(() => {
@@ -188,24 +189,31 @@ const setupMicrophone = async () => {
     audioChunks = [];
 
     // Configura la trascrizione live
-    recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = 'it-IT'; // Imposta la lingua in italiano
-    recognition.interimResults = true; // Risultati parziali
+    if (!recognition) {
+      recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = 'it-IT'; // Imposta la lingua in italiano
+      recognition.interimResults = true; // Risultati parziali
 
-    recognition.onresult = (event) => {
-      liveTranscript = Array.from(event.results)
-          .map((result) => result[0].transcript)
-          .join(' ');
-      console.log('Trascrizione live:', liveTranscript);
-    };
+      recognition.onresult = (event) => {
+        liveTranscript = Array.from(event.results)
+            .map((result) => result[0].transcript)
+            .join(' ');
+        console.log('Trascrizione live:', liveTranscript);
+      };
 
-    recognition.onerror = (event) => {
-      console.error('Errore nella trascrizione live:', event.error);
-    };
+      recognition.onerror = (event) => {
+        console.error('Errore nella trascrizione live:', event.error);
+      };
 
-    recognition.onend = () => {
-      console.log('Trascrizione live terminata.');
-    };
+      recognition.onend = () => {
+        console.log('Trascrizione live terminata.');
+        completeTranscript += liveTranscript;
+        console.log('Trascrizione completa:', completeTranscript);
+        if (isRecording.value) {
+          recognition.start(); // Riavvia la stessa istanza
+        }
+      };
+    }
 
     recognition.start();
 
@@ -220,7 +228,7 @@ const setupMicrophone = async () => {
         console.log('Trascrizione finale:', liveTranscript);
 
         // Invia l'audio e la trascrizione al server
-        const newQuestion = await sendAudioToServer(audioBlob, liveTranscript);
+        const newQuestion = await sendAudioToServer(audioBlob, completeTranscript);
         if (newQuestion) {
           question.value = newQuestion;
           questionReady.value = true;
