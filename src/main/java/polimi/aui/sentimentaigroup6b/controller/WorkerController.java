@@ -75,15 +75,15 @@ public class WorkerController {
         } catch (IOException e) {
             return ResponseEntity.unprocessableEntity().body(ServerResponse.AUDIO_HANDLING_ERROR.getMessage());
         }
-
+        /*
         Message answer = sessionService.handleAudio(user, audioBytes, audioTranscript);
         if(answer!=null){
             return ResponseEntity.ok(answer);
         }
-
+        */
         //TODO: just for testing
-        //return ResponseEntity.ok(new Message("roleeee", audioTranscript));
-        return ResponseEntity.unprocessableEntity().body(ServerResponse.AUDIO_HANDLING_ERROR.getMessage());
+        return ResponseEntity.ok(new Message("roleeee", audioTranscript));
+        //return ResponseEntity.unprocessableEntity().body(ServerResponse.AUDIO_HANDLING_ERROR.getMessage());
     }
 
     @PreAuthorize("hasRole('WORKER')")
