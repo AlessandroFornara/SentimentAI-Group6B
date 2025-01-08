@@ -40,13 +40,18 @@
         Finish Audio
       </button>
     </div>
+
+    <!-- Pulsante Terminate Session -->
+    <div v-if="totalElapsedTime >= 10" class="terminate-session">
+      <button @click="goToResultPage" class="btn-terminate">Terminate Session</button>
+    </div>
   </div>
 </template>
 
 <script setup>
 import microphoneImage from '@/assets/microphone.jpeg';
 import { ref, computed, onMounted } from 'vue';
-import {useRoute} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 
 // Stato iniziale
 const selectedImage = ref(null); // Per memorizzare l'immagine selezionata
@@ -56,6 +61,7 @@ const isRecording = ref(false);
 const showFinishButton = ref(false);
 const questionReady = ref(true);
 const elapsedTime = ref(0);
+const totalElapsedTime = ref(0); // Tempo totale accumulato
 let timerInterval = null;
 const microphoneAccessError = ref(false);
 const audioCanvas = ref(null);
@@ -66,13 +72,14 @@ let recognition; // Per la trascrizione Web Speech API
 let liveTranscript = ''; // Accumula la trascrizione live
 let completeTranscript = ''; // Trascrizione finale
 
+const router = useRouter(); // Router per la navigazione
+
 // Recupera l'immagine salvata in sessionStorage all'avvio
 onMounted(() => {
   const route = useRoute();
   const backgroundImage = route.query.background;
   if (backgroundImage) {
     selectedImage.value = backgroundImage;  // Salva l'immagine nel ref
-    //console.log('Selected image from query:', selectedImage.value);
   }
 });
 
@@ -129,7 +136,10 @@ const finishRecording = async () => {
   isRecording.value = false;
   showFinishButton.value = false;
   clearInterval(timerInterval);
-  console.log('Registrazione terminata.');
+
+  // Aggiorna il tempo totale
+  totalElapsedTime.value += elapsedTime.value;
+  console.log('Tempo totale accumulato:', totalElapsedTime.value);
 
   // Stop la registrazione e salva l'audio
   mediaRecorder.stop();
@@ -139,6 +149,11 @@ const finishRecording = async () => {
 
   // Reset del timer immediato
   timeRemaining.value = 120;
+};
+
+const goToResultPage = () => {
+  // Reindirizza alla pagina ResultPage
+  router.push('/result');
 };
 
 // Funzione per inviare l'audio e la trascrizione al server
@@ -160,7 +175,7 @@ const sendAudioToServer = async (audioBlob, transcript) => {
       if (response.status === 401) {
         console.error('Token scaduto o non valido. Reindirizzamento alla pagina di login.');
         alert('Sessione scaduta. Per favore, effettua nuovamente il login.');
-        window.location.href = '/login';
+        router.push('/login');
         return null;
       }
       throw new Error(`Errore durante l'invio dell'audio al server: ${response.statusText}`);
@@ -177,7 +192,7 @@ const sendAudioToServer = async (audioBlob, transcript) => {
 // Configura il microfono e registra audio
 const setupMicrophone = async () => {
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const stream = await navigator.mediaDevices.getUserMedia({audio: true});
     checkMicrophoneInput(stream); // Controllo input microfono
 
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -222,7 +237,7 @@ const setupMicrophone = async () => {
     };
 
     mediaRecorder.onstop = async () => {
-      const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+      const audioBlob = new Blob(audioChunks, {type: 'audio/wav'});
       recognition.onend(); // Termina la trascrizione
       try {
         console.log('Trascrizione finale:', liveTranscript);
@@ -260,14 +275,6 @@ const checkMicrophoneInput = (stream) => {
 
   const dataArray = new Uint8Array(analyser.fftSize);
   analyser.getByteTimeDomainData(dataArray);
-
-  /*const isSilent = dataArray.every((value) => value === 128);
-  if (isSilent) {
-    console.warn('Microfono non riceve input. Verifica il dispositivo.');
-    alert('Il microfono non sembra funzionare. Verifica il dispositivo e riprova.');
-  } else {
-    console.log('Microfono funzionante, input rilevato.');
-  }*/
 };
 
 // Animazione della barra audio
@@ -451,18 +458,42 @@ const animateAudioVisualizer = () => {
   background-color: darkred;
 }
 
+.terminate-session {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.btn-terminate {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: blue;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-terminate:hover {
+  background-color: darkblue;
+}
+
 @media (max-width: 768px) {
   .image-bubble {
     width: 70%;
     height: 70%;
   }
+
   .microphone-container {
     width: 60px;
     height: 60px;
   }
+
   .question {
     font-size: 1.5rem;
   }
+
   .timer {
     height: 200px;
   }
