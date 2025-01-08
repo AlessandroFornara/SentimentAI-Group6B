@@ -72,7 +72,7 @@ onMounted(() => {
   const backgroundImage = route.query.background;
   if (backgroundImage) {
     selectedImage.value = backgroundImage;  // Salva l'immagine nel ref
-    console.log('Selected image from query:', selectedImage.value);
+    //console.log('Selected image from query:', selectedImage.value);
   }
 });
 
@@ -223,7 +223,7 @@ const setupMicrophone = async () => {
 
     mediaRecorder.onstop = async () => {
       const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-
+      recognition.onend(); // Termina la trascrizione
       try {
         console.log('Trascrizione finale:', liveTranscript);
 

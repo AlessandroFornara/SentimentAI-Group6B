@@ -56,7 +56,7 @@ async function loadImages() {
 
 async function selectImage(index) {
   const selectedImage = images.value[index];
-  console.log(`Selected Image: ${selectedImage}`);
+  //console.log(`Selected Image: ${selectedImage}`);
   const response = await fetch('/api/worker/start_session', {
     method: 'POST',
     headers: {
