@@ -11,9 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import polimi.aui.sentimentaigroup6b.entities.User;
-import polimi.aui.sentimentaigroup6b.models.FinalResponse;
-import polimi.aui.sentimentaigroup6b.models.ImageResponse;
-import polimi.aui.sentimentaigroup6b.models.ServerResponse;
+import polimi.aui.sentimentaigroup6b.models.*;
 import polimi.aui.sentimentaigroup6b.models.llm.Message;
 import polimi.aui.sentimentaigroup6b.repositories.UserRepo;
 import polimi.aui.sentimentaigroup6b.services.ProfileService;
@@ -33,6 +31,31 @@ public class WorkerController {
     private final UserRepo userRepo;
 
     private final ImageManager imageManager;
+
+    @PreAuthorize("hasRole('WORKER')")
+    @GetMapping("/profile")
+    public ResponseEntity<?> getProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = (String) authentication.getPrincipal();
+
+        ProfileResponse user = profileService.getProfile(email);
+
+        if(user == null){
+            return ResponseEntity.unprocessableEntity().body(ServerResponse.PROFILE_ERROR.getMessage());
+        }
+
+        return ResponseEntity.ok(user);
+    }
+
+    @PreAuthorize("hasRole('WORKER')")
+    @GetMapping("/history")
+    public ResponseEntity<?> getHistory() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = (String) authentication.getPrincipal();
+        HistoryResponse user = profileService.getHistory(email);
+
+        return ResponseEntity.ok(user);
+    }
 
     @PreAuthorize("hasRole('WORKER')")
     @PostMapping("/create_session")

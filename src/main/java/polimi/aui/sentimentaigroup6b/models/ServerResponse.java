@@ -17,7 +17,11 @@ public enum ServerResponse {
 
     USER_REGISTRATION_SUCCESS("User registered successfully"),
     USER_REGISTRATION_ERROR("Error while registering user"),
-    INVALID_CREDENTIALS("Invalid credentials");
+    INVALID_CREDENTIALS("Invalid credentials"),
+
+    PROFILE_ERROR("Error while getting profile");
+
+
 
     private final String message;
 }
