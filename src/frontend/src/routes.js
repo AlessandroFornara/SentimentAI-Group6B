@@ -6,6 +6,7 @@ import LoginPage from '@/components/LoginPage.vue';
 import RegisterPage from '@/components/RegisterPage.vue';
 import HistoryPage from "@/components/HistoryPage.vue";
 import ProfilePage from "@/components/ProfilePage.vue";
+import ResultPage from "@/components/ResultPage.vue";
 
 const routes = [
     { path: '/', name: 'LoginPage', component: LoginPage }, // Pagina di Login come predefinita
@@ -14,7 +15,8 @@ const routes = [
     { path: '/audio', name: 'AudioPage', component: AudioPage },
     { path: '/register', name: 'RegisterPage', component: RegisterPage },
     { path: '/history', name: 'HistoryPage', component: HistoryPage },
-    { path: '/profile', name: 'ProfilePage', component: ProfilePage}
+    { path: '/profile', name: 'ProfilePage', component: ProfilePage },
+    { path: '/result', name: 'ResultPage', component: ResultPage },
 ];
 
 const router = createRouter({

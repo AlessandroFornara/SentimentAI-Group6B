@@ -2,6 +2,7 @@ package polimi.aui.sentimentaigroup6b.utils.gamification;
 
 import org.springframework.stereotype.Component;
 import polimi.aui.sentimentaigroup6b.entities.Session;
+import polimi.aui.sentimentaigroup6b.models.ActivityResponse;
 import polimi.aui.sentimentaigroup6b.repositories.SessionRepo;
 import polimi.aui.sentimentaigroup6b.models.Activity;
 
@@ -10,15 +11,14 @@ import static polimi.aui.sentimentaigroup6b.models.Activity.*;
 @Component
 public class PointsManager {
 
-    public int calculateXPForSession(Session session) {
+    public int calculateXPForSession(ActivityResponse activityResponse, int numberOfAudios) {
         int baseXP = 50; // Base XP for attending a session
 
         // Add duration-based XP
-        int numberOfAudios = session.getAudios().size();
         int durationXP = numberOfAudios * 10; // e.g., 10 XP per minute
 
         // Convert the activity category from String to Activity enum
-        Activity activityCategory = Activity.valueOf(session.getActivityCategory().toUpperCase().replace(" ", "_"));
+        Activity activityCategory = Activity.valueOf(activityResponse.getActivityCategory().toUpperCase().replace(" ", "_").replace("-", "_"));
 
         // Add activity-based or bonus XP
         int activityXP = switch (activityCategory) {

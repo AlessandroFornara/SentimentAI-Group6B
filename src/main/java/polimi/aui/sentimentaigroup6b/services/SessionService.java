@@ -6,11 +6,8 @@ import polimi.aui.sentimentaigroup6b.entities.Audio;
 import polimi.aui.sentimentaigroup6b.entities.BadgeType;
 import polimi.aui.sentimentaigroup6b.entities.Session;
 import polimi.aui.sentimentaigroup6b.entities.User;
-import polimi.aui.sentimentaigroup6b.models.Activity;
-import polimi.aui.sentimentaigroup6b.models.ActivityResponse;
-import polimi.aui.sentimentaigroup6b.models.ServerResponse;
+import polimi.aui.sentimentaigroup6b.models.*;
 import polimi.aui.sentimentaigroup6b.models.emotionAI.Emotion;
-import polimi.aui.sentimentaigroup6b.models.FinalResponse;
 import polimi.aui.sentimentaigroup6b.models.emotionAI.EmotionAIResponse;
 import polimi.aui.sentimentaigroup6b.utils.gamification.PointsManager;
 import polimi.aui.sentimentaigroup6b.models.llm.Message;
@@ -116,54 +113,74 @@ public class SessionService {
 
     public FinalResponse endSession(User worker){
         Session session = getUserActiveSession(worker);
+        int numberOfAudios = audioRepo.countAudiosBySession(session);
         if(session == null) return null;
 
         Long sessionId = session.getId();
-        Emotion dominantEmotion = getDominantEmotion(sessionId);
+        Emotion dominantEmotion = getDominantEmotion(session);
         ActivityResponse activity = chooseActivity(dominantEmotion);
-        int points = pointsManager.calculateXPForSession(Objects.requireNonNull(sessionRepo.findById(sessionId).orElse(null)));
+        System.out.println("Activity: " + activity.getActivityCategory() + " - " + activity.getActivityText());
+        int points = pointsManager.calculateXPForSession(activity, numberOfAudios);
+        System.out.println("Points: " + points);
         Map<BadgeType, Integer> badges = badgeService.assignBadges(sessionId);
+        System.out.println("Badges: " + badges);
         cachingComponent.deleteChat(sessionId);
-
+        System.out.println("Chat deleted");
         return new FinalResponse(dominantEmotion.getEmotion(),
                 activity,
                 badges,
                 points);
     }
 
-    public Emotion getDominantEmotion(Long sessionId) {
-        Session session;
+    public Emotion getDominantEmotion(Session session) {
         try {
-            session = sessionRepo.findById(sessionId).orElse(null);
-            if (session == null) {
-                throw new Exception("session not found for id: " + sessionId);
+            List<AudioEmotionsDTO> detectedEmotions = audioRepo.findEmotionsBySession(session);
+            System.out.println("Audios: " + detectedEmotions);
+            if (detectedEmotions == null || detectedEmotions.isEmpty()) {
+                throw new Exception("audios not found for session_id: " + session.getId());
             }
-            List<Audio> audios = audioRepo.findAllBySession(session);
-            if (audios.isEmpty()) {
-                throw new Exception("audios not found for session_id: " + sessionId);
-            }
-            return computeDominantEmotion(audios);
+            return computeDominantEmotion(detectedEmotions);
         } catch (Exception e) {
             System.err.println("Error in computing session dominant emotion: " + e.getMessage());
             return null;
         }
     }
 
-    private Emotion computeDominantEmotion(List<Audio> audios) {
-        Map<Emotion, Double> emotionsScores = new HashMap<>();
-        for(Emotion e: Emotion.values()){
-            emotionsScores.put(e, 0.0);
-        }
-        for (Audio audio : audios) {
-            for(Emotion e: Emotion.values()){
-                emotionsScores.put(e, emotionsScores.get(e) + audio.getDetectedEmotions().get(e.ordinal()));
+    private Emotion computeDominantEmotion(List<AudioEmotionsDTO> detectedEmotions) {
+        Emotion dominantEmotion = null;
+        double maxIntensity = Double.NEGATIVE_INFINITY;
+
+        for (AudioEmotionsDTO dto : detectedEmotions) {
+            if (dto.getAnger() > maxIntensity) {
+                maxIntensity = dto.getAnger();
+                dominantEmotion = Emotion.ANGER;
+            }
+            if (dto.getDisgust() > maxIntensity) {
+                maxIntensity = dto.getDisgust();
+                dominantEmotion = Emotion.DISGUST;
+            }
+            if (dto.getFear() > maxIntensity) {
+                maxIntensity = dto.getFear();
+                dominantEmotion = Emotion.FEAR;
+            }
+            if (dto.getJoy() > maxIntensity) {
+                maxIntensity = dto.getJoy();
+                dominantEmotion = Emotion.JOY;
+            }
+            if (dto.getSadness() > maxIntensity) {
+                maxIntensity = dto.getSadness();
+                dominantEmotion = Emotion.SADNESS;
+            }
+            if (dto.getSurprise() > maxIntensity) {
+                maxIntensity = dto.getSurprise();
+                dominantEmotion = Emotion.SURPRISE;
+            }
+            if (dto.getNeutrality() > maxIntensity) {
+                maxIntensity = dto.getNeutrality();
+                dominantEmotion = Emotion.NEUTRALITY;
             }
         }
-
-        return emotionsScores.entrySet().stream()
-                .max(Comparator.comparingDouble(Map.Entry::getValue))
-                .map(Map.Entry::getKey)
-                .orElse(null);
+        return dominantEmotion;
     }
 
     public ActivityResponse chooseActivity(Emotion emotion){
