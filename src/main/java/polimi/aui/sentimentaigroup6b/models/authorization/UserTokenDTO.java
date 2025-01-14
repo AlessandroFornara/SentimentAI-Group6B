@@ -8,7 +8,7 @@ import polimi.aui.sentimentaigroup6b.entities.UserRoles;
 @Getter
 public class UserTokenDTO {
 
-    private String email;
+    private String username;
     private UserRoles role;
     private String token;
 

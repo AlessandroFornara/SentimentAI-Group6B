@@ -1,44 +1,47 @@
 <template>
-  <div>
-    <!-- Contenitore delle nuvole animate -->
-    <div class="sky">
-      <div class="cloud"></div>
-      <div class="cloud"></div>
+  <div class="container" style="display: flex; flex-direction: column">
+
+    <div class="container mt-5" style="display: flex; flex-direction: row; align-items: baseline">
+      <h1>Profile</h1>
+      <h4 style="margin-left: 2%; color: darkgreen">{{role}}</h4>
     </div>
 
-    <div class="homepage">
-      <!-- Titolo e sottotitolo in alto al centro -->
-      <div class="header">
-        <h1 class="title">EMOTINO</h1>
-        <h2 class="subtitle">My profile</h2>
-      </div>
+    <div class="container" style="display: flex; flex-direction: row; margin-top: 10%">
 
-      <!-- Pulsante Logout in alto a destra -->
-      <div class="top-right">
-        <button class="logout-button" @click="logout">Logout</button>
-      </div>
-
-      <!-- Foto in alto a sinistra -->
-      <div class="top-left">
-        <img src="path-to-your-image.jpg" alt="Profile Photo" class="profile-photo" />
+      <div class="container" style="display: flex; align-items: center">
+        <div class="col" style="width: 35%; display: flex; justify-content: center">
+          <img src="@/assets/profile-circle-svgrepo-com.svg" width="300" alt="P">
+        </div>
+        <div class="col" style="margin-left: 10%">
+          <p>Email: <strong>{{email}}</strong></p>
+        </div>
+        <div class="col" style="margin-left: 10%">
+          <p>Name: <strong>{{name}}</strong></p>
+          <p>Surname: <strong>{{surname}}</strong></p>
+          <p>Company: <strong>{{company}}</strong></p>
+          <p>Level: <strong>{{level}}</strong></p>
+          <p>Points: <strong>{{points}}</strong></p>
+          <p>Badges: <strong>{{badges}}</strong></p>
+        </div>
       </div>
     </div>
 
-    <div class="profile-info">
-      <img :src="user.profilePhoto" alt="Profile Photo" class="profile-photo" />
-      <h2>{{ user.name }}</h2>
-      <p>Email: {{ user.email }}</p>
-      <p>Joined: {{ user.joinedDate }}</p>
-    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+//import { useRouter } from 'vue-router';
 
-const router = useRouter();
-const user = ref({});
+//const router = useRouter();
+const name = ref('');
+const surname = ref('');
+const email = ref('');
+const company = ref('');
+const level = ref('');
+const points = ref('');
+const role = ref('');
+const badges = ref('');
 
 // Function to fetch user profile from the server
 async function fetchUserProfile() {
@@ -53,16 +56,25 @@ async function fetchUserProfile() {
       throw new Error('Error fetching user profile.');
     }
 
-    user.value = await response.json();
+    let user = await response.json();
+    name.value = user.name;
+    surname.value = user.surname;
+    email.value = user.email;
+    company.value = user.company;
+    level.value = user.level;
+    points.value = user.points;
+    role.value = user.role;
+    badges.value = user.badges;
+
   } catch (error) {
     console.error('Error fetching user profile:', error);
   }
 }
-
+/*
 function logout() {
   localStorage.removeItem('token');
   router.push('/');
-}
+}*/
 
 onMounted(() => {
   fetchUserProfile();

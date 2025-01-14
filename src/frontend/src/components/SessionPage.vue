@@ -98,7 +98,6 @@ onMounted(() => {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  background-color: #87ceeb;
   padding: 20px;
   overflow: hidden;
 }

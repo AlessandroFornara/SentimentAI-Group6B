@@ -39,7 +39,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + userRole.name()));
 
             return org.springframework.security.core.userdetails.User.builder()
-                    .username(user.getEmail())
+                    .username(user.getEmail() + "-" + user.getName())
                     .password(user.getPassword())
                     .authorities(authorities)
                     .build();

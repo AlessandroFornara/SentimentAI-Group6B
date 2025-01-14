@@ -1,6 +1,6 @@
 <template>
-  <div id="app">
-    <router-view /> <!-- Punto di montaggio per i componenti dinamici -->
+  <div class="sky">
+    <router-view />
   </div>
 </template>
 

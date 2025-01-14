@@ -1,5 +1,5 @@
 <template>
-  <div :style="backgroundStyle" class="audio-page">
+  <div class="audio-page">
     <!-- Frase Generata -->
     <div class="question">
       <p>{{ question }}</p>
@@ -42,7 +42,7 @@
     </div>
 
     <!-- Pulsante Terminate Session -->
-    <div v-if="totalElapsedTime >= 10" class="terminate-session">
+    <div v-if="totalElapsedTime >= 0" class="terminate-session">
       <button @click="goToResultPage" class="btn-terminate">Terminate Session</button>
     </div>
   </div>
@@ -82,13 +82,6 @@ onMounted(() => {
     selectedImage.value = backgroundImage;  // Salva l'immagine nel ref
   }
 });
-
-// Stili dinamici
-const backgroundStyle = computed(() => ({
-  backgroundColor: '#87CEEB', // Azzurro chiaro
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-}));
 
 const progressBarStyle = computed(() => ({
   height: `${(timeRemaining.value / 120) * 100}%`,
@@ -324,7 +317,6 @@ const animateAudioVisualizer = () => {
   width: 100vw;
   position: relative;
   overflow: hidden;
-  background-color: #1e1e1e;
 }
 
 .audio-visualizer {

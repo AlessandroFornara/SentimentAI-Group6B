@@ -10,7 +10,7 @@
       <!-- Titolo e sottotitolo in alto al centro -->
       <div class="header">
         <h1 class="title">EMOTINO</h1>
-        <h2 class="subtitle">Welcome, "User"</h2>
+        <h2 class="subtitle">Hello {{ username }}!</h2>
       </div>
 
       <!-- Pulsante Logout in alto a destra -->
@@ -20,13 +20,12 @@
 
       <!-- Foto in alto a sinistra -->
       <div class="top-left">
-        <img src="path-to-your-image.jpg" alt="Profile Photo" class="profile-photo" />
+        <img src="@/assets/profile-circle-svgrepo-com.svg" width="100" alt="P">
       </div>
 
       <!-- Contenuto centrale con bottoni -->
       <div class="center-buttons">
         <button @click="navigateTo('profile')">My Profile</button>
-        <button @click="navigateTo('achievements')">My Achievements</button>
         <button @click="navigateTo('history')">History</button>
       </div>
 
@@ -39,9 +38,11 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'; // Importa il router
+import { useRouter } from 'vue-router';
+import {ref} from "vue"; // Importa il router
 
 const router = useRouter(); // Ottieni l'istanza del router
+const username = ref(localStorage.getItem('name')); // Nome utente
 
 // Funzione per navigare tra le pagine
 function navigateTo(page) {
@@ -67,24 +68,12 @@ function logout() {
 .homepage {
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* Distribuisci uniformemente gli elementi */
+  justify-content: space-between;
   align-items: center;
-  height: 100vh; /* Altezza fissa alla finestra del browser */
+  height: 90vh;
   padding: 0;
   font-family: Arial, sans-serif;
   position: relative;
-  overflow: hidden;
-}
-
-/* Contenitore delle nuvole animate */
-.sky {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  z-index: -1;
-  background: #87ceeb; /* Sfondo azzurro cielo */
   overflow: hidden;
 }
 
@@ -129,8 +118,8 @@ function logout() {
   font-size: 90px;
   font-weight: bold;
   margin: 0;
-  font-family: "Roboto Light";
-  color: mediumpurple;
+  font-family: Copperplate;
+  color: #1666cb; /* Blu scuro */
 }
 
 .subtitle {
@@ -138,7 +127,7 @@ function logout() {
   font-weight: normal;
   font-family: Copperplate;
   margin: 30px 0 0 0;
-  color: steelblue;
+  color: #1666cb; /* Blu pastello */
 }
 
 /* Pulsante Logout in alto a destra */
@@ -151,7 +140,7 @@ function logout() {
 .logout-button {
   padding: 10px 20px;
   font-size: 18px;
-  background-color: #ff6347; /* Rosso */
+  background-color: #ff6b6b; /* Rosso pastello */
   color: white;
   border: none;
   border-radius: 5px;
@@ -160,7 +149,7 @@ function logout() {
 }
 
 .logout-button:hover {
-  background-color: #cc4c39; /* Rosso scuro */
+  background-color: #d45a5a; /* Rosso scuro */
 }
 
 /* Foto in alto a sinistra */
@@ -175,7 +164,7 @@ function logout() {
   height: 80px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #ccc;
+  border: 2px solid #cccccc;
 }
 
 /* Bottoni centrali */
@@ -195,7 +184,7 @@ function logout() {
   font-family: Copperplate;
   cursor: pointer;
   border: none;
-  background: linear-gradient(90deg, #007bff, lightblue);
+  background: linear-gradient(90deg, #5cc0ff, #92d8f7); /* Blu sfumato */
   color: white;
   border-radius: 15px;
   transition: all 0.3s ease;
@@ -205,7 +194,7 @@ function logout() {
 
 .center-buttons button:hover {
   transform: scale(1.1);
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 15px rgba(92, 192, 255, 0.5); /* Bagliore blu */
 }
 
 /* Bottone in basso al centro */
@@ -221,7 +210,7 @@ function logout() {
   font-family: Copperplate;
   cursor: pointer;
   border: none;
-  background-color: mediumpurple;
+  background: linear-gradient(90deg, #ff8c6b, #ff6ba3); /* Arancio-rosa sfumato */
   color: white;
   border-radius: 15px;
   transition: background-color 0.3s ease;
@@ -230,6 +219,7 @@ function logout() {
 }
 
 .bottom-center button:hover {
-  background-color: indigo;
+  background: linear-gradient(90deg, #d4735b, #d45a7c); /* Sfuma verso toni più scuri */
 }
 </style>
+

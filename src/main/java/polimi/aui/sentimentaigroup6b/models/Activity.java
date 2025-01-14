@@ -7,7 +7,7 @@ import polimi.aui.sentimentaigroup6b.models.emotionAI.Emotion;
 @AllArgsConstructor
 @Getter
 public enum Activity {
-    PERSONALIZED_QUOTE("Personalized Inspirational Quote"),
+    PERSONALIZED_QUOTE("Personalized Quote"),
     SELF_CARE_SUGGESTION("Self-Care Suggestion"),
     CREATIVE_MINI_ACTIVITY("Creative Mini Activity"),
     SHORT_GUIDED_MEDITATION("Short Guided Meditation"),

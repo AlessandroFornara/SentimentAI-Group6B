@@ -5,12 +5,12 @@
     <form @submit.prevent="handleLogin" class="login-form">
       <!-- Input Username -->
       <div class="form-group">
-        <label for="username">Username</label>
+        <label for="email">Email</label>
         <input
-            id="username"
-            v-model="username"
+            id="email"
+            v-model="email"
             type="text"
-            placeholder="Enter your username"
+            placeholder="Enter your email"
             required
         />
       </div>
@@ -46,7 +46,7 @@ import { useRouter } from 'vue-router'; // Importa il router
 const router = useRouter(); // Ottieni l'istanza del router
 
 // Variabili reattive
-const username = ref('');
+const email = ref('');
 const password = ref('');
 let errorMessage = ref('');
 const requestOptions = {
@@ -59,7 +59,7 @@ const requestOptions = {
 // Funzione per gestire il login
 function handleLogin() {
   requestOptions.body = JSON.stringify({
-    email: username.value,
+    email: email.value,
     password: password.value,
 
   });
@@ -69,7 +69,7 @@ function handleLogin() {
         if (response.status === 200) {
           return response.json().then(data => {
             localStorage.setItem("token", data.token);
-            localStorage.setItem("email", data.email);
+            localStorage.setItem("name", data.username);
             localStorage.setItem("role", data.role)
             errorMessage.value = '';
             router.push('/home');

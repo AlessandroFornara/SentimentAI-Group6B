@@ -1,10 +1,7 @@
 <template>
   <div>
     <!-- Contenitore delle nuvole animate -->
-    <div class="sky">
-      <div class="cloud"></div>
-      <div class="cloud"></div>
-    </div>
+    <div class="sky"></div>
 
     <div class="homepage">
       <!-- Titolo e sottotitolo in alto al centro -->

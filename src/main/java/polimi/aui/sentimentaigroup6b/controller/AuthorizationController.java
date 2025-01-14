@@ -2,6 +2,7 @@ package polimi.aui.sentimentaigroup6b.controller;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -23,6 +24,7 @@ import java.util.Collection;
 @RestController
 @RequestMapping("/api/auth")
 @AllArgsConstructor
+@Slf4j
 public class AuthorizationController {
 
     private final AuthenticationManager authenticationManager;
@@ -35,7 +37,9 @@ public class AuthorizationController {
         try {
             Authentication authentication =
                     authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword()));
-            String email = authentication.getName();
+            String emailAndUsername = authentication.getName();
+            String email = emailAndUsername.split("-")[0];
+            String name = emailAndUsername.split("-")[1];
             Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
             String grantedAuthority = null;
             for (GrantedAuthority authority : authorities) {
@@ -44,9 +48,9 @@ public class AuthorizationController {
 
             User user = new User(email,"", grantedAuthority.equals("ROLE_WORKER") ? UserRoles.WORKER : UserRoles.HR);
             String token = jwtUtil.createToken(user);
-            UserTokenDTO userTokenDTO = new UserTokenDTO(email, grantedAuthority.equals("ROLE_WORKER") ? UserRoles.WORKER : UserRoles.HR, token);
+            UserTokenDTO userTokenDTO = new UserTokenDTO(name, grantedAuthority.equals("ROLE_WORKER") ? UserRoles.WORKER : UserRoles.HR, token);
 
-            System.out.println("User: " + email + " has logged in");
+            log.info("User: {} has logged in", email);
             return ResponseEntity.ok(userTokenDTO);
 
         }catch (BadCredentialsException e){

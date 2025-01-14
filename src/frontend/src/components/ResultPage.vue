@@ -41,7 +41,7 @@ const fetchSessionResults = async () => {
 
     const data = await response.json();
     dominantEmotion.value = data.dominantEmotion;
-    activity.value = data.activityResponse.description;
+    activity.value = data.activityResponse.activityText;
     points.value = data.points;
   } catch (error) {
     console.error('Error fetching session results:', error);

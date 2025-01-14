@@ -124,6 +124,12 @@ public class SessionService {
         System.out.println("Points: " + points);
         Map<BadgeType, Integer> badges = badgeService.assignBadges(sessionId);
         System.out.println("Badges: " + badges);
+
+        session.setDominantEmotion(dominantEmotion.getEmotion());
+        session.setActivityCategory(activity.getActivityCategory());
+        session.setActivityText(activity.getActivityText());
+
+        sessionRepo.save(session);
         cachingComponent.deleteChat(sessionId);
         System.out.println("Chat deleted");
         return new FinalResponse(dominantEmotion.getEmotion(),

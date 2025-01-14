@@ -23,9 +23,7 @@ public class ProfileService {
 
     public ProfileResponse getProfile(String email) {
         User user = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
-        ProfileResponse profileResponse = new ProfileResponse(user.getName(), user.getSurname(), user.getEmail(), user.getCompany(), user.getLevel(), user.getPoints(), user.getRole(), user.getBadges());
-
-        return profileResponse;
+        return new ProfileResponse(user.getName(), user.getSurname(), user.getEmail(), user.getCompany(), user.getLevel(), user.getPoints(), user.getRole(), user.getBadges());
     }
 
     public HistoryResponse getHistory(String email) {
