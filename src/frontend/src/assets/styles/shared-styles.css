@@ -8,3 +8,18 @@
     background: linear-gradient(180deg, #a8e6ff, #f7f9fc); /* Sfondo sfumato cielo */
     overflow: hidden;
 }
+
+.logout-button {
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: #ff6b6b; /* Rosso pastello */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+    background-color: #d45a5a;
+}

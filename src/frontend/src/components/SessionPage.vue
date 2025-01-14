@@ -5,6 +5,7 @@
     </div>
 
     <h1 class="title">Welcome to the session</h1>
+    <h3 style="font-family: Century">Select an image to start!</h3>
     <div class="image-container">
       <button
           v-for="(image, index) in images"
@@ -114,28 +115,44 @@ onMounted(() => {
 }
 
 .bubble {
-  width: 100px;
-  height: 100px;
+  width: 300px;
+  height: 300px;
   border-radius: 50%;
   overflow: hidden;
-  border: 2px solid #ccc;
+  border: 3px solid #ccc;
   background-color: white;
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
   cursor: pointer;
+  animation: float 4s ease-in-out infinite;
 }
 
 .bubble img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 50%;
 }
 
 .bubble:hover {
   transform: scale(1.1);
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+  border-color: #1666cb;
+}
+
+/* Animazione fluttuante */
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
 }
 
 .bottom-center {
@@ -150,7 +167,7 @@ onMounted(() => {
   padding: 15px 30px;
   font-size: 18px;
   font-family: Copperplate;
-  background-color: mediumpurple;
+  background-color: #1666cb;
   color: white;
   border: none;
   border-radius: 10px;
@@ -166,8 +183,8 @@ onMounted(() => {
   font-size: 60px;
   font-weight: bold;
   margin: 0;
-  font-family: Copperplate;
-  color: mediumpurple;
+  font-family: Century;
+  color: #1666cb;
 }
 
 .upper-left {
@@ -181,8 +198,8 @@ onMounted(() => {
 .upper-left button {
   padding: 15px 30px;
   font-size: 18px;
-  font-family: Copperplate;
-  background-color: mediumpurple;
+  font-family: Century;
+  background-color: #1666cb;
   color: white;
   border: none;
   border-radius: 10px;

@@ -23,8 +23,14 @@
 
       <!-- Contenuto centrale con bottoni -->
       <div class="center-buttons">
-        <button @click="navigateTo('profile')">My Profile</button>
-        <button @click="navigateTo('history')">History</button>
+        <button @click="navigateTo('profile')">
+          <span>Profile</span>
+          <img src="@/assets/profile-button-image.png" alt="Profile"/>
+        </button>
+        <button @click="navigateTo('history')">
+          <span>History</span>
+          <img src="@/assets/history-button-image.png" alt="History"/>
+        </button>
       </div>
 
       <!-- Bottone in basso al centro -->
@@ -69,7 +75,6 @@ function logout() {
   justify-content: space-between;
   align-items: center;
   height: 90vh;
-  padding: 0;
   font-family: Arial, sans-serif;
   position: relative;
   overflow: hidden;
@@ -115,8 +120,8 @@ function logout() {
 .title {
   font-size: 90px;
   font-weight: bold;
-  margin: 0;
   font-family: Century;
+  margin: 0;
   color: #1666cb; /* Blu scuro */
 }
 
@@ -135,21 +140,6 @@ function logout() {
   right: 20px;
 }
 
-.logout-button {
-  padding: 10px 20px;
-  font-size: 18px;
-  background-color: #ff6b6b; /* Rosso pastello */
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.logout-button:hover {
-  background-color: #d45a5a; /* Rosso scuro */
-}
-
 /* Foto in alto a sinistra */
 .top-left {
   position: absolute;
@@ -157,19 +147,11 @@ function logout() {
   left: 20px;
 }
 
-.profile-photo {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #cccccc;
-}
-
 /* Bottoni centrali */
 .center-buttons {
   display: flex;
   flex-direction: row;
-  gap: 60px;
+  gap: 80px;
   justify-content: center;
   align-items: center;
   width: 100%;
@@ -177,30 +159,45 @@ function logout() {
 }
 
 .center-buttons button {
-  padding: 20px 40px;
-  font-size: 24px;
-  font-family: 'Poppins', sans-serif; /* Font moderno e leggibile */
-  cursor: pointer;
+  position: relative;
+  width: 200px;
+  height: 200px;
   border: none;
-  background: linear-gradient(90deg, #4facfe, #00f2fe); /* Blu sfumato più vibrante */
+  border-radius: 50%;
+  background-color: rgba(22, 102, 203, 0.36);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+}
+
+.center-buttons button span {
+  position: absolute;
+  bottom: 10px;
+  font-size: 1.5rem;
+  font-weight: bold;
   color: white;
-  border-radius: 20px; /* Curve leggermente più morbide */
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-  min-width: 200px;
-  min-height: 60px;
-  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1); /* Aggiunta di una lieve ombra */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  z-index: 2;
+}
+
+.center-buttons button img {
+  width: 80%;
+  height: 80%;
+  object-fit: fill;
 }
 
 .center-buttons button:hover {
-  transform: scale(1.1);
-  box-shadow: 0px 10px 20px rgba(79, 172, 254, 0.6), 0 5px 15px rgba(0, 0, 0, 0.1); /* Effetto bagliore più intenso */
-  background: linear-gradient(90deg, #00f2fe, #4facfe); /* Inversione del gradiente per un effetto dinamico */
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 .center-buttons button:active {
-  transform: scale(1.05);
-  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2); /* Ombra ridotta al clic per effetto "premuto" */
-  background: linear-gradient(90deg, #3ba7db, #0088cc); /* Colore più scuro al clic */
+  transform: scale(0.95);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* Bottone in basso al centro */
