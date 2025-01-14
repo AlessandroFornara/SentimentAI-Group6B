@@ -1,10 +1,8 @@
 <template>
   <div>
     <!-- Contenitore delle nuvole animate -->
-    <div class="sky">
-      <div class="cloud"></div>
-      <div class="cloud"></div>
-    </div>
+    <div class="cloud"></div>
+    <div class="cloud"></div>
 
     <div class="homepage">
       <!-- Titolo e sottotitolo in alto al centro -->
@@ -118,14 +116,14 @@ function logout() {
   font-size: 90px;
   font-weight: bold;
   margin: 0;
-  font-family: Copperplate;
+  font-family: Century;
   color: #1666cb; /* Blu scuro */
 }
 
 .subtitle {
   font-size: 25px;
   font-weight: normal;
-  font-family: Copperplate;
+  font-family: Century;
   margin: 30px 0 0 0;
   color: #1666cb; /* Blu pastello */
 }
@@ -181,20 +179,28 @@ function logout() {
 .center-buttons button {
   padding: 20px 40px;
   font-size: 24px;
-  font-family: Copperplate;
+  font-family: 'Poppins', sans-serif; /* Font moderno e leggibile */
   cursor: pointer;
   border: none;
-  background: linear-gradient(90deg, #5cc0ff, #92d8f7); /* Blu sfumato */
+  background: linear-gradient(90deg, #4facfe, #00f2fe); /* Blu sfumato più vibrante */
   color: white;
-  border-radius: 15px;
-  transition: all 0.3s ease;
+  border-radius: 20px; /* Curve leggermente più morbide */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   min-width: 200px;
   min-height: 60px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1); /* Aggiunta di una lieve ombra */
 }
 
 .center-buttons button:hover {
   transform: scale(1.1);
-  box-shadow: 0 0 15px rgba(92, 192, 255, 0.5); /* Bagliore blu */
+  box-shadow: 0px 10px 20px rgba(79, 172, 254, 0.6), 0 5px 15px rgba(0, 0, 0, 0.1); /* Effetto bagliore più intenso */
+  background: linear-gradient(90deg, #00f2fe, #4facfe); /* Inversione del gradiente per un effetto dinamico */
+}
+
+.center-buttons button:active {
+  transform: scale(1.05);
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2); /* Ombra ridotta al clic per effetto "premuto" */
+  background: linear-gradient(90deg, #3ba7db, #0088cc); /* Colore più scuro al clic */
 }
 
 /* Bottone in basso al centro */
@@ -207,19 +213,28 @@ function logout() {
 .bottom-center button {
   padding: 40px 80px;
   font-size: 40px;
-  font-family: Copperplate;
+  font-family: 'Poppins', sans-serif; /* Font moderno e leggibile */
   cursor: pointer;
   border: none;
-  background: linear-gradient(90deg, #ff8c6b, #ff6ba3); /* Arancio-rosa sfumato */
+  background: linear-gradient(90deg, #ff7e5f, #ff6ba3); /* Tonalità calde e sfumate */
   color: white;
-  border-radius: 15px;
-  transition: background-color 0.3s ease;
+  border-radius: 20px; /* Curve più morbide */
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   min-width: 200px;
   min-height: 60px;
+  box-shadow: 0px 8px 20px rgba(255, 110, 135, 0.2); /* Effetto tridimensionale */
 }
 
 .bottom-center button:hover {
-  background: linear-gradient(90deg, #d4735b, #d45a7c); /* Sfuma verso toni più scuri */
+  transform: scale(1.05); /* Lieve ingrandimento al passaggio del mouse */
+  box-shadow: 0px 12px 25px rgba(255, 110, 135, 0.3); /* Ombra più intensa */
+  background: linear-gradient(90deg, #ff6ba3, #ff7e5f); /* Inversione del gradiente per dinamicità */
+}
+
+.bottom-center button:active {
+  transform: scale(0.98); /* Effetto pressione */
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2); /* Ombra più leggera */
+  background: linear-gradient(90deg, #d45a7c, #d4735b); /* Tonalità più scure per feedback visivo */
 }
 </style>
 

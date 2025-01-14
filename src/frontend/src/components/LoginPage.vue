@@ -1,41 +1,95 @@
 <template>
   <div class="login-page">
-    <h1 class="title">Login</h1>
+    <h1 class="title">IMAGE HERE</h1>
 
-    <form @submit.prevent="handleLogin" class="login-form">
+    <form class="login-form" @submit.prevent="handleSubmit">
       <!-- Input Username -->
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input
-            id="email"
-            v-model="email"
-            type="text"
-            placeholder="Enter your email"
-            required
-        />
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input id="email" class="form-control" v-model="email" type="text" required/>
       </div>
 
       <!-- Input Password -->
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input
-            id="password"
-            v-model="password"
-            type="password"
-            placeholder="Enter your password"
-            required
-        />
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input id="password" class="form-control" v-model="password" type="password" required/>
       </div>
 
-      <!-- Pulsante di Login -->
-      <button type="submit" class="login-button">Login</button>
+      <div class="row text-center">
+        <a
+            @click.prevent="register()"
+            href="#"
+        >{{ registration ? "Already registered? Log in" : "New here? Sign up!" }}</a>
+      </div>
+
+      <div class="mb-3" v-if="registration">
+        <label for="name" class="form-label">Name</label>
+        <input id="name" class="form-control" v-model="name" type="text" required/>
+      </div>
+
+      <div class="mb-3" v-if="registration">
+        <label for="surname">Surname</label>
+        <input id="surname" v-model="surname" type="text" required/>
+      </div>
+
+      <div class="mb-3" v-if="registration">
+        <label for="company" class="form-label">Company</label>
+        <input id="company" class="form-control" v-model="company" type="text" required/>
+      </div>
+
+      <div class="row" v-if="registration">
+
+        <div class="col">
+          <p>WORKER</p>
+        </div>
+
+        <div class="col d-flex justify-content-center">
+          <div class="form-check form-switch">
+            <input
+                class="form-check-input"
+                type="checkbox"
+                role="switch"
+                id="flexSwitchCheckDefault"
+                v-model="role"
+            >
+          </div>
+        </div>
+
+        <div class="col d-flex justify-content-center">
+          <p>HR</p>
+        </div>
+
+      </div>
+
+      <button
+          v-if="!registration"
+          type="submit"
+          class="btn btn-primary"
+      >Log in</button>
+
+      <button
+          v-if="registration"
+          type="submit"
+          class="btn btn-primary"
+      >Sign up</button>
+
+      <p
+          v-if="errorMessage!==''"
+          class="text-danger text-center"
+          role="alert"
+      >
+        {{ errorMessage }}
+      </p>
+
+      <p
+          v-if="successMessage!==''"
+          class="text-success text-center"
+          role="alert"
+      >
+        {{ successMessage }}
+      </p>
+
     </form>
-
-    <!-- Pulsante di Registrazione -->
-    <button class="register-button" @click="navigateToRegister">Register</button>
-
-    <!-- Messaggio di errore -->
-    <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
   </div>
 </template>
 
@@ -43,11 +97,16 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router'; // Importa il router
 
-const router = useRouter(); // Ottieni l'istanza del router
+const router = useRouter();
 
-// Variabili reattive
 const email = ref('');
 const password = ref('');
+const name = ref('');
+const surname = ref('');
+const company = ref('');
+const role = ref('');
+const registration = ref(false);
+let successMessage = ref('');
 let errorMessage = ref('');
 const requestOptions = {
   method: "POST",
@@ -55,8 +114,18 @@ const requestOptions = {
   body: null
 };
 
+function register() {
+  this.registration = (!this.registration)
+}
 
-// Funzione per gestire il login
+function handleSubmit() {
+  if (registration.value) {
+    handleRegister();
+  } else {
+    handleLogin();
+  }
+}
+
 function handleLogin() {
   requestOptions.body = JSON.stringify({
     email: email.value,
@@ -86,27 +155,57 @@ function handleLogin() {
       });
 }
 
-// Navigazione alla pagina di registrazione
-function navigateToRegister() {
-  router.push('/register'); // Naviga alla pagina di registrazione
+function handleRegister() {
+  let assignedRole = role.value === ("WORKER") ? "WORKER" : "HR";
+  console.log(assignedRole);
+  requestOptions.body = JSON.stringify({
+    email: email.value,
+    password: password.value,
+    name: name.value,
+    surname: surname.value,
+    company: company.value,
+    role: assignedRole
+  });
+
+  fetch("/api/auth/register", requestOptions)
+      .then(response => {
+        if (response.status === 200) {
+          return response.text().then(data => {
+            successMessage.value = data;
+            errorMessage.value = '';
+            router.push('/');
+          });
+        } else {
+          return response.text().then(error => {
+            successMessage.value = '';
+            errorMessage.value = error;
+          });
+        }
+      })
+      .catch(error => {
+        errorMessage.value = 'There was an error in sending the request';
+        console.error('There was an error in sending the request:', error);
+      });
 }
 </script>
 
 <style scoped>
 .login-page {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #87ceeb; /* Sfondo azzurro */
   font-family: Arial, sans-serif;
+  gap: 20%
 }
 
 .title {
   font-size: 40px;
-  margin-bottom: 20px;
-  color: mediumpurple;
+  font-weight: bold;
+  margin: 0;
+  font-family: Century;
+  color: #1666cb; /* Blu scuro */
 }
 
 .login-form {
@@ -117,10 +216,6 @@ function navigateToRegister() {
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   width: 300px;
-}
-
-.form-group {
-  margin-bottom: 20px;
 }
 
 label {
@@ -137,40 +232,14 @@ input {
   font-size: 16px;
 }
 
-.login-button {
-  padding: 10px;
-  background-color: mediumpurple;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 18px;
-  transition: background-color 0.3s ease;
+.text-danger {
+  margin-top: 10%;
 }
 
-.login-button:hover {
-  background-color: indigo;
+.text-success {
+  margin-top: 10%;
 }
-
-.register-button {
-  margin-top: 15px;
-  padding: 10px 20px;
-  background-color: lightblue;
-  color: black;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
-}
-
-.register-button:hover {
-  background-color: #007bff;
-  color: white;
-}
-
-.error-message {
-  color: red;
-  margin-top: 15px;
+.btn {
+  margin-top: 10%;
 }
 </style>
