@@ -104,7 +104,7 @@ const password = ref('');
 const name = ref('');
 const surname = ref('');
 const company = ref('');
-const role = ref('');
+const role = ref(false);
 const registration = ref(false);
 let successMessage = ref('');
 let errorMessage = ref('');
@@ -156,7 +156,7 @@ function handleLogin() {
 }
 
 function handleRegister() {
-  let assignedRole = role.value === ("WORKER") ? "WORKER" : "HR";
+  let assignedRole = role.value ? "HR" : "WORKER";
   console.log(assignedRole);
   requestOptions.body = JSON.stringify({
     email: email.value,
