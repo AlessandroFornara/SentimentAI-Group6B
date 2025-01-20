@@ -10,18 +10,6 @@
       <img :src="selectedImage" alt="Selected Background" class="center-image" />
     </div>
 
-    <!-- Barra Audio dinamica -->
-    <div v-if="isRecording" class="audio-visualizer">
-      <canvas ref="audioCanvas"></canvas>
-    </div>
-
-    <!-- Icona Microfono -->
-    <div class="bottom-container">
-      <div class="microphone-container">
-        <img :src="microphoneImage" alt="Microphone" />
-      </div>
-    </div>
-
     <!-- Timer -->
     <div class="timer">
       <div class="timer-progress">
@@ -30,12 +18,24 @@
       <p class="time-remaining">{{ formattedTime }}</p>
     </div>
 
-    <!-- Bottoni -->
-    <div class="controls">
-      <button v-if="!isRecording && questionReady" @click="startRecording" class="btn-center">
-        Start Recording
+    <!-- Contenitore degli elementi di registrazione -->
+    <div class="recording-box">
+      <!-- Pulsante Start Audio -->
+      <button v-if="!isRecording && questionReady" @click="startRecording" class="btn-start">
+        Start Audio
       </button>
 
+      <!-- Icona del Microfono -->
+      <div class="microphone-container">
+        <img :src="microphoneImage" alt="Microphone" />
+      </div>
+
+      <!-- Barra Audio -->
+      <div v-if="isRecording" class="audio-visualizer">
+        <canvas ref="audioCanvas"></canvas>
+      </div>
+
+      <!-- Pulsante Finish Audio -->
       <button v-if="showFinishButton" @click="finishRecording" class="btn-finish">
         Finish Audio
       </button>
@@ -48,14 +48,16 @@
   </div>
 </template>
 
+
 <script setup>
-import microphoneImage from '@/assets/microphone.jpeg';
+import microphoneImage from '@/assets/microphone.png';
 import { ref, computed, onMounted } from 'vue';
 import {useRoute, useRouter} from "vue-router";
 
 // Stato iniziale
 const selectedImage = ref(null); // Per memorizzare l'immagine selezionata
-const question = ref('How do you feel about this argument?'); // Prima domanda fissa
+const question = ref('Great choice!' + ' ' +
+    'How do you feel about this topic?'); // Prima domanda fissa
 const timeRemaining = ref(120);
 const isRecording = ref(false);
 const showFinishButton = ref(false);
@@ -292,7 +294,7 @@ const animateAudioVisualizer = () => {
 
     for (let i = 0; i < bufferLength; i++) {
       barHeight = dataArray[i] / 2;
-      ctx.fillStyle = 'rgb(255, 255, 255)'; // Bianco
+      ctx.fillStyle = 'rgb(0, 0, 255)'; // Bianco
       ctx.fillRect(x, canvas.height - barHeight / 2, barWidth, barHeight);
 
       x += barWidth + 1;
@@ -319,75 +321,104 @@ const animateAudioVisualizer = () => {
   overflow: hidden;
 }
 
-.audio-visualizer {
-  width: 300px;
-  height: 50px;
-  position: relative;
-  margin-top: 10px;
+/* Bubble dell'immagine */
+.image-bubble {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 66.67%; /* 2/3 della larghezza */
+  aspect-ratio: 1; /* Mantiene la proporzione */
+  border-radius: 40px;
+  overflow: hidden;
+  background-color: white;
+  border: 6px solid #1666cb;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
-.audio-visualizer canvas {
+.center-image {
   width: 100%;
   height: 100%;
-  background-color: transparent;
+  object-fit: cover; /* Mantiene proporzioni senza modifiche */
 }
 
 .question {
   margin-top: 20px;
   font-size: 2rem;
   text-align: center;
+  color: #1666cb;
+  font-weight: bold;
+}
+
+/* Box unico per la registrazione */
+.recording-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px; /* Spazio tra gli elementi */
+  background-color: #e3f2fd; /* Sfondo leggermente blu */
+  padding: 20px;
+  border-radius: 15px;
+  width: auto;
+}
+
+/* Pulsante Start Audio */
+.btn-start {
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  background-color: #00bfff;
   color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
 }
 
-.image-bubble {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 50%;
-  height: 50%;
-  border-radius: 50%;
-  overflow: hidden;
-  background-color: rgba(255, 255, 255, 0.1);
-  margin: auto;
+.btn-start:hover {
+  background-color: #0080ff;
 }
 
-.center-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.bottom-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  position: absolute;
-  bottom: 60px;
-  left: 40px;
-}
-
+/* Icona del microfono */
 .microphone-container {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
+  width: 50px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.3s ease;
-  margin-right: 20px;
-}
-
-.microphone-container.recording {
-  transform: scale(1.2);
-  box-shadow: 0 0 15px red;
 }
 
 .microphone-container img {
   width: 100%;
   height: 100%;
+  object-fit: cover;
 }
 
+/* Barra audio */
+.audio-visualizer {
+  width: 300px;
+  height: 50px;
+  background-color: transparent;
+}
+
+.audio-visualizer canvas {
+  width: 100%;
+  height: 100%;
+}
+
+/* Pulsante Finish Audio */
+.btn-finish {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-finish:hover {
+  background-color: gray;
+}
+
+/* Timer */
 .timer {
   display: flex;
   flex-direction: column;
@@ -415,46 +446,11 @@ const animateAudioVisualizer = () => {
   text-align: center;
 }
 
-.controls {
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-}
-
-.btn-center {
-  padding: 15px 30px;
-  font-size: 1.2rem;
-  background-color: green;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.btn-center:hover {
-  background-color: darkgreen;
-}
-
-.btn-finish {
-  padding: 15px 30px;
-  font-size: 1.2rem;
-  background-color: red;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.btn-finish:hover {
-  background-color: darkred;
-}
-
+/* Pulsante Terminate Session */
 .terminate-session {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  z-index: 1000;
 }
 
 .btn-terminate {
@@ -470,6 +466,7 @@ const animateAudioVisualizer = () => {
 .btn-terminate:hover {
   background-color: darkblue;
 }
+
 
 @media (max-width: 768px) {
   .image-bubble {
