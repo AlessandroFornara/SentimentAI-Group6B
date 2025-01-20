@@ -1,7 +1,9 @@
 <template>
   <div class="login-page">
-    <h1 class="title">IMAGE HERE</h1>
-
+    <div style="display: flex; justify-content: center; align-items: center; flex-direction: column">
+      <h1 class="title">EMOTINO</h1>
+      <img src="@/assets/mic_emotino_noBack.png" width="350" alt="EMOTINO">
+    </div>
     <form class="login-form" @submit.prevent="handleSubmit">
       <!-- Input Username -->
       <div class="mb-3">
@@ -188,8 +190,15 @@ function handleRegister() {
       });
 }
 </script>
-
+\
 <style scoped>
+.title {
+  font-size: 70px;
+  font-family: Century;
+  margin: 0;
+  color: #1666cb; /* Blu scuro */
+}
+
 .login-page {
   display: flex;
   flex-direction: row;
@@ -198,14 +207,6 @@ function handleRegister() {
   height: 100vh;
   font-family: Arial, sans-serif;
   gap: 20%
-}
-
-.title {
-  font-size: 40px;
-  font-weight: bold;
-  margin: 0;
-  font-family: Century;
-  color: #1666cb; /* Blu scuro */
 }
 
 .login-form {

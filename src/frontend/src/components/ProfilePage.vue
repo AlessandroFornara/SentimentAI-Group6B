@@ -6,7 +6,7 @@
       <h4 style="margin-left: 2%; color: darkgreen">{{role}}</h4>
     </div>
 
-    <div class="container" style="display: flex; flex-direction: row; margin-top: 10%">
+    <div class="container" style="display: flex; flex-direction: column; margin-top: 10%; gap: 100px">
 
       <div class="container" style="display: flex; align-items: center">
         <div class="col" style="width: 35%; display: flex; justify-content: center">
@@ -14,26 +14,30 @@
         </div>
         <div class="col" style="margin-left: 10%">
           <p>Email: <strong>{{email}}</strong></p>
-        </div>
-        <div class="col" style="margin-left: 10%">
           <p>Name: <strong>{{name}}</strong></p>
           <p>Surname: <strong>{{surname}}</strong></p>
           <p>Company: <strong>{{company}}</strong></p>
           <p>Level: <strong>{{level}}</strong></p>
           <p>Points: <strong>{{points}}</strong></p>
-          <p>Badges: <strong>{{badges}}</strong></p>
+        </div>
+      </div>
+
+      <div class="badges-container">
+        <h2 style="text-align: center; margin-bottom: 20px;">Your Badges</h2>
+        <div class="badges-grid">
+          <div v-for="(value, key) in badgesData" :key="key" class="badge">
+            <img :src="getBadgeImage(key)" :alt="key" class="badge-image" />
+            <p>{{ key.replace(/([A-Z])/g, ' $1').trim() }}</p>
+          </div>
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
-//import { useRouter } from 'vue-router';
 
-//const router = useRouter();
 const name = ref('');
 const surname = ref('');
 const email = ref('');
@@ -42,6 +46,13 @@ const level = ref('');
 const points = ref('');
 const role = ref('');
 const badges = ref('');
+
+const badgesData = {
+  activityBasedBadge: 0,
+  levelBasedBadge: 0,
+  timeBasedBadge: 0,
+  topicBasedBadge: 0
+};
 
 // Function to fetch user profile from the server
 async function fetchUserProfile() {
@@ -70,11 +81,17 @@ async function fetchUserProfile() {
     console.error('Error fetching user profile:', error);
   }
 }
-/*
-function logout() {
-  localStorage.removeItem('token');
-  router.push('/');
-}*/
+
+// Funzione per ottenere l'immagine corrispondente a ciascun badge
+const getBadgeImage = (badgeKey) => {
+  const badgeImages = {
+    activityBasedBadge: '@/assets/activity-badge.png',
+    levelBasedBadge: '@/assets/level-badge.png',
+    timeBasedBadge: '@/assets/time-badge.png',
+    topicBasedBadge: '@/assets/topic-badge.png'
+  };
+  return badgeImages[badgeKey] || '@/assets/default-badge.png';
+};
 
 onMounted(() => {
   fetchUserProfile();
