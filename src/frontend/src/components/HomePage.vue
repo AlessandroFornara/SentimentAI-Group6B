@@ -208,30 +208,31 @@ function logout() {
 }
 
 .bottom-center button {
-  padding: 40px 80px;
-  font-size: 40px;
-  font-family: 'Poppins', sans-serif; /* Font moderno e leggibile */
+  padding: 30px 70px;
+  font-size: 36px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
   cursor: pointer;
   border: none;
-  background: linear-gradient(90deg, #ff7e5f, #ff6ba3); /* Tonalità calde e sfumate */
+  background: linear-gradient(90deg, #ff6b6b, #ff9a5f);
   color: white;
-  border-radius: 20px; /* Curve più morbide */
+  border-radius: 20px;
   transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-  min-width: 200px;
-  min-height: 60px;
-  box-shadow: 0px 8px 20px rgba(255, 110, 135, 0.2); /* Effetto tridimensionale */
+  min-width: 240px;
+  min-height: 70px;
+  box-shadow: 0px 8px 20px rgba(255, 107, 107, 0.3);
 }
 
 .bottom-center button:hover {
-  transform: scale(1.05); /* Lieve ingrandimento al passaggio del mouse */
-  box-shadow: 0px 12px 25px rgba(255, 110, 135, 0.3); /* Ombra più intensa */
-  background: linear-gradient(90deg, #ff6ba3, #ff7e5f); /* Inversione del gradiente per dinamicità */
+  transform: scale(1.05);
+  box-shadow: 0px 12px 30px rgba(255, 107, 107, 0.4);
+  background: linear-gradient(90deg, #ff9a5f, #ff6b6b);
 }
 
 .bottom-center button:active {
-  transform: scale(0.98); /* Effetto pressione */
-  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2); /* Ombra più leggera */
-  background: linear-gradient(90deg, #d45a7c, #d4735b); /* Tonalità più scure per feedback visivo */
+  transform: scale(0.98);
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(90deg, #d45a5a, #e6855e);
 }
 </style>
 
