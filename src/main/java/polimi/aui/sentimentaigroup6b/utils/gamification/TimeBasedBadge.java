@@ -11,16 +11,11 @@ public class TimeBasedBadge extends Badge {
 
     public TimeBasedBadge() {
         super("Persistence Badge", "You completed a new streak!");
-        this.thresholds = new int[]{1, 5, 10, 20};
+        this.thresholds = new int[]{2, 5, 10, 20};
     }
 
-    public int getLevel(int streak) {
-        for (int i = 0; i < thresholds.length; i++) {
-            if (streak <= thresholds[i]) {
-                return i;
-            }
-        }
-        return thresholds.length;
+    @Override
+    protected int[] getThresholds() {
+        return thresholds;
     }
-
 }

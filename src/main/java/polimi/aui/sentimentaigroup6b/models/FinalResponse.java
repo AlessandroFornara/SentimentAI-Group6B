@@ -13,10 +13,8 @@ import java.util.Map;
 public class FinalResponse {
 
     private String dominantEmotion;
-
     private ActivityResponse activityResponse;
-
     private Map<BadgeType, Integer> badges;
-
     private int points;
+    private int level;
 }

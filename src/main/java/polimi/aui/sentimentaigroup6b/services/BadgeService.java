@@ -27,18 +27,14 @@ public class BadgeService {
     private final TopicBasedBadge topicBasedBadge;
 
 
-    public Map<BadgeType, Integer> assignBadges(Long userId) {
-        User user = userRepo.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    public Map<BadgeType, Integer> assignBadges(User user) {
 
         Map<BadgeType, Integer> newBadges = new HashMap<>();
 
         assignLevelBadge(user, newBadges);
         assignActivityBadge(user, newBadges);
         assignTimeBadge(user, newBadges);
-        assignTopicBadge(user, newBadges);
-
-        userRepo.save(user);
+        //assignTopicBadge(user, newBadges);
 
         return newBadges;
     }
@@ -46,7 +42,6 @@ public class BadgeService {
     public void assignLevelBadge(User user, Map<BadgeType, Integer> badges) {
 
         int actualBadgeLevel = levelBasedBadge.getLevel(user.getLevel());
-
         int oldBadgeLevel = user.getBadges().getLevelBasedBadge();
 
         if (actualBadgeLevel > oldBadgeLevel) {

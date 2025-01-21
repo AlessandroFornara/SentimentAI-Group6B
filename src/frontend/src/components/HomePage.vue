@@ -18,7 +18,7 @@
 
       <!-- Foto in alto a sinistra -->
       <div class="top-left">
-        <img src="@/assets/profile-circle-svgrepo-com.svg" width="100" alt="P">
+        <img src="@/assets/mic_emotino_noBack.png" width="150" alt="P">
       </div>
 
       <!-- Contenuto centrale con bottoni -->
@@ -118,17 +118,17 @@ function logout() {
 }
 
 .title {
-  font-size: 90px;
+  font-size: 100px;
   font-weight: bold;
-  font-family: Century;
+  font-family: "Ink Free", sans-serif;
   margin: 0;
   color: #1666cb; /* Blu scuro */
 }
 
 .subtitle {
-  font-size: 25px;
+  font-size: 45px;
   font-weight: normal;
-  font-family: Century;
+  font-family: "Ink Free", sans-serif;
   margin: 30px 0 0 0;
   color: #1666cb; /* Blu pastello */
 }

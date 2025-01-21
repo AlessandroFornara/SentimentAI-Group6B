@@ -33,5 +33,16 @@ public class PointsManager {
         return baseXP + durationXP + activityXP;
     }
 
+    public int calculateUserLevel(int totalXP) {
+        int level = 0;
+        int xpForNextLevel = 80;
 
+        while (totalXP >= xpForNextLevel) {
+            level++;
+            totalXP -= xpForNextLevel;
+            xpForNextLevel += 40; // Increase XP requirement for the next level
+        }
+
+        return level;
+    }
 }

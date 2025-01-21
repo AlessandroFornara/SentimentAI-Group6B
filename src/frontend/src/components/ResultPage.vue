@@ -1,24 +1,29 @@
 <template>
   <div class="result-page" :style="backgroundStyle">
-    <h1 class="title">Your session is concluded! Congratulations</h1>
+    <h1 class="title">Your session is concluded! <em>Congratulations</em></h1>
     <h2 class="subtitle">Here are some results from the analysis:</h2>
 
     <div class="result-content">
       <p class="emotion">The emotion that you are mostly feeling is: <span>{{ dominantEmotion }}</span></p>
       <p class="activity">Suggested activity based on your emotion: <span>{{ activity }}</span></p>
-      <p class="points">You earned <span>{{ points }}</span> points!</p>
+      <button v-if="!pointsCollected" class="collect-button" @click="collectPoints">Click here to collect your points</button>
+      <p v-else class="points">You earned <span>{{ points }}</span> points!</p>
     </div>
+    <div v-if="showConfetti" class="confetti-container"></div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import confetti from 'canvas-confetti';
 
 const router = useRouter();
 const dominantEmotion = ref('');
 const activity = ref('');
 const points = ref(0);
+const pointsCollected = ref(false);
+const showConfetti = ref(false);
 
 const fetchSessionResults = async () => {
   try {
@@ -49,6 +54,20 @@ const fetchSessionResults = async () => {
   }
 };
 
+const collectPoints = () => {
+  showConfetti.value = true;
+  confetti({
+    particleCount: 150,
+    spread: 70,
+    origin: { y: 0.6 },
+  });
+
+  setTimeout(() => {
+    showConfetti.value = false;
+    pointsCollected.value = true;
+  }, 2000);
+};
+
 onMounted(() => {
   fetchSessionResults();
 });
@@ -71,20 +90,24 @@ const backgroundStyle = {
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
+  padding-left: 20px;
   justify-content: center;
 }
 
 .title {
-  font-size: 2.5rem;
+  font-size: 3rem;
   font-weight: bold;
   margin-bottom: 10px;
+  text-align: center;
+  width: 100%;
 }
 
 .subtitle {
   font-size: 1.5rem;
   font-weight: 300;
   margin-bottom: 20px;
+  text-align: left;
 }
 
 .result-content {
@@ -97,15 +120,31 @@ const backgroundStyle = {
   color: #fff;
 }
 
-.emotion {
+.emotion, .activity, .points {
   margin-bottom: 10px;
 }
 
-.activity {
-  margin-bottom: 10px;
+.collect-button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.points {
-  margin-bottom: 10px;
+.collect-button:hover {
+  background-color: #45a049;
+}
+
+.confetti-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 </style>

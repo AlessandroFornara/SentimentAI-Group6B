@@ -14,14 +14,8 @@ public class LevelBasedBadge extends Badge {
         this.thresholds = new int[]{1, 5, 10, 20};
     }
 
-    public int getLevel(int level) {
-        for (int i = 0; i < thresholds.length; i++) {
-            if (level <= thresholds[i]) {
-                return i;
-            }
-        }
-        return thresholds.length;
+    @Override
+    protected int[] getThresholds() {
+        return thresholds;
     }
-
-
 }

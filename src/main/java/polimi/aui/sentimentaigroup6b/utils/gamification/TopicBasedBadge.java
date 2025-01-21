@@ -14,13 +14,8 @@ public class TopicBasedBadge extends Badge {
         this.thresholds = new int[]{1, 5, 10, 20};
     }
 
-    public int getLevel(int count) {
-        for (int i = 0; i < thresholds.length; i++) {
-            if (count <= thresholds[i]) {
-                return i;
-            }
-        }
-        return thresholds.length;
+    @Override
+    protected int[] getThresholds() {
+        return thresholds;
     }
-
 }

@@ -194,7 +194,7 @@ function handleRegister() {
 <style scoped>
 .title {
   font-size: 70px;
-  font-family: Century;
+  font-family: "Ink Free", sans-serif;
   margin: 0;
   color: #1666cb; /* Blu scuro */
 }

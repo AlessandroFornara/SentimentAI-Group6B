@@ -1,9 +1,19 @@
 <template>
   <div class="audio-page">
+
+    <div class="floating-sphere"></div>
+    <div class="floating-sphere"></div>
+    <div class="floating-sphere"></div>
+    <div class="floating-sphere"></div>
+    <div class="floating-sphere"></div>
+
+
     <!-- Frase Generata -->
     <div class="question">
       <p>{{ question }}</p>
     </div>
+
+
 
     <!-- Immagine al centro in grande -->
     <div class="image-bubble">
@@ -50,7 +60,7 @@
 
 
 <script setup>
-import microphoneImage from '@/assets/microphone.png';
+import microphoneImage from '@/assets/Microphone.png';
 import { ref, computed, onMounted } from 'vue';
 import {useRoute, useRouter} from "vue-router";
 
@@ -86,11 +96,11 @@ onMounted(() => {
 });
 
 const progressBarStyle = computed(() => ({
-  height: `${(timeRemaining.value / 120) * 100}%`,
-  backgroundColor: 'green',
-  width: '100%',
-  borderRadius: '5px',
+  height: `${(timeRemaining.value / 120) * 100}%`, // Altezza dinamica basata sul tempo
+  backgroundColor: '#90ee90', // Verde chiaro
+  transition: 'height 1s linear', // Transizione fluida
 }));
+
 
 const formattedTime = computed(() => {
   const minutes = Math.floor(timeRemaining.value / 60);
@@ -102,7 +112,7 @@ const formattedTime = computed(() => {
 const startRecording = () => {
   microphoneAccessError.value = false;
   isRecording.value = true;
-  showFinishButton.value = false;
+  showFinishButton.value = false; // Nascondi il pulsante inizialmente
   questionReady.value = false;
   timeRemaining.value = 120; // Reset del timer
   elapsedTime.value = 0;
@@ -113,15 +123,15 @@ const startRecording = () => {
       timeRemaining.value--;
       elapsedTime.value++;
 
-      // Mostra il pulsante Finish dopo 5 secondi
+      // Mostra il pulsante Finish Audio dopo 5 secondi
       if (elapsedTime.value >= 5) {
         showFinishButton.value = true;
       }
     } else {
       clearInterval(timerInterval);
-      finishRecording();
     }
   }, 1000);
+
 
   // Avvia la registrazione audio
   setupMicrophone();
@@ -321,19 +331,49 @@ const animateAudioVisualizer = () => {
   overflow: hidden;
 }
 
-/* Bubble dell'immagine */
 .image-bubble {
+  width: 1000px;
+  height: 1000px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 66.67%; /* 2/3 della larghezza */
-  aspect-ratio: 1; /* Mantiene la proporzione */
-  border-radius: 40px;
-  overflow: hidden;
+  -webkit-mask-image: url('/src/assets/cloud-shape.svg');
+  -webkit-mask-size: cover;
+  mask-image: url('/src/assets/cloud-shape.svg');
+  mask-size: cover;
   background-color: white;
-  border: 6px solid #1666cb;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
 }
+
+.center-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
+
+.bubble-shape {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.bubble-image {
+  position: absolute;
+  top: 10px; /* Offset interno */
+  left: 10px;
+  width: calc(100% - 20px); /* Per adattare l'immagine */
+  height: calc(100% - 20px);
+  object-fit: cover; /* Mantiene proporzioni */
+  border-radius: 15px; /* Per armonizzare */
+  z-index: 2;
+}
+
+
 
 .center-image {
   width: 100%;
@@ -355,31 +395,30 @@ const animateAudioVisualizer = () => {
   align-items: center;
   justify-content: center;
   gap: 15px; /* Spazio tra gli elementi */
-  background-color: #e3f2fd; /* Sfondo leggermente blu */
-  padding: 20px;
-  border-radius: 15px;
-  width: auto;
+  padding: 20px; /* Padding interno */
 }
 
 /* Pulsante Start Audio */
 .btn-start {
   padding: 10px 20px;
   font-size: 1.2rem;
-  background-color: #00bfff;
-  color: white;
+  background-color: #00bfff; /* Azzurro */
+  color: white; /* Testo bianco */
+  font-weight: bold; /* Grassetto */
   border: none;
   border-radius: 10px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .btn-start:hover {
-  background-color: #0080ff;
+  background-color: #0080ff; /* Azzurro più scuro quando si passa sopra */
 }
 
 /* Icona del microfono */
 .microphone-container {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -387,7 +426,7 @@ const animateAudioVisualizer = () => {
 
 .microphone-container img {
   width: 100%;
-  height: 100%;
+  //height: 100%;
   object-fit: cover;
 }
 
@@ -406,16 +445,18 @@ const animateAudioVisualizer = () => {
 /* Pulsante Finish Audio */
 .btn-finish {
   padding: 10px 20px;
-  font-size: 1rem;
-  background-color: black;
-  color: white;
+  font-size: 1.2rem;
+  background-color: #00bfff; /* Azzurro */
+  color: white; /* Testo bianco */
+  font-weight: bold; /* Grassetto */
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .btn-finish:hover {
-  background-color: gray;
+  background-color: #0080ff; /* Azzurro più scuro quando si passa sopra */
 }
 
 /* Timer */
@@ -423,27 +464,40 @@ const animateAudioVisualizer = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* Posiziona il contenuto verso l'alto */
   position: absolute;
   right: 40px;
   top: 50%;
   transform: translateY(-50%);
   width: 30px;
   height: 300px;
-  background: rgba(0, 128, 0, 0.2);
+  background: rgba(255, 255, 255, 0.2); /* Sfondo trasparente */
   border-radius: 10px;
   overflow: hidden;
+  border: 2px solid #1666cb; /* Bordo blu */
 }
 
 .progress-bar {
+  background-color: #90ee90; /* Verde chiaro */
   transition: height 1s linear;
+  width: 100%;
+  height: 100%; /* Partenza piena */
+  transform-origin: top; /* L'origine diventa il bordo superiore */
 }
 
 .time-remaining {
-  margin-top: 10px;
+  position: absolute;
+  top: -20px; /* Sopra il timer */
+  color: #1666cb; /* Testo blu */
   font-size: 1rem;
-  color: white;
-  text-align: center;
+  font-weight: bold;
+}
+
+
+.timer-progress {
+  width: 100%;
+  height: 100%; /* Stessa altezza del timer */
+  position: relative;
 }
 
 /* Pulsante Terminate Session */
@@ -468,10 +522,11 @@ const animateAudioVisualizer = () => {
 }
 
 
-@media (max-width: 768px) {
+
+@media (max-width: 800px) {
   .image-bubble {
-    width: 70%;
-    height: 70%;
+    width: 100%;
+    height: 100%;
   }
 
   .microphone-container {
@@ -487,4 +542,66 @@ const animateAudioVisualizer = () => {
     height: 200px;
   }
 }
+
+.floating-sphere {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(255, 182, 193, 0.9), rgba(216, 191, 216, 0.6), rgba(173, 216, 230, 0.4));
+  border-radius: 50%;
+  animation: floatUp 8s ease-in-out infinite;
+  opacity: 0.8;
+}
+
+.floating-sphere:nth-child(1) {
+  left: 10%;
+  animation-delay: 0s;
+  width: 120px;
+  height: 120px;
+}
+
+.floating-sphere:nth-child(2) {
+  left: 30%;
+  animation-delay: 2s;
+  width: 80px;
+  height: 80px;
+}
+
+.floating-sphere:nth-child(3) {
+  left: 50%;
+  animation-delay: 4s;
+  width: 100px;
+  height: 100px;
+}
+
+.floating-sphere:nth-child(4) {
+  left: 70%;
+  animation-delay: 1s;
+  width: 90px;
+  height: 90px;
+}
+
+.floating-sphere:nth-child(5) {
+  left: 90%;
+  animation-delay: 3s;
+  width: 110px;
+  height: 110px;
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(100vh);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(50vh);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-10%);
+    opacity: 0;
+  }
+}
+
+
 </style>
