@@ -1,8 +1,9 @@
 <template>
   <div class="login-page">
-    <div style="display: flex; justify-content: center; align-items: center; flex-direction: column">
+    <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; width: 300px">
       <h1 class="title">EMOTINO</h1>
-      <img src="@/assets/mic_emotino_noBack.png" width="350" alt="EMOTINO">
+      <h2 class="subtitle">Where every emotion matters, and your well-being takes center stage.</h2>
+      <img src="@/assets/mic_emotino_noBack.png" width="300" alt="EMOTINO">
     </div>
     <form class="login-form" @submit.prevent="handleSubmit">
       <!-- Input Username -->
@@ -190,13 +191,21 @@ function handleRegister() {
       });
 }
 </script>
-\
+
 <style scoped>
 .title {
   font-size: 70px;
   font-family: "Ink Free", sans-serif;
   margin: 0;
   color: #1666cb; /* Blu scuro */
+}
+
+.subtitle {
+  font-size: 25px;
+  font-weight: normal;
+  font-family: "Ink Free", sans-serif;
+  color: #1666cb; /* Blu pastello */
+  text-align: center;
 }
 
 .login-page {

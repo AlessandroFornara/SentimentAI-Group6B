@@ -7,8 +7,8 @@
     <div class="homepage">
       <!-- Titolo e sottotitolo in alto al centro -->
       <div class="header">
-        <h1 class="title">EMOTINO</h1>
-        <h2 class="subtitle">Hello {{ username }}!</h2>
+        <h1 class="title">Hello {{ username }}!</h1>
+        <h2 class="subtitle">I hope you're having a great day!</h2>
       </div>
 
       <!-- Pulsante Logout in alto a destra -->
@@ -74,7 +74,7 @@ function logout() {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  height: 90vh;
+  height: 100vh;
   font-family: Arial, sans-serif;
   position: relative;
   overflow: hidden;
@@ -120,7 +120,7 @@ function logout() {
 .title {
   font-size: 100px;
   font-weight: bold;
-  font-family: "Ink Free", sans-serif;
+  font-family: "Calibri Light", sans-serif;
   margin: 0;
   color: #1666cb; /* Blu scuro */
 }
@@ -128,7 +128,7 @@ function logout() {
 .subtitle {
   font-size: 45px;
   font-weight: normal;
-  font-family: "Ink Free", sans-serif;
+  font-family: "Calibri Light", sans-serif;
   margin: 30px 0 0 0;
   color: #1666cb; /* Blu pastello */
 }
