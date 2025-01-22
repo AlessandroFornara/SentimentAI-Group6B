@@ -129,9 +129,9 @@ public class EmotionAIRequestGenerator {
                     rawNode.path("disgust").asDouble(),
                     rawNode.path("fear").asDouble(),
                     rawNode.path("joy").asDouble(),
-                    rawNode.path("neutrality").asDouble(),
                     rawNode.path("sadness").asDouble(),
-                    rawNode.path("surprise").asDouble()
+                    rawNode.path("surprise").asDouble(),
+                    rawNode.path("neutrality").asDouble()
                     );
         }
 
