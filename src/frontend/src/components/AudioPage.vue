@@ -116,6 +116,8 @@ const startRecording = () => {
   questionReady.value = false;
   timeRemaining.value = 120; // Reset del timer
   elapsedTime.value = 0;
+  liveTranscript = '';
+  completeTranscript = '';
 
   // Avvia il timer
   timerInterval = setInterval(() => {
@@ -230,7 +232,8 @@ const setupMicrophone = async () => {
         completeTranscript += liveTranscript;
         console.log('Trascrizione completa:', completeTranscript);
         if (isRecording.value) {
-          recognition.start(); // Riavvia la stessa istanza
+          liveTranscript = '';
+          recognition.start();
         }
       };
     }
@@ -245,7 +248,7 @@ const setupMicrophone = async () => {
       const audioBlob = new Blob(audioChunks, {type: 'audio/wav'});
       recognition.onend(); // Termina la trascrizione
       try {
-        console.log('Trascrizione finale:', liveTranscript);
+        console.log('Trascrizione finale:', completeTranscript);
 
         // Invia l'audio e la trascrizione al server
         const newQuestion = await sendAudioToServer(audioBlob, completeTranscript);
