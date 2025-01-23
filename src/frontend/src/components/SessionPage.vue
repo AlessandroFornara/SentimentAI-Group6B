@@ -4,8 +4,11 @@
       <button @click="goBack">Back</button>
     </div>
 
-    <h1 class="title">Welcome to the session</h1>
-    <h3 style="font-family: Century">Select an image to start!</h3>
+    <h1 class="title">Let's Start Your Session!</h1>
+    <h2 style="font-size: 20px; font-weight: bold">Pick an image to get started!</h2>
+    <div>
+      <img src="@/assets/mic_emotino_noBack.png" width="150" alt="P">
+    </div>
     <div class="image-container">
       <button
           v-for="(image, index) in images"
@@ -92,7 +95,6 @@ onMounted(() => {
 .session-page {
   position: relative;
   text-align: center;
-  font-family: Arial, sans-serif;
   margin: 0 auto;
   height: 100vh;
   display: flex;
@@ -115,8 +117,8 @@ onMounted(() => {
 }
 
 .bubble {
-  width: 300px;
-  height: 300px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   overflow: hidden;
   border: 3px solid #ccc;
@@ -165,26 +167,31 @@ onMounted(() => {
 
 .bottom-center button {
   padding: 15px 30px;
-  font-size: 18px;
-  font-family: Copperplate;
+  font-size: 15px;
   background-color: #1666cb;
   color: white;
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .bottom-center button:hover {
-  background-color: indigo;
+  transform: scale(1.05);
+  background-color: #0f4da8;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.bottom-center button:active {
+  transform: scale(0.95);
+  background-color: #0a3680;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .title {
-  font-size: 60px;
+  font-size: 40px;
   font-weight: bold;
   margin: 0;
-  font-family: Century;
-  color: #1666cb;
 }
 
 </style>

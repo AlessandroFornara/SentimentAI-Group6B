@@ -118,19 +118,17 @@ function logout() {
 }
 
 .title {
-  font-size: 100px;
+  font-size: 60px;
   font-weight: bold;
   font-family: "Calibri Light", sans-serif;
   margin: 0;
-  color: #1666cb; /* Blu scuro */
 }
 
 .subtitle {
-  font-size: 45px;
+  font-size: 30px;
   font-weight: normal;
   font-family: "Calibri Light", sans-serif;
   margin: 30px 0 0 0;
-  color: #1666cb; /* Blu pastello */
 }
 
 /* Pulsante Logout in alto a destra */
