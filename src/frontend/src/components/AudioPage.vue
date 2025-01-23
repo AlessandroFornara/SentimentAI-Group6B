@@ -1,12 +1,15 @@
 <template>
   <div class="audio-page">
 
-    <div class="floating-sphere"></div>
-    <div class="floating-sphere"></div>
-    <div class="floating-sphere"></div>
-    <div class="floating-sphere"></div>
-    <div class="floating-sphere"></div>
+    <div class="background-bubbles">
+      <div v-for="(bubble, index) in bubbles" :key="index" class="floating-bubble" :style="bubble.style"></div>
+    </div>
 
+    <div class="floating-sphere"></div>
+    <div class="floating-sphere"></div>
+    <div class="floating-sphere"></div>
+    <div class="floating-sphere"></div>
+    <div class="floating-sphere"></div>
 
     <!-- Frase Generata -->
     <div class="question">
@@ -19,6 +22,14 @@
     <div class="image-bubble">
       <img :src="selectedImage" alt="Selected Background" class="center-image" />
     </div>
+
+    <div class="timer">
+      <div class="time-numbers">{{ formattedTime }}</div>
+      <div class="timer-progress">
+        <div class="progress-bar" :style="progressBarStyle"></div>
+      </div>
+    </div>
+
 
     <!-- Timer -->
     <div class="timer">
@@ -67,7 +78,7 @@ import {useRoute, useRouter} from "vue-router";
 // Stato iniziale
 const selectedImage = ref(null); // Per memorizzare l'immagine selezionata
 const question = ref('Great choice!' + ' ' +
-    'How do you feel about this topic?'); // Prima domanda fissa
+    'How do you feel?'); // Prima domanda fissa
 const timeRemaining = ref(120);
 const isRecording = ref(false);
 const showFinishButton = ref(false);
@@ -95,11 +106,39 @@ onMounted(() => {
   }
 });
 
+const generateBubble = () => {
+  const numberOfBubbles = Math.floor(5 * bubbleMultiplier.value); // Numero di bolle moltiplicato
+  for (let i = 0; i < numberOfBubbles; i++) {
+    const bubbleSize = Math.random() * 10 + 10; // Dimensione casuale
+    const bubbleLeft = Math.random() * 100; // Posizione casuale
+    const bubbleStyle = {
+      width: `${bubbleSize}px`,
+      height: `${bubbleSize}px`,
+      left: `${bubbleLeft}%`,
+      animationDuration: `${Math.random() * 3 + 2}s`, // Durata casuale
+      background: 'radial-gradient(circle, #ff7f50, #ffa500, #ff4500)', // Sfumatura arancione
+    };
+
+    bubbles.value.push({ style: bubbleStyle });
+
+    // Rimuovi la bolla dopo la fine dell'animazione
+    setTimeout(() => {
+      bubbles.value.shift();
+    }, 5000); // Le bolle durano 5 secondi
+  }
+};
+
+
+
 const progressBarStyle = computed(() => ({
   height: `${(timeRemaining.value / 120) * 100}%`, // Altezza dinamica basata sul tempo
-  backgroundColor: '#90ee90', // Verde chiaro
+  backgroundColor: 'orange', // Verde chiaro
   transition: 'height 1s linear', // Transizione fluida
 }));
+
+const bubbles = ref([]); // Array reattivo per gestire le bolle
+const bubbleMultiplier = ref(1); // Moltiplicatore per il numero di bolle
+
 
 
 const formattedTime = computed(() => {
@@ -107,56 +146,57 @@ const formattedTime = computed(() => {
   const seconds = timeRemaining.value % 60;
   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 });
-
-// Funzioni per la registrazione e timer
 const startRecording = () => {
   microphoneAccessError.value = false;
   isRecording.value = true;
-  showFinishButton.value = false; // Nascondi il pulsante inizialmente
+  bubbleMultiplier.value = 2; // Aumenta il numero di bolle
+  showFinishButton.value = false;
   questionReady.value = false;
-  timeRemaining.value = 120; // Reset del timer
+  timeRemaining.value = 120;
   elapsedTime.value = 0;
-  liveTranscript = '';
-  completeTranscript = '';
+
+  // Mostra il pulsante Finish Audio dopo 5 secondi
+  setTimeout(() => {
+    if (isRecording.value) {
+      showFinishButton.value = true;
+    }
+  }, 5000);
+
+  // Genera bolle continuamente durante la registrazione
+  const bubbleInterval = setInterval(() => {
+    if (isRecording.value) {
+      generateBubble();
+    } else {
+      clearInterval(bubbleInterval);
+    }
+  }, 1000);
 
   // Avvia il timer
   timerInterval = setInterval(() => {
     if (timeRemaining.value > 0) {
       timeRemaining.value--;
       elapsedTime.value++;
-
-      // Mostra il pulsante Finish Audio dopo 5 secondi
-      if (elapsedTime.value >= 5) {
-        showFinishButton.value = true;
-      }
     } else {
       clearInterval(timerInterval);
     }
   }, 1000);
 
-
-  // Avvia la registrazione audio
   setupMicrophone();
 };
 
+
 const finishRecording = async () => {
   isRecording.value = false;
+  bubbleMultiplier.value = 1; // Torna al numero normale di bolle
   showFinishButton.value = false;
   clearInterval(timerInterval);
+  timeRemaining.value = 120; // Reset del timer
 
-  // Aggiorna il tempo totale
-  totalElapsedTime.value += elapsedTime.value;
-  console.log('Tempo totale accumulato:', totalElapsedTime.value);
-
-  // Stop la registrazione e salva l'audio
+  // Ferma la registrazione
   mediaRecorder.stop();
-
-  // Stop la trascrizione
   recognition.stop();
-
-  // Reset del timer immediato
-  timeRemaining.value = 120;
 };
+
 
 const goToResultPage = () => {
   // Reindirizza alla pagina ResultPage
@@ -285,6 +325,9 @@ const checkMicrophoneInput = (stream) => {
   analyser.getByteTimeDomainData(dataArray);
 };
 
+
+
+
 // Animazione della barra audio
 const animateAudioVisualizer = () => {
   const canvas = audioCanvas.value;
@@ -387,9 +430,12 @@ const animateAudioVisualizer = () => {
 .question {
   margin-top: 20px;
   font-size: 2rem;
+  font-family:"Ink Free", sans-serif;
   text-align: center;
   color: #1666cb;
   font-weight: bold;
+  position: relative; /* Necessario per far funzionare il z-index */
+  z-index: 10; /* Garantisce che il testo sia sempre sopra altri elementi */
 }
 
 /* Box unico per la registrazione */
@@ -405,7 +451,7 @@ const animateAudioVisualizer = () => {
 .btn-start {
   padding: 10px 20px;
   font-size: 1.2rem;
-  background-color: #00bfff; /* Azzurro */
+  background: linear-gradient(45deg, #ffa500, #ff4500); /* Sfumatura arancione */
   color: white; /* Testo bianco */
   font-weight: bold; /* Grassetto */
   border: none;
@@ -415,7 +461,7 @@ const animateAudioVisualizer = () => {
 }
 
 .btn-start:hover {
-  background-color: #0080ff; /* Azzurro più scuro quando si passa sopra */
+  background: linear-gradient(45deg, #ff7f50, #ff6347); /* Sfumatura più chiara al passaggio del mouse */
 }
 
 /* Icona del microfono */
@@ -449,7 +495,7 @@ const animateAudioVisualizer = () => {
 .btn-finish {
   padding: 10px 20px;
   font-size: 1.2rem;
-  background-color: #00bfff; /* Azzurro */
+  background: linear-gradient(45deg, #ffa500, #ff4500); /* Azzurro */
   color: white; /* Testo bianco */
   font-weight: bold; /* Grassetto */
   border: none;
@@ -459,7 +505,7 @@ const animateAudioVisualizer = () => {
 }
 
 .btn-finish:hover {
-  background-color: #0080ff; /* Azzurro più scuro quando si passa sopra */
+  background:linear-gradient(45deg, #ff7f50, #ff6347);  /* Azzurro più scuro quando si passa sopra */
 }
 
 /* Timer */
@@ -477,21 +523,31 @@ const animateAudioVisualizer = () => {
   background: rgba(255, 255, 255, 0.2); /* Sfondo trasparente */
   border-radius: 10px;
   overflow: hidden;
-  border: 2px solid #1666cb; /* Bordo blu */
+
 }
 
 .progress-bar {
-  background-color: #90ee90; /* Verde chiaro */
+  background-color: linear-gradient(to bottom, #ff4500, #ffa500); /* Sfumatura arancione */
   transition: height 1s linear;
   width: 100%;
   height: 100%; /* Partenza piena */
-  transform-origin: top; /* L'origine diventa il bordo superiore */
+  transform-origin: bottom; /* L'origine diventa il bordo superiore */
 }
+
+.timer-bubble {
+  position: absolute;
+  bottom: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ff7f50, #ff6347, #ffa500); /* Sfumatura arancione */
+  animation: floatUpTimer 5s linear infinite;
+  opacity: 0.8;
+}
+
 
 .time-remaining {
   position: absolute;
   top: -20px; /* Sopra il timer */
-  color: #1666cb; /* Testo blu */
+  color: orange; /* Testo blu */
   font-size: 1rem;
   font-weight: bold;
 }
@@ -537,12 +593,70 @@ const animateAudioVisualizer = () => {
     height: 60px;
   }
 
-  .question {
-    font-size: 1.5rem;
-  }
+
 
   .timer {
     height: 200px;
+  }
+}
+
+.floating-bubble {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, #ff7f50, #ffa07a, #ff6347); /* Sfumature arancione-rosa */
+  border-radius: 50%;
+  animation: floatUp 8s ease-in-out infinite;
+  opacity: 0.8;
+}
+
+/*.floating-bubble:nth-child(1) {
+  left: 10%;
+  animation-delay: 0s;
+  width: 120px;
+  height: 120px;
+}
+
+.floating-sphere:nth-child(2) {
+  left: 30%;
+  animation-delay: 2s;
+  width: 80px;
+  height: 80px;
+}
+
+.floating-sphere:nth-child(3) {
+  left: 50%;
+  animation-delay: 4s;
+  width: 100px;
+  height: 100px;
+}
+
+.floating-sphere:nth-child(4) {
+  left: 70%;
+  animation-delay: 1s;
+  width: 90px;
+  height: 90px;
+}
+
+.floating-sphere:nth-child(5) {
+  left: 90%;
+  animation-delay: 3s;
+  width: 110px;
+  height: 110px;
+} */
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(100vh);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(50vh);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-10%);
+    opacity: 0;
   }
 }
 
@@ -550,7 +664,7 @@ const animateAudioVisualizer = () => {
   position: absolute;
   width: 100px;
   height: 100px;
-  background: radial-gradient(circle, rgba(255, 182, 193, 0.9), rgba(216, 191, 216, 0.6), rgba(173, 216, 230, 0.4));
+  background: radial-gradient(circle, #ff7f50, #ffa07a, #ff6347); /* Sfumature arancione-rosa */
   border-radius: 50%;
   animation: floatUp 8s ease-in-out infinite;
   opacity: 0.8;
@@ -591,20 +705,16 @@ const animateAudioVisualizer = () => {
   height: 110px;
 }
 
-@keyframes floatUp {
-  0% {
-    transform: translateY(100vh);
-    opacity: 0.8;
-  }
-  50% {
-    transform: translateY(50vh);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(-10%);
-    opacity: 0;
-  }
+.time-numbers {
+  position: absolute;
+  top: -25px; /* Posiziona sopra il timer */
+  color: orange; /* Testo arancione */
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+  width: 100%;
 }
+
 
 
 </style>
