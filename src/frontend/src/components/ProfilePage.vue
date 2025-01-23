@@ -152,6 +152,12 @@ const getBadgeImage = (badgeKey, level) => {
       3: {path: require('@/assets/TimeBasedBadges/10.png'), name: '10 Days'},
       4: {path: require('@/assets/TimeBasedBadges/20.png'), name: '20 Days'},
     },
+    topicBasedBadge: {
+      1: {path: require('@/assets/TopicBasedBadges/BeginnerExplorer.png'), name: 'Beginner Explorer'},
+      2: {path: require('@/assets/TopicBasedBadges/CuriousThinker.png'), name: 'Curious Thinker'},
+      3: {path: require('@/assets/TopicBasedBadges/TopicTrailblazer.png'), name: 'Topic Trailblazer'},
+      4: {path: require('@/assets/TopicBasedBadges/MasterOfInsights.png'), name: 'Master Of Insights'},
+    }
   };
 
   return badgeImages[badgeKey]?.[level];

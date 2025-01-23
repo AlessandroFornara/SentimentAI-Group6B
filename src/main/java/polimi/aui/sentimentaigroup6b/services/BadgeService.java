@@ -12,6 +12,8 @@ import polimi.aui.sentimentaigroup6b.utils.gamification.TopicBasedBadge;
 import polimi.aui.sentimentaigroup6b.repositories.SessionRepo;
 import polimi.aui.sentimentaigroup6b.repositories.UserRepo;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 @Service
@@ -34,7 +36,7 @@ public class BadgeService {
         assignLevelBadge(user, newBadges);
         assignActivityBadge(user, newBadges);
         assignTimeBadge(user, newBadges);
-        //assignTopicBadge(user, newBadges);
+        assignTopicBadge(user, newBadges);
 
         return newBadges;
     }
@@ -70,21 +72,24 @@ public class BadgeService {
     public void assignTimeBadge(User user, Map<BadgeType, Integer> badges) {
 
         // Fetch all sessions and sort them by date descending
-        List<Object> sessions = sessionRepo.findAllByUserId(user).stream()
-                .sorted(( s1, s2) -> ((Session) s2).getDate().compareTo(((Session) s1).getDate())) // Sort by date descending
+        List<Session> sessions = sessionRepo.findAllByUserId(user).stream()
+                .map(s -> (Session) s)
+                .sorted(( s1, s2) -> (s2).getDate().compareTo((s1).getDate())) // Sort by date descending
                 .toList();
 
         // Calculate consecutive days streak
         int consecutiveDays = 0;
         if (!sessions.isEmpty()) {
-            Date lastDate = ((Session) sessions.getFirst()).getDate();
+            Date lastDate = (sessions.getFirst()).getDate();
             consecutiveDays = 1;
 
             for (int i = 1; i < sessions.size(); i++) {
-                Date currentDate = ((Session) sessions.get(i)).getDate();
-
+                Date currentDate = (sessions.get(i)).getDate();
+                System.out.println("Current date: " + currentDate);
+                System.out.println("Last date: " + lastDate);
                 // Check if the current session is exactly one day before the previous
                 if (isOneDayBefore(currentDate, lastDate)) {
+                    System.out.println("One day before");
                     consecutiveDays++;
                     lastDate = currentDate; // Update last date to current
                 } else {
@@ -106,16 +111,28 @@ public class BadgeService {
     }
 
     private boolean isOneDayBefore(Date currentDate, Date lastDate) {
-        Calendar calendar = Calendar.getInstance();
+        if (currentDate == null || lastDate == null) {
+            return false;
+        }
 
-        // Set calendar to lastDate and subtract one day
-        calendar.setTime(lastDate);
-        calendar.add(Calendar.DAY_OF_YEAR, -1);
-        Date expectedDate = calendar.getTime();
+        Calendar currentCalendar = Calendar.getInstance();
+        currentCalendar.setTime(currentDate);
+        currentCalendar.set(Calendar.HOUR_OF_DAY, 0);
+        currentCalendar.set(Calendar.MINUTE, 0);
+        currentCalendar.set(Calendar.SECOND, 0);
+        currentCalendar.set(Calendar.MILLISECOND, 0);
 
-        // Compare expectedDate with currentDate
-        return currentDate.equals(expectedDate);
+        Calendar lastCalendar = Calendar.getInstance();
+        lastCalendar.setTime(lastDate);
+        lastCalendar.set(Calendar.HOUR_OF_DAY, 0);
+        lastCalendar.set(Calendar.MINUTE, 0);
+        lastCalendar.set(Calendar.SECOND, 0);
+        lastCalendar.set(Calendar.MILLISECOND, 0);
+
+        currentCalendar.add(Calendar.DAY_OF_YEAR, 1);
+        return currentCalendar.getTime().equals(lastCalendar.getTime());
     }
+
 
     public void assignTopicBadge(User user, Map<BadgeType, Integer> badges) {
 

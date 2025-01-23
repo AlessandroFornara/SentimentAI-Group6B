@@ -11,7 +11,7 @@ public class TopicBasedBadge extends Badge {
 
     public TopicBasedBadge() {
         super("Topic Badge", "You have discussed a new topic!");
-        this.thresholds = new int[]{1, 5, 10, 20};
+        this.thresholds = new int[]{1, 3, 5, 8};
     }
 
     @Override
