@@ -1,60 +1,102 @@
 <template>
   <div class="container" style="display: flex; flex-direction: column">
 
-    <div class="container mt-5" style="display: flex; flex-direction: row; align-items: baseline">
+    <div class="container mt-5" style="display: flex; flex-direction: row; align-items: baseline; margin-left: 15%">
       <h1>Profile</h1>
-      <h4 style="margin-left: 2%; color: darkgreen">{{role}}</h4>
+      <h4 style="margin-left: 2%; color: #1666cb">{{role}}</h4>
     </div>
 
-    <div class="container" style="display: flex; flex-direction: column; margin-top: 10%; gap: 100px">
+    <div class="container" style="display: flex; align-items: center">
+      <div class="col" style="width: 35%; display: flex; justify-content: center; margin-top: 5%">
+        <img src="@/assets/profile-circle-svgrepo-com.svg" width="50%" alt="P">
+      </div>
+      <div class="col">
+        <p>Email: <strong>{{email}}</strong></p>
+        <p>Name: <strong>{{name}}</strong></p>
+        <p>Surname: <strong>{{surname}}</strong></p>
+        <p>Company: <strong>{{company}}</strong></p>
 
-      <div class="container" style="display: flex; align-items: center">
-        <div class="col" style="width: 35%; display: flex; justify-content: center">
-          <img src="@/assets/profile-circle-svgrepo-com.svg" width="300" alt="P">
+        <div>
+          <p style="margin-bottom: 10px; font-size: 18px"><strong>Level: {{ level }}</strong></p>
+          <!-- Contenitore della barra -->
+          <div style="linear-gradient(90deg, #e0f7ff, #ccefff); height: 30px; width: 100%; border-radius: 10px; overflow: hidden; position: relative; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1)">
+            <!-- Barra di progresso -->
+            <div :style="{ width: progressData.progress + '%', background: 'linear-gradient(90deg, #0077b6, #00b4d8)', height: '100%' }" style="border-radius: 10px; position: absolute; transition: width 0.5s ease-in-out"></div>
+
+            <!-- Testo al centro della barra -->
+            <div style="position: absolute; left: 50%; transform: translate(-50%, 0); color: black; font-weight: bold; line-height: 30px; z-index: 1">
+              {{ progressData.currentXP }} / {{ progressData.xpForNextLevel }}
+            </div>
+          </div>
         </div>
-        <div class="col" style="margin-left: 10%">
-          <p>Email: <strong>{{email}}</strong></p>
-          <p>Name: <strong>{{name}}</strong></p>
-          <p>Surname: <strong>{{surname}}</strong></p>
-          <p>Company: <strong>{{company}}</strong></p>
-          <p>Level: <strong>{{level}}</strong></p>
-          <p>Points: <strong>{{points}}</strong></p>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; justify-content: center; margin-top: 5%">
+      <h2 style="text-align: center;">Your Badges</h2>
+      <div v-if="Object.values(badges).some(value => value > 0)" style="display: flex; flex-direction: row; align-items: center">
+        <div v-for="(value, key) in badges" :key="key" class="badge">
+          <div v-if="value > 0">
+            <div v-if="badgeImage = getBadgeImage(key, value)">
+              <p style="color: black; font-size: 20px; margin: 0">
+                {{ badgeImage.name }}
+              </p>
+              <img :src="badgeImage.path" :alt="`${key} level ${value}`" class="badge-image" style="width: 70%" />
+              <p style="color: black">
+                {{ capitalizeWords(key) }} (Level {{ value }})
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="badges-container">
-        <h2 style="text-align: center; margin-bottom: 20px;">Your Badges</h2>
-        <div class="badges-grid">
-          <div v-for="(value, key) in badgesData" :key="key" class="badge">
-            <img :src="getBadgeImage(key)" :alt="key" class="badge-image" />
-            <p>{{ key.replace(/([A-Z])/g, ' $1').trim() }}</p>
-          </div>
-        </div>
+      <div v-else style="text-align: center; margin-top: 20px;">
+        <p style="color: black; font-size: 18px;">You currently have no badges to display.</p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import {ref, onMounted, computed} from 'vue';
 
 const name = ref('');
 const surname = ref('');
 const email = ref('');
 const company = ref('');
-const level = ref('');
-const points = ref('');
+const level = ref(0);
+const points = ref(0);
 const role = ref('');
 const badges = ref('');
 
-const badgesData = {
-  activityBasedBadge: 0,
-  levelBasedBadge: 0,
-  timeBasedBadge: 0,
-  topicBasedBadge: 0
+onMounted(() => {
+  fetchUserProfile();
+});
+
+const calculateProgress = () => {
+  if (!Number.isFinite(level.value) || !Number.isFinite(points.value)) {
+    return { progress: 0, currentXP: 0, xpForNextLevel: 0 };
+  }
+
+  let xpForNextLevel = 80;
+  let xpCurrentLevel = 0;
+
+  for (let i = 0; i < level.value; i++) {
+    xpCurrentLevel += xpForNextLevel;
+    xpForNextLevel += 40;
+  }
+
+  const progress = ((points.value - xpCurrentLevel) / xpForNextLevel) * 100;
+
+  return {
+    progress: Math.max(0, Math.min(progress, 100)), // Percentuale limitata tra 0 e 100
+    currentXP: Math.max(0, points.value - xpCurrentLevel), // XP attuale
+    xpForNextLevel,
+  };
 };
 
-// Function to fetch user profile from the server
+const progressData = computed(calculateProgress);
+
 async function fetchUserProfile() {
   try {
     const response = await fetch('/api/worker/profile', {
@@ -82,20 +124,38 @@ async function fetchUserProfile() {
   }
 }
 
-// Funzione per ottenere l'immagine corrispondente a ciascun badge
-const getBadgeImage = (badgeKey) => {
+const getBadgeImage = (badgeKey, level) => {
   const badgeImages = {
-    activityBasedBadge: '@/assets/activity-badge.png',
-    levelBasedBadge: '@/assets/level-badge.png',
-    timeBasedBadge: '@/assets/time-badge.png',
-    topicBasedBadge: '@/assets/topic-badge.png'
+    activityBasedBadge: {
+      1: {path: require('@/assets/ActivityBasedBadges/ActivityStarter.png'), name: 'Activity Starter'},
+      2: {path: require('@/assets/ActivityBasedBadges/TaskExplorer.png'), name: 'Task Explorer'},
+      3: {path: require('@/assets/ActivityBasedBadges/ActionAchiever.png'), name: 'Action Achiever'},
+      4: {path: require('@/assets/ActivityBasedBadges/MasterOfActivities.png'), name: 'Master Of Activities'},
+    },
+    levelBasedBadge: {
+      1: {path: require('@/assets/LevelBasedBadges/EmotionalAwakener.png'), name: 'Emotional Awakener'},
+      2: {path: require('@/assets/LevelBasedBadges/MoodNavigator.png'), name: 'Mood Navigator'},
+      3: {path: require('@/assets/LevelBasedBadges/HarmonyBuilder.png'), name: 'Harmony Builder'},
+      4: {path: require('@/assets/LevelBasedBadges/SentientSage.png'), name: 'Sentient Sage'},
+    },
+    timeBasedBadge: {
+      1: {path: require('@/assets/TimeBasedBadges/2.png'), name: '2 Days'},
+      2: {path: require('@/assets/TimeBasedBadges/5.png'), name: '5 Days'},
+      3: {path: require('@/assets/TimeBasedBadges/10.png'), name: '10 Days'},
+      4: {path: require('@/assets/TimeBasedBadges/20.png'), name: '20 Days'},
+    },
   };
-  return badgeImages[badgeKey] || '@/assets/default-badge.png';
-};
 
-onMounted(() => {
-  fetchUserProfile();
-});
+  return badgeImages[badgeKey]?.[level];
+}
+
+function capitalizeWords(str) {
+  return str
+      .replace(/([A-Z])/g, ' $1')
+      .trim()
+      .toLowerCase()
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+}
 
 </script>
 

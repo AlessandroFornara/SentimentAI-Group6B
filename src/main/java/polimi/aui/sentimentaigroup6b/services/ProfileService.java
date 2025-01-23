@@ -32,16 +32,14 @@ public class ProfileService {
                 .map(s -> (Session) s)
                 .toList();
 
-        /*List<HistoryResponse.SessionData> sessionDataList = sessions.stream()
+        List<HistoryResponse.SessionData> sessionDataList = sessions.stream()
                 .map(session -> new HistoryResponse.SessionData(
                         session.getDate(),
-                        user.getPoints(),
                         session.getDominantEmotion(),
                         session.getActivityCategory(),
                         session.getActivityText()))
-                .toList();*/
+                .toList();
 
-        return null;
-        //return new HistoryResponse(sessionDataList);
+        return new HistoryResponse(sessionDataList);
     }
 }

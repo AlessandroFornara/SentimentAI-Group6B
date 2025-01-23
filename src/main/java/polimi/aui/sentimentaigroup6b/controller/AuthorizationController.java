@@ -80,7 +80,7 @@ public class AuthorizationController {
             return ResponseEntity.unprocessableEntity().body(ServerResponse.USER_REGISTRATION_ERROR.getMessage());
         }
 
-        System.out.println((registerDTO.getEmail() + " has registered to CKB as " + (registerDTO.getRole().equals(UserRoles.WORKER) ? "a Worker" : "an HR manager")));
+        System.out.println((registerDTO.getEmail() + " has registered to Emotino as " + (registerDTO.getRole().equals(UserRoles.WORKER) ? "a Worker" : "an HR manager")));
         return ResponseEntity.ok(ServerResponse.USER_REGISTRATION_SUCCESS.getMessage());
     }
 }

@@ -52,9 +52,9 @@ public class WorkerController {
     public ResponseEntity<?> getHistory() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = (String) authentication.getPrincipal();
-        HistoryResponse user = profileService.getHistory(email);
-
-        return ResponseEntity.ok(user);
+        HistoryResponse history = profileService.getHistory(email);
+        System.out.println(history);
+        return ResponseEntity.ok(history);
     }
 
     @PreAuthorize("hasRole('WORKER')")
