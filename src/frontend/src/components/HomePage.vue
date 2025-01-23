@@ -75,7 +75,7 @@ function logout() {
   justify-content: space-between;
   align-items: center;
   height: 100vh;
-  font-family: Arial, sans-serif;
+  font-family: "Ink Free", sans-serif;
   position: relative;
   overflow: hidden;
 }
@@ -120,14 +120,12 @@ function logout() {
 .title {
   font-size: 60px;
   font-weight: bold;
-  font-family: "Calibri Light", sans-serif;
   margin: 0;
 }
 
 .subtitle {
   font-size: 30px;
   font-weight: normal;
-  font-family: "Calibri Light", sans-serif;
   margin: 30px 0 0 0;
 }
 
@@ -208,7 +206,6 @@ function logout() {
 .bottom-center button {
   padding: 30px 70px;
   font-size: 36px;
-  font-family: 'Poppins', sans-serif;
   font-weight: 600;
   cursor: pointer;
   border: none;

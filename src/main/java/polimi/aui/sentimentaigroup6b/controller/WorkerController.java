@@ -60,7 +60,7 @@ public class WorkerController {
     @PreAuthorize("hasRole('WORKER')")
     @PostMapping("/create_session")
     public ResponseEntity<?> createSession() {
-        List<ImageResponse> images = imageManager.extractImages();
+        List<ImageResponse> images = imageManager.getRandomImages(5);
 
         if (images == null || images.isEmpty()) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error extracting images");
@@ -71,13 +71,14 @@ public class WorkerController {
 
     @PreAuthorize("hasRole('WORKER')")
     @PostMapping("/start_session")
-    public ResponseEntity<?> startSession(){
+    public ResponseEntity<?> startSession(@RequestBody String name){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = (String) authentication.getPrincipal();
 
         User user = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
 
-        ServerResponse response = sessionService.startSession(user);
+        name = name.replace("\"", "").replaceAll("\\..*", "");
+        ServerResponse response = sessionService.startSession(user, name);
         if(response != ServerResponse.SESSION_STARTED){
             return ResponseEntity.unprocessableEntity().body(response.getMessage());
         }

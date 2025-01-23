@@ -5,13 +5,14 @@
 
   <div style="display: flex; flex-direction: column; align-items: center">
 
-    <h1 style="text-align: center">Session History</h1>
+    <h1 style="text-align: center; margin-top: 20px">Session History</h1>
     <div v-if="sessions.length > 0" style="display: flex; flex-direction: column; align-items:center; margin-top: 40px; max-height: 500px; overflow-y: auto">
       <div
           v-for="session in sessions"
           :key="session.date"
           class="session-card">
         <p><strong>Date:</strong> {{ formatDate(session.date) }}</p>
+        <p><strong>Topic:</strong> {{ session.topic }}</p>
         <p><strong>Dominant Emotion:</strong> {{ session.dominantEmotion }}</p>
         <p><strong>Proposed Activity:</strong> {{ session.activityCategory }} - {{ session.activityText }}</p>
       </div>

@@ -35,6 +35,7 @@ public class ProfileService {
         List<HistoryResponse.SessionData> sessionDataList = sessions.stream()
                 .map(session -> new HistoryResponse.SessionData(
                         session.getDate(),
+                        session.getTopic(),
                         session.getDominantEmotion(),
                         session.getActivityCategory(),
                         session.getActivityText()))

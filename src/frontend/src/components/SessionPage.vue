@@ -12,11 +12,11 @@
     <div class="image-container">
       <button
           v-for="(image, index) in images"
-          :key="index"
+          :key="image.name"
           class="bubble"
           @click="selectImage(index)"
       >
-        <img :src="image" :alt="`Image ${index + 1}`" />
+        <img :src="image.src" :alt="image.name" />
       </button>
     </div>
 
@@ -52,7 +52,10 @@ async function loadImages() {
     console.log('Risposta dal server:', responseData);
 
     // Converti Base64 in un formato utilizzabile
-    images.value = responseData.map((item) => `data:${item.contentType};base64,${item.data}`);
+    images.value = responseData.map((item) => ({
+      name: item.name,
+      src: `data:${item.contentType};base64,${item.data}`
+    }));
   } catch (error) {
     console.error('Errore durante il caricamento delle immagini:', error);
   }
@@ -60,6 +63,7 @@ async function loadImages() {
 
 async function selectImage(index) {
   const selectedImage = images.value[index];
+  console.log(selectedImage.name);
   //console.log(`Selected Image: ${selectedImage}`);
   const response = await fetch('/api/worker/start_session', {
     method: 'POST',
@@ -67,11 +71,12 @@ async function selectImage(index) {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${localStorage.getItem('token')}`,
     },
+    body: JSON.stringify(selectedImage.name),
   });
   if (!response.ok) {
     throw new Error('Errore durante l\'avvio della sessione.');
   }else{
-    await router.push({name: 'AudioPage', query: {background: selectedImage}});
+    await router.push({name: 'AudioPage', query: {background: selectedImage.src}});
   }
 }
 
@@ -169,6 +174,7 @@ onMounted(() => {
   padding: 15px 30px;
   font-size: 15px;
   background-color: #1666cb;
+  font-family: "Ink Free", sans-serif;
   color: white;
   border: none;
   border-radius: 10px;

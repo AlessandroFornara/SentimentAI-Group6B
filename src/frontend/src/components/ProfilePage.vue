@@ -21,7 +21,9 @@
         <p>Company: <strong>{{company}}</strong></p>
 
         <div>
-          <p style="margin-bottom: 10px; font-size: 18px"><strong>Level: {{ level }}</strong></p>
+          <p style="margin-bottom: 10px; font-size: 18px">
+            <strong>Level: <span style="color: blue">{{ level }}</span></strong>
+          </p>
           <!-- Contenitore della barra -->
           <div style="linear-gradient(90deg, #e0f7ff, #ccefff); height: 30px; width: 50%; border-radius: 10px; overflow: hidden; position: relative; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1)">
             <!-- Barra di progresso -->

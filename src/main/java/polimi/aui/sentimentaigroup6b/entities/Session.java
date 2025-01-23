@@ -36,8 +36,9 @@ public class Session {
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Audio> audios;
 
-    public Session(User userId, Date date) {
+    public Session(User userId, Date date, String topic) {
         this.userId = userId;
         this.date = date;
+        this.topic = topic;
     }
 }

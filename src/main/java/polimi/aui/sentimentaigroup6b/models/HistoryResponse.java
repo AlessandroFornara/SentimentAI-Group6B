@@ -21,6 +21,7 @@ public class HistoryResponse {
     @ToString
     public static class SessionData {
         private Date date;
+        private String topic;
         private String dominantEmotion;
         private String activityCategory;
         private String activityText;

@@ -137,10 +137,4 @@ public class EmotionAIRequestGenerator {
 
         return null;
     }
-
-    public byte[] readAudioFileToByteArray(String filePath) throws IOException {
-        Path path = Paths.get(filePath);
-
-        return Files.readAllBytes(path);
-    }
 }

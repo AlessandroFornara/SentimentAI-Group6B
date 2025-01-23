@@ -43,7 +43,7 @@
       <div class="row" v-if="registration">
 
         <div class="col">
-          <p>WORKER</p>
+          <p style="font-family: Calibri, sans-serif">WORKER</p>
         </div>
 
         <div class="col d-flex justify-content-center">
@@ -59,7 +59,7 @@
         </div>
 
         <div class="col d-flex justify-content-center">
-          <p>HR</p>
+          <p style="font-family: Calibri, sans-serif">HR</p>
         </div>
 
       </div>

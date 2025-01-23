@@ -43,9 +43,9 @@ public class SessionService {
         return ServerResponse.SESSION_CREATED;
     }
 
-    public ServerResponse startSession(User worker){
+    public ServerResponse startSession(User worker, String topic){
         // Create a new session
-        Session session = new Session(worker, new Date());
+        Session session = new Session(worker, new Date(), topic);
         try {
             sessionRepo.save(session);
         } catch (Exception e) {
