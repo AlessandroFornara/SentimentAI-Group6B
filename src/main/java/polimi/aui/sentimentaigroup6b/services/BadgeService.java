@@ -2,19 +2,19 @@ package polimi.aui.sentimentaigroup6b.services;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import polimi.aui.sentimentaigroup6b.entities.BadgeType;
+import polimi.aui.sentimentaigroup6b.entities.BadgeLevels;
 import polimi.aui.sentimentaigroup6b.entities.Session;
 import polimi.aui.sentimentaigroup6b.entities.User;
+import polimi.aui.sentimentaigroup6b.repositories.SessionRepo;
+import polimi.aui.sentimentaigroup6b.repositories.UserRepo;
 import polimi.aui.sentimentaigroup6b.utils.gamification.ActivityBasedBadge;
 import polimi.aui.sentimentaigroup6b.utils.gamification.LevelBasedBadge;
 import polimi.aui.sentimentaigroup6b.utils.gamification.TimeBasedBadge;
 import polimi.aui.sentimentaigroup6b.utils.gamification.TopicBasedBadge;
-import polimi.aui.sentimentaigroup6b.repositories.SessionRepo;
-import polimi.aui.sentimentaigroup6b.repositories.UserRepo;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -29,9 +29,9 @@ public class BadgeService {
     private final TopicBasedBadge topicBasedBadge;
 
 
-    public Map<BadgeType, Integer> assignBadges(User user) {
+    public BadgeLevels assignBadges(User user) {
 
-        Map<BadgeType, Integer> newBadges = new HashMap<>();
+        BadgeLevels newBadges = new BadgeLevels();
 
         assignLevelBadge(user, newBadges);
         assignActivityBadge(user, newBadges);
@@ -41,18 +41,18 @@ public class BadgeService {
         return newBadges;
     }
 
-    public void assignLevelBadge(User user, Map<BadgeType, Integer> badges) {
+    public void assignLevelBadge(User user, BadgeLevels badges) {
 
         int actualBadgeLevel = levelBasedBadge.getLevel(user.getLevel());
         int oldBadgeLevel = user.getBadges().getLevelBasedBadge();
 
         if (actualBadgeLevel > oldBadgeLevel) {
             user.getBadges().setLevelBasedBadge(actualBadgeLevel);
-            badges.put(BadgeType.LEVEL_BASED, actualBadgeLevel);
+            badges.setLevelBasedBadge(actualBadgeLevel);
         }
     }
 
-    public void assignActivityBadge(User user, Map<BadgeType, Integer> badges) {
+    public void assignActivityBadge(User user, BadgeLevels badges) {
 
         int actualBadgeLevel = activityBasedBadge.getLevel((int)
                 sessionRepo.findAllByUserId(user).stream()
@@ -65,11 +65,11 @@ public class BadgeService {
 
         if (actualBadgeLevel > oldBadgeLevel) {
             user.getBadges().setActivityBasedBadge(actualBadgeLevel);
-            badges.put(BadgeType.ACTIVITY_BASED, actualBadgeLevel);
+            badges.setActivityBasedBadge(actualBadgeLevel);
         }
     }
 
-    public void assignTimeBadge(User user, Map<BadgeType, Integer> badges) {
+    public void assignTimeBadge(User user, BadgeLevels badges) {
 
         // Fetch all sessions and sort them by date descending
         List<Session> sessions = sessionRepo.findAllByUserId(user).stream()
@@ -105,7 +105,7 @@ public class BadgeService {
         if (actualBadgeLevel > oldBadgeLevel) {
             user.getBadges().setTimeBasedBadge(actualBadgeLevel);
 
-            badges.put(BadgeType.TIME_BASED, actualBadgeLevel);
+            badges.setTimeBasedBadge(actualBadgeLevel);
         }
 
     }
@@ -134,7 +134,7 @@ public class BadgeService {
     }
 
 
-    public void assignTopicBadge(User user, Map<BadgeType, Integer> badges) {
+    public void assignTopicBadge(User user, BadgeLevels badges) {
 
         int actualBadgeLevel = topicBasedBadge.getLevel((int)
                 sessionRepo.findAllByUserId(user).stream()
@@ -148,7 +148,7 @@ public class BadgeService {
         if (actualBadgeLevel > oldBadgeLevel) {
             user.getBadges().setTopicBasedBadge(actualBadgeLevel);
 
-            badges.put(BadgeType.TOPIC_BASED, actualBadgeLevel);
+            badges.setTopicBasedBadge(actualBadgeLevel);
         }
 
     }

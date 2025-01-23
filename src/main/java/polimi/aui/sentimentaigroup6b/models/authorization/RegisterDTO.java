@@ -1,11 +1,11 @@
 package polimi.aui.sentimentaigroup6b.models.authorization;
 
-import polimi.aui.sentimentaigroup6b.entities.UserRoles;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import polimi.aui.sentimentaigroup6b.entities.UserRoles;
 
 @AllArgsConstructor
 @Getter

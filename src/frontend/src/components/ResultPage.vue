@@ -10,6 +10,25 @@
       <p v-else class="points">You earned <span>{{ points }}</span> points!</p>
     </div>
     <div v-if="showConfetti" class="confetti-container"></div>
+
+    <div style="display: flex; flex-direction: column; justify-content: center; margin-top: 5%">
+      <h1 v-if="newBadges = Object.values(badges).some(value => value > 0)">You have obtained the following badges:</h1>
+      <div v-if="newBadges" style="display: flex; flex-direction: row; justify-content: center">
+        <div v-for="(value, key) in badges" :key="key" class="badge">
+          <div v-if="value > 0">
+            <div v-if="badgeImage = getBadgeImage(key, value)">
+              <p style="color: black; font-size: 20px; margin: 0">
+                {{ badgeImage.name }}
+              </p>
+              <img :src="badgeImage.path" :alt="`${key} level ${value}`" class="badge-image" style="height: 200px" />
+              <p style="color: black">
+                {{ capitalizeWords(key) }} (Level {{ value }})
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -22,6 +41,7 @@ const router = useRouter();
 const dominantEmotion = ref('');
 const activity = ref('');
 const points = ref(0);
+const badges = ref('');
 const pointsCollected = ref(false);
 const showConfetti = ref(false);
 
@@ -48,6 +68,7 @@ const fetchSessionResults = async () => {
     dominantEmotion.value = data.dominantEmotion;
     activity.value = data.activityResponse.activityText;
     points.value = data.points;
+    badges.value = data.badges;
   } catch (error) {
     console.error('Error fetching session results:', error);
     alert('Failed to fetch session results. Please try again later.');
@@ -83,6 +104,45 @@ const backgroundStyle = {
   textAlign: 'center',
   padding: '20px',
 };
+
+const getBadgeImage = (badgeKey, level) => {
+  const badgeImages = {
+    activityBasedBadge: {
+      1: {path: require('@/assets/ActivityBasedBadges/ActivityStarter.png'), name: 'Activity Starter'},
+      2: {path: require('@/assets/ActivityBasedBadges/TaskExplorer.png'), name: 'Task Explorer'},
+      3: {path: require('@/assets/ActivityBasedBadges/ActionAchiever.png'), name: 'Action Achiever'},
+      4: {path: require('@/assets/ActivityBasedBadges/MasterOfActivities.png'), name: 'Master Of Activities'},
+    },
+    levelBasedBadge: {
+      1: {path: require('@/assets/LevelBasedBadges/EmotionalAwakener.png'), name: 'Emotional Awakener'},
+      2: {path: require('@/assets/LevelBasedBadges/MoodNavigator.png'), name: 'Mood Navigator'},
+      3: {path: require('@/assets/LevelBasedBadges/HarmonyBuilder.png'), name: 'Harmony Builder'},
+      4: {path: require('@/assets/LevelBasedBadges/SentientSage.png'), name: 'Sentient Sage'},
+    },
+    timeBasedBadge: {
+      1: {path: require('@/assets/TimeBasedBadges/2.png'), name: '2 Days'},
+      2: {path: require('@/assets/TimeBasedBadges/5.png'), name: '5 Days'},
+      3: {path: require('@/assets/TimeBasedBadges/10.png'), name: '10 Days'},
+      4: {path: require('@/assets/TimeBasedBadges/20.png'), name: '20 Days'},
+    },
+    topicBasedBadge: {
+      1: {path: require('@/assets/TopicBasedBadges/BeginnerExplorer.png'), name: 'Beginner Explorer'},
+      2: {path: require('@/assets/TopicBasedBadges/CuriousThinker.png'), name: 'Curious Thinker'},
+      3: {path: require('@/assets/TopicBasedBadges/TopicTrailblazer.png'), name: 'Topic Trailblazer'},
+      4: {path: require('@/assets/TopicBasedBadges/MasterOfInsights.png'), name: 'Master Of Insights'},
+    }
+  };
+
+  return badgeImages[badgeKey]?.[level];
+}
+
+function capitalizeWords(str) {
+  return str
+      .replace(/([A-Z])/g, ' $1')
+      .trim()
+      .toLowerCase()
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+}
 </script>
 
 <style scoped>

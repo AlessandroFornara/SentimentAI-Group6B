@@ -1,12 +1,8 @@
 package polimi.aui.sentimentaigroup6b.utils.gamification;
 
 import org.springframework.stereotype.Component;
-import polimi.aui.sentimentaigroup6b.entities.Session;
-import polimi.aui.sentimentaigroup6b.models.ActivityResponse;
-import polimi.aui.sentimentaigroup6b.repositories.SessionRepo;
 import polimi.aui.sentimentaigroup6b.models.Activity;
-
-import static polimi.aui.sentimentaigroup6b.models.Activity.*;
+import polimi.aui.sentimentaigroup6b.models.ActivityResponse;
 
 @Component
 public class PointsManager {

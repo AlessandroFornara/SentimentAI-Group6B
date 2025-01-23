@@ -4,22 +4,24 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import polimi.aui.sentimentaigroup6b.entities.Audio;
-import polimi.aui.sentimentaigroup6b.entities.BadgeType;
+import polimi.aui.sentimentaigroup6b.entities.BadgeLevels;
 import polimi.aui.sentimentaigroup6b.entities.Session;
 import polimi.aui.sentimentaigroup6b.entities.User;
 import polimi.aui.sentimentaigroup6b.models.*;
 import polimi.aui.sentimentaigroup6b.models.emotionAI.Emotion;
 import polimi.aui.sentimentaigroup6b.models.emotionAI.EmotionAIResponse;
-import polimi.aui.sentimentaigroup6b.repositories.UserRepo;
-import polimi.aui.sentimentaigroup6b.utils.gamification.PointsManager;
 import polimi.aui.sentimentaigroup6b.models.llm.Message;
 import polimi.aui.sentimentaigroup6b.repositories.AudioRepo;
 import polimi.aui.sentimentaigroup6b.repositories.SessionRepo;
+import polimi.aui.sentimentaigroup6b.repositories.UserRepo;
 import polimi.aui.sentimentaigroup6b.utils.CachingComponent;
 import polimi.aui.sentimentaigroup6b.utils.EmotionAIRequestGenerator;
 import polimi.aui.sentimentaigroup6b.utils.OpenAIRequestGenerator;
+import polimi.aui.sentimentaigroup6b.utils.gamification.PointsManager;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
 
 @AllArgsConstructor
 @Service
@@ -135,7 +137,7 @@ public class SessionService {
         worker.setPoints(totalXP);
         worker.setLevel(level);
 
-        Map<BadgeType, Integer> badges = badgeService.assignBadges(worker);
+        BadgeLevels badges = badgeService.assignBadges(worker);
         System.out.println("Badges: " + badges);
 
         session.setDominantEmotion(dominantEmotion.getEmotion());

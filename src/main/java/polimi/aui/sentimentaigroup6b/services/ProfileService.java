@@ -11,7 +11,6 @@ import polimi.aui.sentimentaigroup6b.repositories.SessionRepo;
 import polimi.aui.sentimentaigroup6b.repositories.UserRepo;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor

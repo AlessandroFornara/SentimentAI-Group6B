@@ -13,11 +13,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import polimi.aui.sentimentaigroup6b.models.emotionAI.EmotionAIResponse;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 @Component
 public class EmotionAIRequestGenerator {
 
