@@ -187,27 +187,4 @@ onMounted(() => {
   color: #1666cb;
 }
 
-.upper-left {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  display: flex;
-  width: 100%;
-}
-
-.upper-left button {
-  padding: 15px 30px;
-  font-size: 18px;
-  font-family: Century;
-  background-color: #1666cb;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.upper-left button:hover {
-  background-color: indigo;
-}
 </style>

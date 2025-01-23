@@ -1,8 +1,12 @@
 <template>
-  <div style="padding: 20px;">
-    <h1 style="text-align: center; margin-bottom: 20px;">Session History</h1>
+  <div class="upper-left">
+    <button @click="goBack">Back</button>
+  </div>
 
-    <div v-if="sessions.length > 0" style="display: flex; flex-direction: column; align-items:center; justify-content: center;">
+  <div style="display: flex; flex-direction: column; align-items: center">
+
+    <h1 style="text-align: center">Session History</h1>
+    <div v-if="sessions.length > 0" style="display: flex; flex-direction: column; align-items:center; margin-top: 40px; max-height: 500px; overflow-y: auto">
       <div
           v-for="session in sessions"
           :key="session.date"
@@ -22,6 +26,9 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 let sessions = ref([]);
 
 onMounted(() => {
@@ -52,10 +59,15 @@ async function fetchHistory() {
   }
 }
 
+function goBack() {
+  console.log('Navigating back to HomePage...');
+  router.push('/home');
+}
+
 </script>
 
 <style>
-/* Stile opzionale */
+
 .session-card {
   background-color: #f9f9f9;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -64,7 +76,7 @@ async function fetchHistory() {
   border-radius: 10px;
   margin-bottom: 15px;
   padding: 15px;
-  max-width: 700px;
+  width: 100%;
 }
 
 .session-card:hover {

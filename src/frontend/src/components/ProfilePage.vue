@@ -1,14 +1,18 @@
 <template>
+  <div class="upper-left">
+    <button @click="goBack">Back</button>
+  </div>
+
   <div class="container" style="display: flex; flex-direction: column">
 
-    <div class="container mt-5" style="display: flex; flex-direction: row; align-items: baseline; margin-left: 15%">
+    <div class="container mt-2" style="display: flex; flex-direction: row; align-items: baseline; margin-left: 15%">
       <h1>Profile</h1>
       <h4 style="margin-left: 2%; color: #1666cb">{{role}}</h4>
     </div>
 
     <div class="container" style="display: flex; align-items: center">
-      <div class="col" style="width: 35%; display: flex; justify-content: center; margin-top: 5%">
-        <img src="@/assets/profile-circle-svgrepo-com.svg" width="50%" alt="P">
+      <div class="col" style="display: flex; justify-content: center">
+        <img src="@/assets/profile-circle-svgrepo-com.svg" width="200px" alt="P">
       </div>
       <div class="col">
         <p>Email: <strong>{{email}}</strong></p>
@@ -33,15 +37,14 @@
     </div>
 
     <div style="display: flex; flex-direction: column; justify-content: center; margin-top: 5%">
-      <h2 style="text-align: center;">Your Badges</h2>
-      <div v-if="Object.values(badges).some(value => value > 0)" style="display: flex; flex-direction: row; align-items: center">
+      <div v-if="Object.values(badges).some(value => value > 0)" style="display: flex; flex-direction: row; justify-content: center">
         <div v-for="(value, key) in badges" :key="key" class="badge">
           <div v-if="value > 0">
             <div v-if="badgeImage = getBadgeImage(key, value)">
               <p style="color: black; font-size: 20px; margin: 0">
                 {{ badgeImage.name }}
               </p>
-              <img :src="badgeImage.path" :alt="`${key} level ${value}`" class="badge-image" style="width: 70%" />
+              <img :src="badgeImage.path" :alt="`${key} level ${value}`" class="badge-image" style="height: 200px" />
               <p style="color: black">
                 {{ capitalizeWords(key) }} (Level {{ value }})
               </p>
@@ -59,6 +62,9 @@
 
 <script setup>
 import {ref, onMounted, computed} from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const name = ref('');
 const surname = ref('');
@@ -155,6 +161,11 @@ function capitalizeWords(str) {
       .trim()
       .toLowerCase()
       .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function goBack() {
+  console.log('Navigating back to HomePage...');
+  router.push('/home');
 }
 
 </script>
