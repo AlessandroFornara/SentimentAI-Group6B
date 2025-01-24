@@ -5,6 +5,8 @@
       <div v-for="(bubble, index) in bubbles" :key="index" class="floating-bubble" :style="bubble.style"></div>
     </div>
 
+
+
     <div class="floating-sphere"></div>
     <div class="floating-sphere"></div>
     <div class="floating-sphere"></div>
@@ -13,18 +15,19 @@
 
     <!-- Frase Generata -->
     <div class="question">
+      <img :src="questionImage" alt="Question Icon" class="question-image" />
       <p>{{ question }}</p>
     </div>
 
-
-
-    <!-- Immagine al centro in grande -->
-    <div class="image-bubble">
-      <img :src="selectedImage" alt="Selected Background" class="center-image" />
+    <!-- Nuvola con l'immagine selezionata -->
+    <div class="cloud-container">
+      <img :src="selectedImage" alt="Cloud Image" class="cloud-image" />
     </div>
 
-    <div class="timer">
-      <div class="time-numbers">{{ formattedTime }}</div>
+
+
+    <div class="timer">    <!-- Minuti e secondi mancanti -->
+
       <div class="timer-progress">
         <div class="progress-bar" :style="progressBarStyle"></div>
       </div>
@@ -74,12 +77,17 @@
 import microphoneImage from '@/assets/Microphone.png';
 import { ref, computed, onMounted } from 'vue';
 import {useRoute, useRouter} from "vue-router";
+import questionImage from '@/assets/HappyCloud.png'
 
 // Stato iniziale
 const selectedImage = ref(null); // Per memorizzare l'immagine selezionata
 const question = ref('Great choice!' + ' ' +
     'How do you feel?'); // Prima domanda fissa
+
 const timeRemaining = ref(120);
+
+// Calcolo dei minuti e secondi mancanti
+
 const isRecording = ref(false);
 const showFinishButton = ref(false);
 const questionReady = ref(true);
@@ -97,14 +105,29 @@ let completeTranscript = ''; // Trascrizione finale
 
 const router = useRouter(); // Router per la navigazione
 
+// Funzione per avviare il conto alla rovescia
+const startTimer = () => {
+  timerInterval = setInterval(() => {
+    if (timeRemaining.value > 0) {
+      timeRemaining.value--; // Riduci di un secondo
+    } else {
+      clearInterval(timerInterval); // Ferma il timer a zero
+    }
+  }, 1000);
+};
+
 // Recupera l'immagine salvata in sessionStorage all'avvio
 onMounted(() => {
+  startTimer();
   const route = useRoute();
   const backgroundImage = route.query.background;
   if (backgroundImage) {
     selectedImage.value = backgroundImage;  // Salva l'immagine nel ref
   }
 });
+
+
+
 
 const generateBubble = () => {
   const numberOfBubbles = Math.floor(5 * bubbleMultiplier.value); // Numero di bolle moltiplicato
@@ -428,6 +451,11 @@ const animateAudioVisualizer = () => {
 }
 
 .question {
+  display: flex; /* Disposizione orizzontale di immagine e testo */
+  align-items: center; /* Allinea verticalmente immagine e testo */
+  text-align: left; /* Allinea il contenitore a sinistra */
+  gap: 15px; /* Spazio tra immagine e testo */
+  margin: 20px 0; /* Spazio intorno al box */
   margin-top: 20px;
   font-size: 2rem;
   font-family:"Ink Free", sans-serif;
@@ -438,6 +466,21 @@ const animateAudioVisualizer = () => {
   z-index: 10; /* Garantisce che il testo sia sempre sopra altri elementi */
 }
 
+.question-image {
+  width: 100px; /* Larghezza immagine */
+  height: 100px; /* Altezza immagine */
+  object-fit: contain; /* Adatta l'immagine mantenendo proporzioni */
+  animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
 /* Box unico per la registrazione */
 .recording-box {
   display: flex;
@@ -515,10 +558,10 @@ const animateAudioVisualizer = () => {
   align-items: center;
   justify-content: flex-start; /* Posiziona il contenuto verso l'alto */
   position: absolute;
-  right: 40px;
+  right: 100px;
   top: 50%;
   transform: translateY(-50%);
-  width: 30px;
+  width: 50px;
   height: 300px;
   background: rgba(255, 255, 255, 0.2); /* Sfondo trasparente */
   border-radius: 10px;
@@ -527,26 +570,19 @@ const animateAudioVisualizer = () => {
 }
 
 .progress-bar {
-  background-color: linear-gradient(to bottom, #ff4500, #ffa500); /* Sfumatura arancione */
+  background: linear-gradient(to bottom, #ff4500, #ffa500); /* Sfumatura arancione */
   transition: height 1s linear;
   width: 100%;
   height: 100%; /* Partenza piena */
   transform-origin: bottom; /* L'origine diventa il bordo superiore */
 }
 
-.timer-bubble {
-  position: absolute;
-  bottom: 0;
-  border-radius: 50%;
-  background: radial-gradient(circle, #ff7f50, #ff6347, #ffa500); /* Sfumatura arancione */
-  animation: floatUpTimer 5s linear infinite;
-  opacity: 0.8;
-}
+
 
 
 .time-remaining {
   position: absolute;
-  top: -20px; /* Sopra il timer */
+  margin-bottom: 10px; /* Spazio tra il testo e la barra */
   color: orange; /* Testo blu */
   font-size: 1rem;
   font-weight: bold;
@@ -609,6 +645,24 @@ const animateAudioVisualizer = () => {
   animation: floatUp 8s ease-in-out infinite;
   opacity: 0.8;
 }
+
+.cloud-container {
+  position: relative;
+  width: 500px; /* Larghezza della nuvola */
+  height: 300px; /* control the size */
+  aspect-ratio: 1.8;
+  --g: radial-gradient(50% 50%, #000 98%, #0000) no-repeat;
+  mask: var(--g) 100% 100%/30% 60%,var(--g) 70% 0/50% 100%,var(--g) 0 100%/36% 68%,var(--g) 27% 18%/26% 40%,linear-gradient(#000 0 0) bottom/67% 58% no-repeat;
+  background: #269af2;
+}
+
+.cloud-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Adatta l'immagine alla nuvola */
+}
+
+
 
 /*.floating-bubble:nth-child(1) {
   left: 10%;
@@ -714,6 +768,15 @@ const animateAudioVisualizer = () => {
   text-align: center;
   width: 100%;
 }
+
+.time-remaining-text {
+  font-size: 1.5rem; /* Dimensione del testo */
+  font-weight: bold;
+  color: orange; /* Colore arancione */
+  text-align: center;
+  margin-bottom: 10px; /* Spazio sopra la barra del timer */
+}
+
 
 
 
