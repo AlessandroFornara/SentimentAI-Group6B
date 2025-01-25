@@ -22,7 +22,7 @@
         <a
             @click.prevent="register()"
             href="#"
-        >{{ registration ? "Already registered? Log in" : "New here? Sign up!" }}</a>
+        >{{ registration ? "Already registered? Log in!" : "New here? Sign up!" }}</a>
       </div>
 
       <div class="mb-3" v-if="registration">
@@ -195,7 +195,7 @@ function handleRegister() {
 <style scoped>
 .title {
   font-size: 70px;
-  font-family: "Ink Free", sans-serif;
+  font-family: 'Lobster', cursive;
   margin: 0;
   color: #1666cb; /* Blu scuro */
 }
@@ -203,7 +203,7 @@ function handleRegister() {
 .subtitle {
   font-size: 25px;
   font-weight: normal;
-  font-family: "Ink Free", sans-serif;
+  font-family: 'Lobster', cursive;
   color: #1666cb; /* Blu pastello */
   text-align: center;
 }
