@@ -29,7 +29,7 @@
         </button>
         <button @click="navigateTo('history')">
           <span>History</span>
-          <img src="@/assets/history-button-image.png" alt="History"/>
+          <img src="@/assets/history_dodgerBlueShadow.png" alt="History"/>
         </button>
       </div>
 
