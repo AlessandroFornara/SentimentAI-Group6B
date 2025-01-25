@@ -51,11 +51,4 @@ public class GeneralConfig {
         return builder.build();
     }
 
-    @Bean
-    public LocaleResolver localeResolver() {
-        SessionLocaleResolver resolver = new SessionLocaleResolver();
-        resolver.setDefaultLocale(Locale.ENGLISH);
-        return resolver;
-    }
-
 }
