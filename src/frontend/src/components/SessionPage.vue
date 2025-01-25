@@ -29,6 +29,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import freeModeImage from '@/assets/OfficeWorkerThinking-NoBG.png';
 
 const router = useRouter();
 const images = ref([]);
@@ -82,7 +83,7 @@ async function selectImage(index) {
 
 function freeModeOption() {
   console.log('Free Mode Option Selected');
-  router.push({name: 'AudioPage'});
+  router.push({name: 'AudioPage', query: {background: freeModeImage, mask: false}});
 }
 
 function goBack() {
@@ -174,7 +175,7 @@ onMounted(() => {
   padding: 15px 30px;
   font-size: 15px;
   background-color: #1666cb;
-  font-family: "Ink Free", sans-serif;
+  font-family: 'Lobster', cursive;
   color: white;
   border: none;
   border-radius: 10px;

@@ -21,7 +21,7 @@
     <p style="font-size: 25px">Session remaining time: {{formattedSessionRemainingTime}}</p>
 
     <!-- Nuvola con l'immagine selezionata -->
-    <div class="masking">
+    <div :class="['masking', { 'no-mask': !shouldMask }]">
       <img :src="selectedImage" alt="Cloud Image" class="cloud-image" />
     </div>
 
@@ -67,7 +67,7 @@
     </div>
 
     <!-- Pulsante Terminate Session -->
-    <div v-if="totalRemainingTime >= 0" class="terminate-session">
+    <div v-if="maxSessionTime - totalRemainingTime >= minimumSessionTime" class="terminate-session">
       <button @click="goToResultPage" class="btn-terminate">Terminate Session</button>
     </div>
   </div>
@@ -87,7 +87,9 @@ const question = ref('Great choice. What does this image make you think of?'); /
 const maxAudioTime = 80;
 const maxSessionTime = 360;
 const timeRemaining = ref(maxAudioTime);
+const minimumSessionTime = 120;
 
+const shouldMask = ref(true)
 // Calcolo dei minuti e secondi mancanti
 
 const isRecording = ref(false);
@@ -111,6 +113,9 @@ let endSession = false;
 
 const router = useRouter(); // Router per la navigazione
 
+function toggleMasking() {
+  shouldMask.value = !shouldMask.value;
+}
 
 function preventReload(event)
 {
@@ -197,6 +202,9 @@ onMounted(() => {
   const route = useRoute();
   const backgroundImage = route.query.background;
   if (backgroundImage) {
+    if(route.query.mask === 'false'){
+      toggleMasking();
+    }
     selectedImage.value = backgroundImage;  // Salva l'immagine nel ref
     typeText();
   }else{
@@ -270,12 +278,12 @@ const startRecording = () => {
   liveTranscript = '';
   completeTranscript = '';
 
-  // Mostra il pulsante Finish Audio dopo 5 secondi
+  // Mostra il pulsante Finish Audio dopo 30 secondi
   setTimeout(() => {
     if (isRecording.value) {
       showFinishButton.value = true;
     }
-  }, 5000);
+  }, 30000);
 
   // Genera bolle continuamente durante la registrazione
   const bubbleInterval = setInterval(() => {
@@ -552,7 +560,7 @@ const animateAudioVisualizer = () => {
   margin: 20px 0; /* Spazio intorno al box */
   margin-top: 20px;
   font-size: 2rem;
-  font-family:"Ink Free", sans-serif;
+  font-family: 'Lobster', cursive;
   text-align: center;
   color: #1666cb;
   font-weight: bold;
@@ -699,7 +707,7 @@ const animateAudioVisualizer = () => {
 .btn-terminate {
   padding: 10px 20px;
   font-size: 1rem;
-  background-color: blue;
+  background-color: #1666cb;
   color: white;
   border: none;
   border-radius: 5px;
@@ -707,7 +715,7 @@ const animateAudioVisualizer = () => {
 }
 
 .btn-terminate:hover {
-  background-color: darkblue;
+  background-color: #0f4da8;
 }
 
 
@@ -765,50 +773,17 @@ const animateAudioVisualizer = () => {
   background-color: #fff; /* Optional: background color inside the mask */
 }
 
+.no-mask {
+  mask-image: none;
+  -webkit-mask-image: none;
+  background-color: transparent;
+}
+
 .cloud-image {
   width: 100%;
   height: 100%;
   object-fit: cover; /* Adatta l'immagine alla nuvola */
 }
-
-
-
-
-
-/*.floating-bubble:nth-child(1) {
-  left: 10%;
-  animation-delay: 0s;
-  width: 120px;
-  height: 120px;
-}
-
-.floating-sphere:nth-child(2) {
-  left: 30%;
-  animation-delay: 2s;
-  width: 80px;
-  height: 80px;
-}
-
-.floating-sphere:nth-child(3) {
-  left: 50%;
-  animation-delay: 4s;
-  width: 100px;
-  height: 100px;
-}
-
-.floating-sphere:nth-child(4) {
-  left: 70%;
-  animation-delay: 1s;
-  width: 90px;
-  height: 90px;
-}
-
-.floating-sphere:nth-child(5) {
-  left: 90%;
-  animation-delay: 3s;
-  width: 110px;
-  height: 110px;
-} */
 
 @keyframes floatUp {
   0% {
@@ -887,8 +862,5 @@ const animateAudioVisualizer = () => {
   text-align: center;
   margin-bottom: 10px; /* Spazio sopra la barra del timer */
 }
-
-
-
 
 </style>

@@ -25,7 +25,7 @@
       <div class="center-buttons">
         <button @click="navigateTo('profile')">
           <span>Profile</span>
-          <img src="@/assets/profile-button-image.png" alt="Profile"/>
+          <img src="@/assets/ProfileButtonIcon.png" alt="Profile"/>
         </button>
         <button @click="navigateTo('history')">
           <span>History</span>
@@ -75,7 +75,7 @@ function logout() {
   justify-content: space-between;
   align-items: center;
   height: 100vh;
-  font-family: "Ink Free", sans-serif;
+  font-family: 'Lobster', cursive;
   position: relative;
   overflow: hidden;
 }
@@ -160,8 +160,7 @@ function logout() {
   height: 200px;
   border: none;
   border-radius: 50%;
-  background-color: rgba(22, 102, 203, 0.36);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background-color: transparent;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -175,14 +174,13 @@ function logout() {
   bottom: 10px;
   font-size: 1.5rem;
   font-weight: bold;
-  color: white;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  color: dodgerblue;
   z-index: 2;
 }
 
 .center-buttons button img {
-  width: 80%;
-  height: 80%;
+  width: 100%;
+  height: 100%;
   object-fit: fill;
 }
 
@@ -209,25 +207,26 @@ function logout() {
   font-weight: 600;
   cursor: pointer;
   border: none;
-  background: linear-gradient(90deg, #ff6b6b, #ff9a5f);
+  background: linear-gradient(90deg, dodgerblue, #1666cb);
   color: white;
   border-radius: 20px;
   transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   min-width: 240px;
   min-height: 70px;
-  box-shadow: 0px 8px 20px rgba(255, 107, 107, 0.3);
+  box-shadow: 0px 8px 20px rgba(30, 144, 255, 0.3); /* Dodgerblue shadow */
 }
 
 .bottom-center button:hover {
   transform: scale(1.05);
-  box-shadow: 0px 12px 30px rgba(255, 107, 107, 0.4);
-  background: linear-gradient(90deg, #ff9a5f, #ff6b6b);
+  box-shadow: 0px 12px 30px rgba(30, 144, 255, 0.4); /* Brighter dodgerblue shadow */
+  background: linear-gradient(90deg, #1e90ff, #0073e6); /* Lighter dodgerblue gradient */
 }
 
 .bottom-center button:active {
   transform: scale(0.98);
-  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
-  background: linear-gradient(90deg, #d45a5a, #e6855e);
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow for active state */
+  background: linear-gradient(90deg, #005bb5, #004a99); /* Darker dodgerblue gradient */
 }
+
 </style>
 
