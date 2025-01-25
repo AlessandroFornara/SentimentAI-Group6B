@@ -1,39 +1,30 @@
 <template>
   <div class="result-page" :style="backgroundStyle">
-    <h1 class="title">Your session is concluded! <em>Congratulations</em></h1>
+    <h1 class="title">Your session is concluded!</h1>
     <h2 class="subtitle">Here are some results from the analysis:</h2>
-    <!-- Corpo diviso in quattro sezioni -->
-    <div class="result-grid">
-      <!-- Sezione: Emotion -->
-      <div class="grid-item emotion-box">
-        <p>The emotion you are feeling is:</p>
-        <div class="emotion-display">
-          <img :src="getEmotionImage(dominantEmotion)" alt="Emotion Icon" class="emotion-icon" />
-          <p class="emotion-text">{{ dominantEmotion }}</p>
-        </div>
-      </div>
 
-      <!-- Sezione: Points -->
-      <div class="grid-item points-box">
-        <button v-if="!pointsCollected" class="collect-button" @click="collectPoints">Click here to collect your points</button>
-        <p v-else class="points">You earned <span>{{ points }}</span> points!</p>
-      </div>
-      <div v-if="showConfetti" class="confetti-container">
-      </div>
+    <div class="result-content">
+      <p class="emotion">The emotion that you are mostly feeling is: <span style="color: blue">{{ dominantEmotion }}</span></p>
+      <p class="activity">Suggested activity based on your emotion: <span style="color: blue">{{ activity }}</span></p>
+      <button v-if="!pointsCollected" class="collect-button" @click="collectPoints">Click here to collect your points</button>
+      <p v-else class="points">You earned <span style="color: blue">{{ points }}</span> points!</p>
+    </div>
+    <div v-if="showConfetti" class="confetti-container"></div>
 
-      <!-- Sezione: Suggested Activity -->
-      <div class="grid-item activity-box">
-        <p>Suggested activity:</p>
-        <p class="activity-text">{{ activity }}</p>
-      </div>
-
-      <!-- Sezione: Badges -->
-      <div class="grid-item badges-box">
-        <p>Your badges:</p>
-        <div class="badges-container">
-          <div v-for="([key, value]) in filteredBadges" :key="key" class="badge">
-            <img :src="getBadgeImage(key, value)?.path" :alt="`${key} level ${value}`" class="badge-image" />
-            <p class="badge-label">{{ capitalizeWords(key) }} (Level {{ value }})</p>
+    <div style="display: flex; flex-direction: column; justify-content: center; margin-top: 5%">
+      <h1 v-if="newBadges = Object.values(badges).some(value => value > 0)">You have obtained the following badges:</h1>
+      <div v-if="newBadges" style="display: flex; flex-direction: row; justify-content: center">
+        <div v-for="(value, key) in badges" :key="key" class="badge">
+          <div v-if="value > 0">
+            <div v-if="badgeImage = getBadgeImage(key, value)">
+              <p style="color: black; font-size: 20px; margin: 0">
+                {{ badgeImage.name }}
+              </p>
+              <img :src="badgeImage.path" :alt="`${key} level ${value}`" class="badge-image" style="height: 200px" />
+              <p style="color: black">
+                {{ capitalizeWords(key) }} (Level {{ value }})
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -46,13 +37,6 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import confetti from 'canvas-confetti';
 import {badgeImages, capitalizeWords} from '@/utils/badgeUtils';
-import angerImage from '@/assets/Anger.png';
-import fearImage from '@/assets/Fear.png';
-import disgustImage from '@/assets/Disgust.png';
-import joyImage from '@/assets/Joy.png';
-import sadnessImage from '@/assets/Sadness.png';
-import neutralImage from '@/assets/Neutral.png';
-import surpriseImage from '@/assets/Surprise.png';
 
 const router = useRouter();
 const dominantEmotion = ref('');
@@ -61,22 +45,6 @@ const points = ref(0);
 const badges = ref('');
 const pointsCollected = ref(false);
 const showConfetti = ref(false);
-
-// Mappatura emozioni -> immagini
-const emotionImages = {
-  Anger: angerImage,
-  Fear: fearImage,
-  Disgust: disgustImage,
-  Joy: joyImage,
-  Sadness: sadnessImage,
-  Neutral: neutralImage,
-  Surprise: surpriseImage,
-};
-
-// Funzione per ottenere l'immagine in base all'emozione
-const getEmotionImage = (emotion) => {
-  return emotionImages[emotion] || neutralImage; // Valore di fallback: immagine neutrale
-};
 
 const fetchSessionResults = async () => {
   try {
@@ -145,137 +113,69 @@ const getBadgeImage = (badgeKey, level) => {
 </script>
 
 <style scoped>
+p, h1, h2 {
+  color: black;
+}
+
 .result-page {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
+  padding-left: 20px;
   justify-content: center;
-  height: 100vh;
-  background-color: #87ceeb;
-  color: white;
-  padding: 20px;
 }
 
 .title {
   font-size: 3rem;
   font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+  width: 100%;
+}
+
+.subtitle {
+  font-size: 1.5rem;
+  font-weight: 300;
   margin-bottom: 20px;
-  text-align: center;
+  text-align: left;
 }
 
-.result-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* Due colonne */
-  grid-template-rows: 1fr 1fr; /* Due righe */
-  gap: 20px; /* Spazio tra le sezioni */
-  width: 80%; /* Adatta alla larghezza della pagina */
-  height: 60%; /* Adatta l'altezza */
+.result-content {
+  font-size: 1.2rem;
+  line-height: 1.8;
 }
 
-.grid-item {
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-  padding: 20px;
-  text-align: center;
-  height: 200px;
-  background: linear-gradient(to right, #e65100, #fb8c00, #ffcc80);
-}
-
-.emotion-box .emotion-text {
-  color: blue;
-  font-size: 2rem;
+.result-content span {
   font-weight: bold;
-  animation: wave 2s infinite;
+  color: #fff;
 }
 
-.emotion-display {
-  display: flex;
-  align-items: center; /* Allinea verticalmente immagine e testo */
-  gap: 15px; /* Spazio tra immagine e testo */
+.emotion, .activity, .points {
+  margin-bottom: 10px;
 }
-
-.emotion-icon {
-  width: 50px; /* Larghezza dell'immagine */
-  height: 50px; /* Altezza dell'immagine */
-  object-fit: contain; /* Mantiene proporzioni */
-}
-
-.emotion-text {
-  color: blue;
-  font-size: 2rem;
-  font-weight: bold;
-  animation: wave 2s infinite; /* Animazione ondulata */
-}
-
-@keyframes wave {
-  0%, 100% {
-    transform: rotate(-10deg);
-  }
-  50% {
-    transform: rotate(10deg);
-  }
-}
-
 
 .collect-button {
-  background-color: darkblue; /* Blu */
-  color: white; /* Testo bianco */
-  padding: 10px 20px; /* Spaziatura interna */
-  font-family: "Ink Free", sans-serif;
-  font-size: 1.2rem; /* Dimensione del testo */
-  border: none; /* Rimuove il bordo */
-  border-radius: 10px; /* Angoli smussati */
-  cursor: pointer; /* Cursore puntatore al passaggio del mouse */
-  transition: background-color 0.3s ease; /* Animazione su hover */
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .collect-button:hover {
-  background-color: #0056b3; /* Blu più scuro quando si passa sopra */
+  background-color: #45a049;
 }
 
-.points{
-  font-size: 2rem;
+.confetti-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
-
-
-.activity-box .activity-text {
-  color: blue;
-  font-size: 2rem;
-  font-weight: bold;
-}
-
-.badges-box .badges-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-}
-
-.badge-image {
-  width: 60px;
-  height: 60px;
-}
-
-.badge-label {
-  font-size: 0.8rem;
-  margin-top: 5px;
-  color: white;
-}
-
-@keyframes wave {
-  0%, 100% {
-    transform: rotate(-10deg);
-  }
-  50% {
-    transform: rotate(10deg);
-  }
-}
-
-
-
 </style>
