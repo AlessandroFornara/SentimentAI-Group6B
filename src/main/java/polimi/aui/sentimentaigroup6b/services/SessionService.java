@@ -151,6 +151,10 @@ public class SessionService {
                 level);
     }
 
+    public void changeLanguage(String language) {
+        emotionAIRequestGenerator.setLanguage(language);
+    }
+
     private Emotion computeDominantEmotion(List<AudioEmotionsDTO> detectedEmotions) {
         if (detectedEmotions == null || detectedEmotions.isEmpty()) {
             return null;

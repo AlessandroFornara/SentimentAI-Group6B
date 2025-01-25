@@ -204,6 +204,7 @@ onMounted(() => {
   if (backgroundImage) {
     if(route.query.mask === 'false'){
       toggleMasking();
+      question.value = 'What do you want to talk about today?';
     }
     selectedImage.value = backgroundImage;  // Salva l'immagine nel ref
     typeText();
@@ -774,6 +775,7 @@ const animateAudioVisualizer = () => {
 }
 
 .no-mask {
+  width: 20%;
   mask-image: none;
   -webkit-mask-image: none;
   background-color: transparent;

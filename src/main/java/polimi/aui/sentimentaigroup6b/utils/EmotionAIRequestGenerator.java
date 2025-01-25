@@ -2,6 +2,7 @@ package polimi.aui.sentimentaigroup6b.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Setter;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +31,9 @@ public class EmotionAIRequestGenerator {
     private String API_TOKEN;
     @Value("${ai.emotion.name}")
     private String API_NAME;
+
+    @Setter
+    private String language = "en-US";
 
     @Autowired
     private RestTemplate restTemplate;
@@ -94,7 +98,7 @@ public class EmotionAIRequestGenerator {
         speech.put("data", fileUri);
         payload.put("speech", speech);
 
-        payload.put("language", "it-IT");
+        payload.put("language", language);
 
         JSONObject service = new JSONObject();
         service.put("name", API_NAME);
@@ -133,4 +137,5 @@ public class EmotionAIRequestGenerator {
 
         return null;
     }
+
 }

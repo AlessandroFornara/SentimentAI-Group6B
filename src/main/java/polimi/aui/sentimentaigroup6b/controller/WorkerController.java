@@ -57,6 +57,18 @@ public class WorkerController {
         return ResponseEntity.ok(history);
     }
 
+    @GetMapping("/change_language")
+    public ResponseEntity<?> selectLanguage(@RequestBody String language) {
+        if(language == null || language.isEmpty()){
+            return ResponseEntity.badRequest().body("Language cannot be empty");
+        }
+        if(!language.equals("en-US") && !language.equals("it-IT")){
+            return ResponseEntity.badRequest().body("Language not supported");
+        }
+        sessionService.changeLanguage(language);
+        return ResponseEntity.ok("Language changed to " + language);
+    }
+
     @PreAuthorize("hasRole('WORKER')")
     @PostMapping("/create_session")
     public ResponseEntity<?> createSession() {
