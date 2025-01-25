@@ -6,7 +6,7 @@
   <div style="display: flex; flex-direction: column; align-items: center">
 
     <h1 style="text-align: center; margin-top: 20px">Session History</h1>
-    <div v-if="sessions.length > 0" style="display: flex; flex-direction: column; align-items:center; margin-top: 40px; max-height: 500px; overflow-y: auto">
+    <div v-if="sessions.length > 0" class="scroll-container">
       <div
           v-for="session in sessions"
           :key="session.date"
@@ -68,6 +68,21 @@ function goBack() {
 </script>
 
 <style>
+
+.scroll-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 40px;
+  max-height: 500px;
+  overflow-y: auto;
+  scrollbar-width: none; /* For Firefox */
+  -ms-overflow-style: none; /* For IE and Edge */
+}
+
+.scroll-container::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Edge */
+}
 
 .session-card {
   background-color: #f9f9f9;
