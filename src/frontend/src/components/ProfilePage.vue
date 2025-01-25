@@ -6,7 +6,7 @@
   <div class="container" style="display: flex; flex-direction: column">
 
     <div class="container mt-2" style="display: flex; flex-direction: row; align-items: baseline; margin-left: 15%">
-      <h1>Profile</h1>
+      <h1>{{ $t('profileButton') }}</h1>
       <h4 style="margin-left: 2%; color: #1666cb">{{role}}</h4>
     </div>
 
@@ -16,13 +16,13 @@
       </div>
       <div class="col">
         <p>Email: <strong>{{email}}</strong></p>
-        <p>Name: <strong>{{name}}</strong></p>
-        <p>Surname: <strong>{{surname}}</strong></p>
-        <p>Company: <strong>{{company}}</strong></p>
+        <p>{{ $t('name') }}: <strong>{{name}}</strong></p>
+        <p>{{ $t('surname') }}: <strong>{{surname}}</strong></p>
+        <p>{{ $t('company') }}: <strong>{{company}}</strong></p>
 
         <div>
           <p style="margin-bottom: 10px; font-size: 18px">
-            <strong>Level: <span style="color: blue">{{ level }}</span></strong>
+            <strong>{{ $t('level') }}: <span style="color: blue">{{ level }}</span></strong>
           </p>
           <!-- Contenitore della barra -->
           <div style="linear-gradient(90deg, #e0f7ff, #ccefff); height: 30px; width: 50%; border-radius: 10px; overflow: hidden; position: relative; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1)">

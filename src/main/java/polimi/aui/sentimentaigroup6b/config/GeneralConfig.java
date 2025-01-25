@@ -10,6 +10,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 import polimi.aui.sentimentaigroup6b.utils.ImageManager;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
+
+import java.util.Locale;
 
 @Configuration
 @Slf4j
@@ -45,6 +49,13 @@ public class GeneralConfig {
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         log.info("\u001B[32mCreating bean: RestTemplate\u001B[0m");
         return builder.build();
+    }
+
+    @Bean
+    public LocaleResolver localeResolver() {
+        SessionLocaleResolver resolver = new SessionLocaleResolver();
+        resolver.setDefaultLocale(Locale.ENGLISH);
+        return resolver;
     }
 
 }

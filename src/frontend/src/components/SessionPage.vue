@@ -3,9 +3,13 @@
     <div class="upper-left">
       <button @click="goBack">Back</button>
     </div>
+    <div class="top-right">
+      <button @click="changeLanguage('en-US')">English</button>
+      <button @click="changeLanguage('it-IT')">Italiano</button>
+    </div>
 
-    <h1 class="title">Let's Start Your Session!</h1>
-    <h2 style="font-size: 20px; font-weight: bold">Pick an image to get started!</h2>
+    <h1 class="title">{{ $t('titleSessionPage') }}</h1>
+    <h2 style="font-size: 20px; font-weight: bold">{{ $t('subtitleSessionPage') }}</h2>
     <div>
       <img src="@/assets/mic_emotino_noBack.png" width="150" alt="P">
     </div>
@@ -21,7 +25,7 @@
     </div>
 
     <div class="bottom-center">
-      <button @click="freeModeOption">Free Mode Option</button>
+      <button @click="freeModeOption">{{ $t('freeModeButton') }}</button>
     </div>
   </div>
 </template>
@@ -30,6 +34,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import freeModeImage from '@/assets/OfficeWorkerThinking-NoBG.png';
+import { changeLanguage } from '@/main';
 
 const router = useRouter();
 const images = ref([]);

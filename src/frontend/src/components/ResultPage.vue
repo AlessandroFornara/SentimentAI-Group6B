@@ -10,14 +10,14 @@
         <span style="color: blue">{{ dominantEmotion }}</span>
       </p>
 
-      <p class="activity">Suggested activity based on your emotion: <span style="color: blue">{{ activity }}</span></p>
+      <p class="activity">{{ $t('suggestedActivity') }}: <span style="color: blue">{{ activity }}</span></p>
       <button v-if="!pointsCollected" class="collect-button" @click="collectPoints">Click here to collect your points</button>
-      <p v-else class="points">You earned <span style="color: blue">{{ points }}</span> points!</p>
+      <p v-else class="points">{{ $t('youEarned') }} <span style="color: blue">{{ points }}</span> {{ $t('points') }}!</p>
     </div>
     <div v-if="showConfetti" class="confetti-container"></div>
 
     <div style="display: flex; flex-direction: column; justify-content: center; margin-top: 5%">
-      <h1 v-if="newBadges = Object.values(badges).some(value => value > 0)">You have obtained the following badges:</h1>
+      <h1 v-if="newBadges = Object.values(badges).some(value => value > 0)">{{ $t('obtainedBadges') }}</h1>
       <div v-if="newBadges" style="display: flex; flex-direction: row; justify-content: center">
         <div v-for="(value, key) in badges" :key="key" class="badge">
           <div v-if="value > 0">

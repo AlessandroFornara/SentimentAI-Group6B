@@ -7,13 +7,17 @@
     <div class="homepage">
       <!-- Titolo e sottotitolo in alto al centro -->
       <div class="header">
-        <h1 class="title">Hello {{ username }}!</h1>
-        <h2 class="subtitle">I hope you're having a great day!</h2>
+        <h1 class="title">{{ $t('titleHomePage') }} {{ username }}!</h1>
+        <h2 class="subtitle">{{ $t('subtitleHomePage') }}</h2>
       </div>
 
       <!-- Pulsante Logout in alto a destra -->
       <div class="top-right">
         <button class="logout-button" @click="logout">Logout</button>
+        <div>
+          <button @click="changeLanguage('en-US')">English</button>
+          <button @click="changeLanguage('it-IT')">Italiano</button>
+        </div>
       </div>
 
       <!-- Foto in alto a sinistra -->
@@ -24,18 +28,18 @@
       <!-- Contenuto centrale con bottoni -->
       <div class="center-buttons">
         <button @click="navigateTo('profile')">
-          <span>Profile</span>
+          <span>{{ $t('profileButton') }}</span>
           <img src="@/assets/ProfileButtonIcon.png" alt="Profile"/>
         </button>
         <button @click="navigateTo('history')">
-          <span>History</span>
+          <span>{{ $t('historyButton') }}</span>
           <img src="../assets/historyButtonIcon.png" alt="History"/>
         </button>
       </div>
 
       <!-- Bottone in basso al centro -->
       <div class="bottom-center">
-        <button @click="startSession">Start Session</button>
+        <button @click="startSession">{{ $t('startButton') }}</button>
       </div>
     </div>
   </div>
@@ -44,6 +48,7 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import {ref} from "vue"; // Importa il router
+import { changeLanguage } from "@/main";
 
 const router = useRouter(); // Ottieni l'istanza del router
 const username = ref(localStorage.getItem('name')); // Nome utente
@@ -129,19 +134,7 @@ function logout() {
   margin: 30px 0 0 0;
 }
 
-/* Pulsante Logout in alto a destra */
-.top-right {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-}
 
-/* Foto in alto a sinistra */
-.top-left {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-}
 
 /* Bottoni centrali */
 .center-buttons {

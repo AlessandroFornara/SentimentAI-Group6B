@@ -2,7 +2,7 @@
   <div class="login-page">
     <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; width: 300px">
       <h1 class="title">EMOTINO</h1>
-      <h2 class="subtitle">Where every emotion matters, and your well-being takes center stage.</h2>
+      <h2 class="subtitle">{{ $t('slogan') }}</h2>
       <img src="@/assets/mic_emotino_noBack.png" width="300" alt="EMOTINO">
     </div>
     <form class="login-form" @submit.prevent="handleSubmit">
@@ -91,14 +91,18 @@
       >
         {{ successMessage }}
       </p>
-
     </form>
+    <div style="position: absolute; top: 20px; right: 20px">
+      <button @click="changeLanguage('en-US')">English</button>
+      <button @click="changeLanguage('it-IT')">Italiano</button>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router'; // Importa il router
+import { changeLanguage } from '@/main';
 
 const router = useRouter();
 

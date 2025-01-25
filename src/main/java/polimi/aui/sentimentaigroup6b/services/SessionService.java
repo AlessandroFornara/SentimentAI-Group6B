@@ -51,7 +51,7 @@ public class SessionService {
         return ServerResponse.SESSION_STARTED;
     }
 
-    public Message handleAudio(User worker, byte[] audio, String audioTranscript) {
+    public Message handleAudio(User worker, byte[] audio, String audioTranscript, String language) {
         Session session = getUserActiveSession(worker);
         if(session == null) return null;
 
@@ -69,7 +69,7 @@ public class SessionService {
         try {
             //Upload audio and analyze emotions
             fileURI = emotionAIRequestGenerator.uploadAudioToAIServer(audio);
-            response = emotionAIRequestGenerator.sendEmotionDetectionRequest(fileURI);
+            response = emotionAIRequestGenerator.sendEmotionDetectionRequest(fileURI, language);
             emotionValues = response.getEmotions().toString();
             System.out.println("Detected emotions: " + emotionValues);
             audioEntity.setDetectedEmotions(response.getEmotionsAsList());
@@ -149,10 +149,6 @@ public class SessionService {
                 badges,
                 points,
                 level);
-    }
-
-    public void changeLanguage(String language) {
-        emotionAIRequestGenerator.setLanguage(language);
     }
 
     private Emotion computeDominantEmotion(List<AudioEmotionsDTO> detectedEmotions) {

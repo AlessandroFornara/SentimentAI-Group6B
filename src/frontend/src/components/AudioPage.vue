@@ -18,7 +18,7 @@
       <img :src="questionImage" alt="Question Icon" class="question-image" />
       <p>{{ displayedText }}</p>
     </div>
-    <p style="font-size: 25px">Session remaining time: {{formattedSessionRemainingTime}}</p>
+    <p style="font-size: 25px">{{ $t('sessionRemainingTime') }}: {{formattedSessionRemainingTime}}</p>
 
     <!-- Nuvola con l'immagine selezionata -->
     <div :class="['masking', { 'no-mask': !shouldMask }]">
@@ -47,7 +47,7 @@
     <div class="recording-box">
       <!-- Pulsante Start Audio -->
       <button v-if="!isRecording && questionReady" @click="startRecording" class="btn-start">
-        Start Audio
+        {{ $t('startAudioButton') }}
       </button>
 
       <!-- Icona del Microfono -->
@@ -79,10 +79,11 @@ import microphoneImage from '@/assets/Microphone.png';
 import { ref, computed, onMounted } from 'vue';
 import {useRoute, useRouter, onBeforeRouteLeave} from "vue-router";
 import questionImage from '@/assets/HappyCloud.png'
+import { i18n } from "@/main";
 
 // Stato iniziale
 const selectedImage = ref(null); // Per memorizzare l'immagine selezionata
-const question = ref('Great choice. What does this image make you think of?'); // Prima domanda fissa
+const question = ref(''); // Prima domanda fissa
 
 const maxAudioTime = 80;
 const maxSessionTime = 360;
@@ -204,8 +205,9 @@ onMounted(() => {
   if (backgroundImage) {
     if(route.query.mask === 'false'){
       toggleMasking();
-      question.value = 'What do you want to talk about today?';
-    }
+      question.value = i18n.global.locale === 'it-IT' ? 'Di cosa vuoi parlare oggi?' : 'What do you want to talk about today?';
+    }else
+      question.value = i18n.global.locale === 'it-IT' ? 'Ottima scelta. A cosa ti fa pensare questa immagine?' : 'Great choice. What does this image make you think of?';
     selectedImage.value = backgroundImage;  // Salva l'immagine nel ref
     typeText();
   }else{
@@ -239,7 +241,7 @@ const generateBubble = () => {
     // Rimuovi la bolla dopo la fine dell'animazione
     setTimeout(() => {
       bubbles.value.shift();
-    }, 5000); // Le bolle durano 5 secondi
+    }, 10000); // Le bolle durano 10 secondi
   }
 };
 
@@ -284,7 +286,7 @@ const startRecording = () => {
     if (isRecording.value) {
       showFinishButton.value = true;
     }
-  }, 30000);
+  }, 5000);
 
   // Genera bolle continuamente durante la registrazione
   const bubbleInterval = setInterval(() => {
@@ -326,6 +328,7 @@ const sendAudioToServer = async (audioBlob, transcript) => {
   const formData = new FormData();
   formData.append('audio', audioBlob);
   formData.append('audioTranscript', transcript);
+  formData.append('language', i18n.global.locale);
   console.log('sto per mandare l\'audio');
   try {
     const response = await fetch('/api/worker/handle_audio', {

@@ -1,0 +1,21 @@
+{
+  "slogan": "Where every emotion matters, and your well-being takes center stage",
+  "titleHomePage": "Hello ",
+  "subtitleHomePage": "Welcome to Emotino! I hope you're having a great day!",
+  "profileButton": "Profile",
+  "historyButton": "History",
+  "startButton": "Start Session",
+  "titleSessionPage": "Let's start your session!",
+  "subtitleSessionPage": "Pick an image to get started!",
+  "freeModeButton": "Free Mode",
+  "name": "Name",
+  "surname": "Surname",
+  "company": "Company",
+  "level": "Level",
+  "sessionRemainingTime": "Session remaining time",
+  "startAudioButton": "Start recording",
+  "suggestedActivity": "Suggested activity",
+  "youEarned": "You earned",
+  "points": "points",
+  "obtainedBadges": "You have obtained the following badges"
+}

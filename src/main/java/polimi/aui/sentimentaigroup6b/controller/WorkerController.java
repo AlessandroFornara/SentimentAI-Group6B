@@ -28,6 +28,7 @@ public class WorkerController {
 
     private final SessionService sessionService;
     private final ProfileService profileService;
+
     private final UserRepo userRepo;
 
     private final ImageManager imageManager;
@@ -55,18 +56,6 @@ public class WorkerController {
         HistoryResponse history = profileService.getHistory(email);
         System.out.println(history);
         return ResponseEntity.ok(history);
-    }
-
-    @GetMapping("/change_language")
-    public ResponseEntity<?> selectLanguage(@RequestBody String language) {
-        if(language == null || language.isEmpty()){
-            return ResponseEntity.badRequest().body("Language cannot be empty");
-        }
-        if(!language.equals("en-US") && !language.equals("it-IT")){
-            return ResponseEntity.badRequest().body("Language not supported");
-        }
-        sessionService.changeLanguage(language);
-        return ResponseEntity.ok("Language changed to " + language);
     }
 
     @PreAuthorize("hasRole('WORKER')")
@@ -100,7 +89,8 @@ public class WorkerController {
     @PreAuthorize("hasRole('WORKER')")
     @PostMapping(value = "/handle_audio", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> handleAudio(@RequestPart("audio") MultipartFile audio,
-                                         @RequestPart("audioTranscript") String audioTranscript) {
+                                         @RequestPart("audioTranscript") String audioTranscript,
+                                         @RequestPart("language") String language) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = (String) authentication.getPrincipal();
         System.out.println(email);
@@ -112,7 +102,7 @@ public class WorkerController {
             return ResponseEntity.unprocessableEntity().body(ServerResponse.AUDIO_HANDLING_ERROR.getMessage());
         }
 
-        Message answer = sessionService.handleAudio(user, audioBytes, audioTranscript);
+        Message answer = sessionService.handleAudio(user, audioBytes, audioTranscript, language);
         if(answer!=null){
             return ResponseEntity.ok(answer);
         }
