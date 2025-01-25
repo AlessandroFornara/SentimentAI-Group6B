@@ -21,7 +21,7 @@
     <p style="font-size: 25px">Session remaining time: {{formattedSessionRemainingTime}}</p>
 
     <!-- Nuvola con l'immagine selezionata -->
-    <div class="cloud-container">
+    <div class="masking">
       <img :src="selectedImage" alt="Cloud Image" class="cloud-image" />
     </div>
 
@@ -750,11 +750,28 @@ const animateAudioVisualizer = () => {
   background: #269af2;
 }
 
+.masking {
+  width: 50%;
+  height: auto;
+  position: relative;
+  mask-image: url('../assets/cloudMask.png');
+  mask-size: cover;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-image: url('../assets/cloudMask.png');
+  -webkit-mask-size: cover;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  background-color: #fff; /* Optional: background color inside the mask */
+}
+
 .cloud-image {
   width: 100%;
   height: 100%;
   object-fit: cover; /* Adatta l'immagine alla nuvola */
 }
+
+
 
 
 
