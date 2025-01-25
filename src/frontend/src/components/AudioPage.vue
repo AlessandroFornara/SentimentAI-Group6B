@@ -16,8 +16,9 @@
     <!-- Frase Generata -->
     <div class="question">
       <img :src="questionImage" alt="Question Icon" class="question-image" />
-      <p>{{ question }}</p>
+      <p>{{ displayedText }}</p>
     </div>
+    <p style="font-size: 25px">Session remaining time: {{formattedSessionRemainingTime}}</p>
 
     <!-- Nuvola con l'immagine selezionata -->
     <div class="cloud-container">
@@ -39,7 +40,7 @@
       <div class="timer-progress">
         <div class="progress-bar" :style="progressBarStyle"></div>
       </div>
-      <p class="time-remaining">{{ formattedTime }}</p>
+      <p class="time-remaining">{{ formattedAudioRemainingTime }}</p>
     </div>
 
     <!-- Contenitore degli elementi di registrazione -->
@@ -66,7 +67,7 @@
     </div>
 
     <!-- Pulsante Terminate Session -->
-    <div v-if="totalElapsedTime >= 0" class="terminate-session">
+    <div v-if="totalRemainingTime >= 0" class="terminate-session">
       <button @click="goToResultPage" class="btn-terminate">Terminate Session</button>
     </div>
   </div>
@@ -76,23 +77,26 @@
 <script setup>
 import microphoneImage from '@/assets/Microphone.png';
 import { ref, computed, onMounted } from 'vue';
-import {useRoute, useRouter} from "vue-router";
+import {useRoute, useRouter, onBeforeRouteLeave} from "vue-router";
 import questionImage from '@/assets/HappyCloud.png'
 
 // Stato iniziale
 const selectedImage = ref(null); // Per memorizzare l'immagine selezionata
-const question = ref('Great choice!' + ' ' +
-    'How do you feel?'); // Prima domanda fissa
+const question = ref('Great choice. What does this image make you think of?'); // Prima domanda fissa
 
-const timeRemaining = ref(120);
+const maxAudioTime = 80;
+const maxSessionTime = 360;
+const timeRemaining = ref(maxAudioTime);
 
 // Calcolo dei minuti e secondi mancanti
 
 const isRecording = ref(false);
 const showFinishButton = ref(false);
 const questionReady = ref(true);
+const displayedText = ref("")
+const typingSpeed = 50;
 const elapsedTime = ref(0);
-const totalElapsedTime = ref(0); // Tempo totale accumulato
+const totalRemainingTime = ref(maxSessionTime); // Tempo totale accumulato
 let timerInterval = null;
 const microphoneAccessError = ref(false);
 const audioCanvas = ref(null);
@@ -102,32 +106,111 @@ let mediaRecorder;
 let recognition; // Per la trascrizione Web Speech API
 let liveTranscript = ''; // Accumula la trascrizione live
 let completeTranscript = ''; // Trascrizione finale
+const skipBeforeRouteLeave = ref(false);
+let endSession = false;
 
 const router = useRouter(); // Router per la navigazione
+
+
+function preventReload(event)
+{
+  event.preventDefault();
+  event.returnValue = '';
+}
+
+onBeforeRouteLeave((to, from, next) => {
+  if(!skipBeforeRouteLeave.value) {
+    const confirmLeave = window.confirm(
+        'Are you sure you want to leave? Your session may be deleted or closed.'
+    );
+    if (confirmLeave) {
+      closeSession();
+      window.removeEventListener('beforeunload', preventReload);
+      next();
+    } else {
+      next(false);
+    }
+  }else{
+    window.removeEventListener('beforeunload', preventReload);
+    next();
+  }
+});
+
+const closeSession = () => {
+  fetch('/api/worker/end_session', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  })
+      .then((response) => {
+        if (!response.ok) {
+          if (response.status === 401) {
+            alert('Session expired. Please log in again.');
+            router.push('/login');
+            return;
+          }
+          throw new Error('Error fetching session results');
+        }
+        router.push('/home')
+      })
+      .catch((error) => {
+        console.error('Error fetching session results:', error);
+        alert('Failed to fetch session results. Please try again later.');
+      });
+};
 
 // Funzione per avviare il conto alla rovescia
 const startTimer = () => {
   timerInterval = setInterval(() => {
-    if (timeRemaining.value > 0) {
+    if (timeRemaining.value > 0 && totalRemainingTime.value > 0) {
       timeRemaining.value--; // Riduci di un secondo
+      totalRemainingTime.value -= 1; // Incrementa il tempo totale
     } else {
-      clearInterval(timerInterval); // Ferma il timer a zero
+      if (totalRemainingTime.value === 0) {
+        endSession = true;
+        finishRecording()
+      } else {
+        finishRecording();
+      }
     }
   }, 1000);
 };
 
+const typeText = () => {
+  let index = 0;
+  displayedText.value = "";
+  const interval = setInterval(() => {
+    if (index < question.value.length) {
+      displayedText.value += question.value[index];
+      index++;
+    } else {
+      clearInterval(interval);
+    }
+  }, typingSpeed);
+};
+
+
 // Recupera l'immagine salvata in sessionStorage all'avvio
 onMounted(() => {
-  startTimer();
   const route = useRoute();
   const backgroundImage = route.query.background;
   if (backgroundImage) {
     selectedImage.value = backgroundImage;  // Salva l'immagine nel ref
+    typeText();
+  }else{
+    skipBeforeRouteLeave.value = true;
+    closeSession();
+    router.push('/home');
   }
+
+  const remainingQuery = { ...route.query };
+  delete remainingQuery.background;
+  router.replace({ query: remainingQuery });
+
+  window.addEventListener('beforeunload', preventReload);
 });
-
-
-
 
 const generateBubble = () => {
   const numberOfBubbles = Math.floor(5 * bubbleMultiplier.value); // Numero di bolle moltiplicato
@@ -154,7 +237,7 @@ const generateBubble = () => {
 
 
 const progressBarStyle = computed(() => ({
-  height: `${(timeRemaining.value / 120) * 100}%`, // Altezza dinamica basata sul tempo
+  height: `${(timeRemaining.value / maxAudioTime) * 100}%`, // Altezza dinamica basata sul tempo
   backgroundColor: 'orange', // Verde chiaro
   transition: 'height 1s linear', // Transizione fluida
 }));
@@ -164,19 +247,28 @@ const bubbleMultiplier = ref(1); // Moltiplicatore per il numero di bolle
 
 
 
-const formattedTime = computed(() => {
+const formattedAudioRemainingTime = computed(() => {
   const minutes = Math.floor(timeRemaining.value / 60);
   const seconds = timeRemaining.value % 60;
   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 });
+
+const formattedSessionRemainingTime = computed(() => {
+  const minutes = Math.floor(totalRemainingTime.value / 60);
+  const seconds = totalRemainingTime.value % 60;
+  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+});
+
 const startRecording = () => {
   microphoneAccessError.value = false;
   isRecording.value = true;
   bubbleMultiplier.value = 2; // Aumenta il numero di bolle
   showFinishButton.value = false;
   questionReady.value = false;
-  timeRemaining.value = 120;
+  timeRemaining.value = maxAudioTime;
   elapsedTime.value = 0;
+  liveTranscript = '';
+  completeTranscript = '';
 
   // Mostra il pulsante Finish Audio dopo 5 secondi
   setTimeout(() => {
@@ -195,15 +287,7 @@ const startRecording = () => {
   }, 1000);
 
   // Avvia il timer
-  timerInterval = setInterval(() => {
-    if (timeRemaining.value > 0) {
-      timeRemaining.value--;
-      elapsedTime.value++;
-    } else {
-      clearInterval(timerInterval);
-    }
-  }, 1000);
-
+  startTimer();
   setupMicrophone();
 };
 
@@ -212,8 +296,9 @@ const finishRecording = async () => {
   isRecording.value = false;
   bubbleMultiplier.value = 1; // Torna al numero normale di bolle
   showFinishButton.value = false;
+
   clearInterval(timerInterval);
-  timeRemaining.value = 120; // Reset del timer
+  timeRemaining.value = maxAudioTime; // Reset del timer
 
   // Ferma la registrazione
   mediaRecorder.stop();
@@ -223,6 +308,7 @@ const finishRecording = async () => {
 
 const goToResultPage = () => {
   // Reindirizza alla pagina ResultPage
+  skipBeforeRouteLeave.value = true;
   router.push('/result');
 };
 
@@ -315,8 +401,16 @@ const setupMicrophone = async () => {
 
         // Invia l'audio e la trascrizione al server
         const newQuestion = await sendAudioToServer(audioBlob, completeTranscript);
-        if (newQuestion) {
+        if (newQuestion || endSession) {
+          if(endSession){
+            goToResultPage()
+            return;
+          }
           question.value = newQuestion;
+          typeText();
+          questionReady.value = true;
+        }else{
+          alert('You registered an empty audio. Please try again.');
           questionReady.value = true;
         }
       } catch (error) {

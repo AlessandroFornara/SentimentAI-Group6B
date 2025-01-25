@@ -111,6 +111,7 @@ public class EmotionAIRequestGenerator {
                 String.class
         );
 
+        System.out.println("Response: " + response);
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootNode = objectMapper.readTree(response.getBody());
 

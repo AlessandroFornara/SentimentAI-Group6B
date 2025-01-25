@@ -39,12 +39,6 @@ public class SessionService {
 
     private final PointsManager pointsManager;
 
-    //TODO: check user is not in a session already (?)
-    public ServerResponse createSession(User worker) {
-
-        return ServerResponse.SESSION_CREATED;
-    }
-
     public ServerResponse startSession(User worker, String topic){
         // Create a new session
         Session session = new Session(worker, new Date(), topic);
@@ -125,7 +119,8 @@ public class SessionService {
 
         List<AudioEmotionsDTO> detectedEmotions = audioRepo.findEmotionsBySession(session);
         if (detectedEmotions == null || detectedEmotions.isEmpty()) {
-            return null;
+            sessionRepo.delete(session);
+            return new FinalResponse(null, null, null, 0, 0);
         }
         Emotion dominantEmotion = computeDominantEmotion(detectedEmotions);
         ActivityResponse activity = chooseActivity(dominantEmotion);
