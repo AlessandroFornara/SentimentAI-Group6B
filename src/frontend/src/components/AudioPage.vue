@@ -751,7 +751,7 @@ const animateAudioVisualizer = () => {
 }
 
 .masking {
-  width: 50%;
+  width: 40%;
   height: auto;
   position: relative;
   mask-image: url('../assets/cloudMask.png');

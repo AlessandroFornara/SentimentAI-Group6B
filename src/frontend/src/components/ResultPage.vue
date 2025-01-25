@@ -4,7 +4,12 @@
     <h2 class="subtitle">Here are some results from the analysis:</h2>
 
     <div class="result-content">
-      <p class="emotion">The emotion that you are mostly feeling is: <span style="color: blue">{{ dominantEmotion }}</span></p>
+      <p class="emotion">
+        <img :src="emotionImagePath" alt="Emotion Image" class="emotion-image" />
+        The emotion that you are mostly feeling is:
+        <span style="color: blue">{{ dominantEmotion }}</span>
+      </p>
+
       <p class="activity">Suggested activity based on your emotion: <span style="color: blue">{{ activity }}</span></p>
       <button v-if="!pointsCollected" class="collect-button" @click="collectPoints">Click here to collect your points</button>
       <p v-else class="points">You earned <span style="color: blue">{{ points }}</span> points!</p>
@@ -33,10 +38,30 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import {ref, onMounted, computed} from 'vue';
 import { useRouter } from 'vue-router';
 import confetti from 'canvas-confetti';
 import {badgeImages, capitalizeWords} from '@/utils/badgeUtils';
+import AngerImage from '@/assets/Anger.png';
+import FearImage from '@/assets/Fear.png';
+import DisgustImage from '@/assets/Disgust.png';
+import NeutralImage from '@/assets/Neutral.png';
+import JoyImage from '@/assets/Joy.png';
+import SadnessImage from '@/assets/Sadness.png';
+import SurpriseImage from '@/assets/Surprise.png';
+
+const emotionImages = {
+  Anger: AngerImage,
+  Fear: FearImage,
+  Disgust: DisgustImage,
+  Neutral: NeutralImage,
+  Joy: JoyImage,
+  Sadness: SadnessImage,
+  Surprise: SurpriseImage,
+};
+
+
+const emotionImagePath = computed(() => emotionImages[dominantEmotion.value] || null);
 
 const router = useRouter();
 const dominantEmotion = ref('');
@@ -178,4 +203,13 @@ p, h1, h2 {
   height: 100%;
   pointer-events: none;
 }
+
+.emotion-image {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+  vertical-align: middle;
+  border-radius: 5px;
+}
+
 </style>
