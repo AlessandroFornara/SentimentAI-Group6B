@@ -61,7 +61,7 @@
 
     <!-- Pulsante Terminate Session -->
     <div v-if="maxSessionTime - totalRemainingTime >= minimumSessionTime" class="terminate-session">
-      <button @click="goToResultPage" class="btn-terminate">Terminate Session</button>
+      <button @click="goToResultPage" class="btn-terminate">{{$t('terminateSessionButton')}}</button>
     </div>
   </div>
 </template>

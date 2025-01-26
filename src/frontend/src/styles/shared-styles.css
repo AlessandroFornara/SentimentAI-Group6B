@@ -21,7 +21,7 @@ p, h1, h2, h3, h4, h5, h6, button {
     width: 100%;
 }
 
-.upper-left button {
+.button-custom {
     padding: 15px 30px;
     font-size: 15px;
     font-family: 'Lobster', cursive;
@@ -33,13 +33,13 @@ p, h1, h2, h3, h4, h5, h6, button {
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.upper-left button:hover {
+.button-custom:hover {
     transform: scale(1.05);
     background-color: #0f4da8;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
-.upper-left button:active {
+.button-custom:active {
     transform: scale(0.95);
     background-color: #0a3680;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);

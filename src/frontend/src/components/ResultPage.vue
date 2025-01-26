@@ -34,12 +34,15 @@
         </div>
       </div>
     </div>
+    <div class="homeButton">
+      <button class="button-custom" @click="navigateTo('home')">{{ $t('homeButton') }}</button>
+    </div>
   </div>
 </template>
 
 <script setup>
-import {ref, onMounted, computed} from 'vue';
-import { useRouter } from 'vue-router';
+import {ref, onMounted, computed, onUnmounted} from 'vue';
+import {useRouter} from 'vue-router';
 import confetti from 'canvas-confetti';
 import {badgeImages, capitalizeWords} from '@/utils/badgeUtils';
 import AngerImage from '@/assets/Anger.png';
@@ -71,6 +74,17 @@ const points = ref(0);
 const badges = ref('');
 const pointsCollected = ref(false);
 const showConfetti = ref(false);
+
+function preventReload(event) {
+  event.preventDefault();
+  event.returnValue = '';
+}
+
+function navigateTo(page) {
+  console.log(`Navigating to ${page}...`);
+  sessionStorage.removeItem('isFirstLoad');
+  router.push(`/${page}`);
+}
 
 const fetchSessionResults = async () => {
   try {
@@ -118,7 +132,20 @@ const collectPoints = () => {
 };
 
 onMounted(() => {
-  fetchSessionResults();
+  const isFirstLoad = sessionStorage.getItem('isFirstLoad') === null;
+
+  if (isFirstLoad) {
+    sessionStorage.setItem('isFirstLoad', 'false');
+    fetchSessionResults();
+  }else{
+    navigateTo('home');
+  }
+
+  window.addEventListener('beforeunload', preventReload);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('beforeunload', preventReload);
 });
 
 const backgroundStyle = {

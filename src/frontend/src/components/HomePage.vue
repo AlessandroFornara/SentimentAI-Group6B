@@ -13,7 +13,7 @@
 
       <!-- Pulsante Logout in alto a destra -->
       <div class="top-right">
-        <button class="logout-button" @click="logout">Logout</button>
+        <button class="logout-button" @click="logout">{{ $t('logoutButton') }}</button>
         <div class="language-buttons">
           <button @click="changeLanguage('en-US')">English</button>
           <button @click="changeLanguage('it-IT')">Italiano</button>

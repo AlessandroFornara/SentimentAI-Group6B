@@ -40,5 +40,9 @@
   "activityBasedBadge": "Activity based badge",
   "topicBasedBadge": "Topic based badge",
   "levelBasedBadge": "Level based badge",
-  "timeBasedBadge": "Time based badge"
+  "timeBasedBadge": "Time based badge",
+  "homeButton": "Home",
+  "backButton": "Back",
+  "logoutButton": "Logout",
+  "terminateSessionButton": "Terminate Session"
 }

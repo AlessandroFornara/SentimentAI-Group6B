@@ -1,6 +1,6 @@
 <template>
   <div class="upper-left">
-    <button @click="goBack">Back</button>
+    <button class="button-custom" @click="goBack">Back</button>
   </div>
 
   <div class="container" style="display: flex; flex-direction: column">

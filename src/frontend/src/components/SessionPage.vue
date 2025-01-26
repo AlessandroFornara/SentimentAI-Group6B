@@ -1,7 +1,7 @@
 <template>
   <div class="session-page">
     <div class="upper-left">
-      <button @click="goBack">Back</button>
+      <button class="button-custom" @click="goBack">{{ $t('backButton') }}</button>
     </div>
     <div class="top-right">
       <div class="language-buttons">
