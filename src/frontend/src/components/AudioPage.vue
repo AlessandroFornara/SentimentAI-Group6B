@@ -21,7 +21,7 @@
       <img :src="questionImage" alt="Question Icon" class="question-image" />
       <p>{{ displayedText }}</p>
     </div>
-    <p style="font-size: 25px">{{ $t('sessionRemainingTime') }}: {{formattedSessionRemainingTime}}</p>
+    <p style="font-size: 20px">{{ $t('sessionRemainingTime') }}: {{formattedSessionRemainingTime}}</p>
 
     <!-- Nuvola con l'immagine selezionata -->
     <div :class="['masking', { 'no-mask': !shouldMask }]">
@@ -512,7 +512,7 @@ const animateAudioVisualizer = () => {
   gap: 15px; /* Spazio tra immagine e testo */
   margin: 20px 0; /* Spazio intorno al box */
   margin-top: 20px;
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-family: 'Lobster', cursive;
   text-align: center;
   color: #1666cb;
