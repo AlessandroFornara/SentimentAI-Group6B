@@ -102,10 +102,7 @@ public class EmotionAIRequestGenerator {
         System.out.println("language: " + language);
 
         JSONObject service = new JSONObject();
-        if(language.equals("it-IT"))
-            service.put("name", API_NAME_IT);
-        else
-            service.put("name", API_NAME_EN);
+        service.put("name", API_NAME_IT);
         service.put("account", new JSONObject());
         service.put("serviceParams", new JSONObject());
         payload.put("service", service);
