@@ -44,7 +44,7 @@
           <div v-if="value > 0">
             <div v-if="badgeImage = getBadgeImage(key, value)">
               <p style="color: black; font-size: 20px; margin: 0">
-                {{ badgeImage.name }}
+                {{ i18n.global.locale === 'it-IT' ? badgeImage.nameIt : badgeImage.name }}
               </p>
               <img :src="badgeImage.path" :alt="`${key} level ${value}`" class="badge-image" style="height: 200px" />
               <p style="color: black">
@@ -56,7 +56,7 @@
       </div>
 
       <div v-else style="text-align: center; margin-top: 20px;">
-        <p style="color: black; font-size: 18px;">You currently have no badges to display.</p>
+        <p style="color: black; font-size: 18px;">{{ $t('noBadgesToDisplay') }}</p>
       </div>
     </div>
   </div>
@@ -66,6 +66,7 @@
 import {ref, onMounted, computed} from 'vue';
 import { useRouter } from 'vue-router';
 import {badgeImages, capitalizeWords} from '@/utils/badgeUtils';
+import { i18n } from "@/main";
 
 const router = useRouter();
 

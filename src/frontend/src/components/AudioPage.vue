@@ -25,16 +25,6 @@
       <img :src="selectedImage" alt="Cloud Image" class="cloud-image" />
     </div>
 
-
-
-    <div class="timer">    <!-- Minuti e secondi mancanti -->
-
-      <div class="timer-progress">
-        <div class="progress-bar" :style="progressBarStyle"></div>
-      </div>
-    </div>
-
-
     <!-- Timer -->
     <div class="timer">
       <div class="timer-progress">
@@ -328,13 +318,14 @@ const sendAudioToServer = async (audioBlob, transcript) => {
   const formData = new FormData();
   formData.append('audio', audioBlob);
   formData.append('audioTranscript', transcript);
-  formData.append('language', i18n.global.locale);
+
   console.log('sto per mandare l\'audio');
   try {
     const response = await fetch('/api/worker/handle_audio', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
+        'Accept-Language': i18n.global.locale //
       },
       body: formData,
     });

@@ -5,7 +5,7 @@
 
   <div style="display: flex; flex-direction: column; align-items: center">
 
-    <h1 style="text-align: center; margin-top: 20px">Session History</h1>
+    <h1 style="text-align: center; margin-top: 20px">{{ $t('historyTitle') }}</h1>
     <div v-if="sessions.length > 0" class="scroll-container">
       <div
           v-for="session in sessions"

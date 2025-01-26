@@ -1,17 +1,17 @@
 <template>
   <div class="result-page" :style="backgroundStyle">
-    <h1 class="title">Your session is concluded!</h1>
-    <h2 class="subtitle">Here are some results from the analysis:</h2>
+    <h1 class="title">{{ $t('resultPageTitle') }}</h1>
+    <h2 class="subtitle">{{ $t('resultPageSubtitle') }}</h2>
 
     <div class="result-content">
       <p class="emotion">
         <img :src="emotionImagePath" alt="Emotion Image" class="emotion-image" />
-        The emotion that you are mostly feeling is:
-        <span style="color: blue">{{ dominantEmotion }}</span>
+        {{ $t('Emotion') }}
+        <span style="color: blue">{{ $t(dominantEmotion) }}</span>
       </p>
 
       <p class="activity">{{ $t('suggestedActivity') }}: <span style="color: blue">{{ activity }}</span></p>
-      <button v-if="!pointsCollected" class="collect-button" @click="collectPoints">Click here to collect your points</button>
+      <button v-if="!pointsCollected" class="collect-button" @click="collectPoints">{{ $t('clickHereButton') }}</button>
       <p v-else class="points">{{ $t('youEarned') }} <span style="color: blue">{{ points }}</span> {{ $t('points') }}!</p>
     </div>
     <div v-if="showConfetti" class="confetti-container"></div>
@@ -23,7 +23,7 @@
           <div v-if="value > 0">
             <div v-if="badgeImage = getBadgeImage(key, value)">
               <p style="color: black; font-size: 20px; margin: 0">
-                {{ badgeImage.name }}
+                {{ i18n.global.locale === 'it-IT' ? badgeImage.nameIt : badgeImage.name }}
               </p>
               <img :src="badgeImage.path" :alt="`${key} level ${value}`" class="badge-image" style="height: 200px" />
               <p style="color: black">
@@ -49,12 +49,13 @@ import NeutralImage from '@/assets/Neutral.png';
 import JoyImage from '@/assets/Joy.png';
 import SadnessImage from '@/assets/Sadness.png';
 import SurpriseImage from '@/assets/Surprise.png';
+import { i18n } from "@/main";
 
 const emotionImages = {
   Anger: AngerImage,
   Fear: FearImage,
   Disgust: DisgustImage,
-  Neutral: NeutralImage,
+  Neutrality: NeutralImage,
   Joy: JoyImage,
   Sadness: SadnessImage,
   Surprise: SurpriseImage,
@@ -78,6 +79,7 @@ const fetchSessionResults = async () => {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem('token')}`,
+        'Accept-Language': i18n.global.locale,
       },
     });
 

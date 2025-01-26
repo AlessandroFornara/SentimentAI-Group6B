@@ -22,28 +22,28 @@
         <a
             @click.prevent="register()"
             href="#"
-        >{{ registration ? "Already registered? Log in!" : "New here? Sign up!" }}</a>
+        >{{ registration ? $t("alreadyRegisteredMessage") : $t("notRegisteredMessage") }}</a>
       </div>
 
       <div class="mb-3" v-if="registration">
-        <label for="name" class="form-label">Name</label>
+        <label for="name" class="form-label">{{ $t('name') }}</label>
         <input id="name" class="form-control" v-model="name" type="text" required/>
       </div>
 
       <div class="mb-3" v-if="registration">
-        <label for="surname">Surname</label>
+        <label for="surname">{{ $t('surname') }}</label>
         <input id="surname" v-model="surname" type="text" required/>
       </div>
 
       <div class="mb-3" v-if="registration">
-        <label for="company" class="form-label">Company</label>
+        <label for="company" class="form-label">{{ $t('company') }}</label>
         <input id="company" class="form-control" v-model="company" type="text" required/>
       </div>
 
       <div class="row" v-if="registration">
 
         <div class="col">
-          <p style="font-family: Calibri, sans-serif">WORKER</p>
+          <p>WORKER</p>
         </div>
 
         <div class="col d-flex justify-content-center">
@@ -59,7 +59,7 @@
         </div>
 
         <div class="col d-flex justify-content-center">
-          <p style="font-family: Calibri, sans-serif">HR</p>
+          <p>HR</p>
         </div>
 
       </div>
@@ -68,13 +68,13 @@
           v-if="!registration"
           type="submit"
           class="btn btn-primary"
-      >Log in</button>
+      >{{ $t("loginButton") }}</button>
 
       <button
           v-if="registration"
           type="submit"
           class="btn btn-primary"
-      >Sign up</button>
+      >{{ $t("registerButton") }}</button>
 
       <p
           v-if="errorMessage!==''"
@@ -92,9 +92,11 @@
         {{ successMessage }}
       </p>
     </form>
-    <div style="position: absolute; top: 20px; right: 20px">
-      <button @click="changeLanguage('en-US')">English</button>
-      <button @click="changeLanguage('it-IT')">Italiano</button>
+    <div class = "top-right">
+      <div class="language-buttons">
+        <button @click="changeLanguage('en-US')">English</button>
+        <button @click="changeLanguage('it-IT')">Italiano</button>
+      </div>
     </div>
   </div>
 </template>

@@ -16,7 +16,14 @@ public enum Activity {
 
     private final String categoryDescription;
 
-    public String assignActivity(Emotion detectedEmotion) {
+    public String assignActivity(Emotion detectedEmotion, String language) {
+        if(language.equals("en-US"))
+            return assignActivityEN(detectedEmotion);
+        else
+            return assignActivityIT(detectedEmotion);
+    }
+
+    private String assignActivityEN(Emotion detectedEmotion) {
         return switch (detectedEmotion) {
             case JOY -> switch (this) {
                 case PERSONALIZED_QUOTE -> "Happiness is not a destination, but a journey. Enjoy every step!";
@@ -78,5 +85,65 @@ public enum Activity {
         };
     }
 
-
+    private String assignActivityIT(Emotion detectedEmotion) {
+        return switch (detectedEmotion) {
+            case JOY -> switch (this) {
+                case PERSONALIZED_QUOTE -> "La felicità non è una destinazione, ma un viaggio. Goditi ogni passo!";
+                case SELF_CARE_SUGGESTION -> "Ti senti felice! Concediti del tempo per svolgere la tua attività preferita.";
+                case CREATIVE_MINI_ACTIVITY -> "Scatta una foto di qualcosa che rappresenta la tua felicità e conservala come ricordo.";
+                case SHORT_GUIDED_MEDITATION -> "Ti senti felice! Ecco una breve meditazione guidata per mantenerti rilassato.";
+                case CHALLENGE -> "Fai un complimento sincero a qualcuno o ringrazia una persona che ha migliorato la tua giornata.";
+                case RECOMMENDED_MUSIC -> "Una playlist con canzoni allegre per prolungare il tuo buon umore.";
+            };
+            case SADNESS -> switch (this) {
+                case PERSONALIZED_QUOTE -> "La tristezza fa parte della vita, ma è anche un'opportunità per riscoprire ciò che conta davvero.";
+                case SELF_CARE_SUGGESTION -> "Dedica 15 minuti ad ascoltare la tua musica preferita o a leggere un capitolo del tuo libro preferito.";
+                case CREATIVE_MINI_ACTIVITY -> "Scrivi un paragrafo su un momento felice che ti fa sentire grato, anche quando ti senti triste.";
+                case SHORT_GUIDED_MEDITATION -> "Una breve meditazione di 3–5 minuti per alleviare la tristezza e ritrovare un po' di serenità.";
+                case CHALLENGE -> "Scrivi tre cose per cui sei grato. Concentrarti sul positivo può migliorare il tuo umore.";
+                case RECOMMENDED_MUSIC -> "Una playlist con tracce rilassanti per incoraggiare il rilassamento.";
+            };
+            case ANGER -> switch (this) {
+                case PERSONALIZED_QUOTE -> "La calma è il potere di rimanere equilibrati anche quando tutto intorno c'è caos.";
+                case SELF_CARE_SUGGESTION -> "Prenditi 5 minuti per allontanarti da ciò che ti ha fatto arrabbiare e concentrarti su un'attività che ti rilassa.";
+                case CREATIVE_MINI_ACTIVITY -> "Scrivi ciò che ti ha fatto arrabbiare oggi e prova a individuare un aspetto positivo o una lezione da imparare.";
+                case SHORT_GUIDED_MEDITATION -> "Una meditazione mirata per calmare la rabbia e rifocalizzare la mente.";
+                case CHALLENGE -> "Trova una piccola cosa positiva oggi e concentrati su di essa, anche se semplice.";
+                case RECOMMENDED_MUSIC -> "Una playlist con musica rilassante per alleviare la tensione e aiutarti a rilassarti.";
+            };
+            case DISGUST -> switch (this) {
+                case PERSONALIZED_QUOTE -> "L'accettazione è la chiave per la pace interiore.";
+                case SELF_CARE_SUGGESTION -> "Dedica qualche minuto a un'attività piacevole, come ascoltare la tua musica preferita o leggere qualcosa di interessante.";
+                case CREATIVE_MINI_ACTIVITY -> "Visualizza un luogo o una situazione che ti trasmette pace e prova a disegnarla o a scriverne.";
+                case SHORT_GUIDED_MEDITATION -> "Una meditazione per distanziarti dai sentimenti di disgusto o disagio.";
+                case CHALLENGE -> "Trova una piccola cosa positiva di oggi e concentrati su di essa.";
+                case RECOMMENDED_MUSIC -> "Una playlist con tracce rilassanti per aiutarti a trovare equilibrio e relax.";
+            };
+            case FEAR -> switch (this) {
+                case PERSONALIZED_QUOTE -> "Il coraggio non è l'assenza di paura, ma la decisione di andare avanti comunque.";
+                case SELF_CARE_SUGGESTION -> "Prenditi un momento per elencare le cose che ti fanno sentire al sicuro e protetto.";
+                case CREATIVE_MINI_ACTIVITY -> "Scrivi di una volta in cui hai superato una situazione difficile per ricordarti della tua forza.";
+                case SHORT_GUIDED_MEDITATION -> "Una meditazione guidata per calmare la mente e ridurre l'ansia.";
+                case CHALLENGE -> "Stabilisci un piccolo obiettivo raggiungibile oggi per aumentare la tua fiducia.";
+                case RECOMMENDED_MUSIC -> "Una playlist con tracce rilassanti e calmanti per tranquillizzare la mente.";
+            };
+            case NEUTRALITY -> switch (this) {
+                case PERSONALIZED_QUOTE -> "La serenità è una conquista interiore. Trova la bellezza nella semplicità della tua giornata.";
+                case SELF_CARE_SUGGESTION -> "Dedica qualche minuto a una piccola attività piacevole, come leggere un capitolo di un libro o ascoltare un podcast.";
+                case CREATIVE_MINI_ACTIVITY -> "Pensa a una cosa che ti rende felice o soddisfatto e annotala per ricordarla.";
+                case SHORT_GUIDED_MEDITATION -> "Una breve meditazione per incoraggiare il rilassamento e la consapevolezza.";
+                case CHALLENGE -> "Scrivi una piccola cosa positiva che hai notato oggi, anche se è semplice.";
+                case RECOMMENDED_MUSIC -> "Una playlist delicata per incoraggiare la riflessione o il rilassamento.";
+            };
+            case SURPRISE -> switch (this) {
+                case PERSONALIZED_QUOTE -> "La vita è piena di sorprese. Accogli l'inaspettato!";
+                case SELF_CARE_SUGGESTION -> "Prenditi un momento per goderti la sorpresa e riflettere su cosa significa per te.";
+                case CREATIVE_MINI_ACTIVITY -> "Cattura la sorpresa in un disegno o in una breve storia.";
+                case SHORT_GUIDED_MEDITATION -> "Una meditazione per aiutarti a elaborare e goderti la sorpresa.";
+                case CHALLENGE -> "Condividi la sorpresa con un amico o un familiare e osserva la loro reazione.";
+                case RECOMMENDED_MUSIC -> "Una playlist con brani vivaci e sorprendenti per adattarsi al tuo umore.";
+            };
+            default -> throw new IllegalStateException("Valore emozione inatteso: " + this);
+        };
+    }
 }

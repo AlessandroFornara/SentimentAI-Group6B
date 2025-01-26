@@ -113,7 +113,7 @@ public class SessionService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public FinalResponse endSession(User worker){
+    public FinalResponse endSession(User worker, String language) {
         Session session = getUserActiveSession(worker);
         if(session == null) return null;
 
@@ -123,7 +123,7 @@ public class SessionService {
             return new FinalResponse(null, null, null, 0, 0);
         }
         Emotion dominantEmotion = computeDominantEmotion(detectedEmotions);
-        ActivityResponse activity = chooseActivity(dominantEmotion);
+        ActivityResponse activity = chooseActivity(dominantEmotion, language);
 
         int points = pointsManager.calculateXPForSession(activity, detectedEmotions.size());
         int totalXP = worker.getPoints() + points;
@@ -214,11 +214,11 @@ public class SessionService {
     }
 
 
-    public ActivityResponse chooseActivity(Emotion emotion){
+    public ActivityResponse chooseActivity(Emotion emotion, String language) {
         Activity[] activities = Activity.values();
         Random random = new Random();
         Activity randomActivity = activities[random.nextInt(activities.length)];
-        return new ActivityResponse(randomActivity.getCategoryDescription(), randomActivity.assignActivity(emotion));
+        return new ActivityResponse(randomActivity.getCategoryDescription(), randomActivity.assignActivity(emotion, language));
     }
 
     private Session getUserActiveSession(User worker) {

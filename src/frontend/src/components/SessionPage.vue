@@ -4,8 +4,10 @@
       <button @click="goBack">Back</button>
     </div>
     <div class="top-right">
-      <button @click="changeLanguage('en-US')">English</button>
-      <button @click="changeLanguage('it-IT')">Italiano</button>
+      <div class="language-buttons">
+        <button @click="changeLanguage('en-US')">English</button>
+        <button @click="changeLanguage('it-IT')">Italiano</button>
+      </div>
     </div>
 
     <h1 class="title">{{ $t('titleSessionPage') }}</h1>

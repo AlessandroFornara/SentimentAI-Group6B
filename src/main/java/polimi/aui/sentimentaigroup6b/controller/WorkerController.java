@@ -90,7 +90,7 @@ public class WorkerController {
     @PostMapping(value = "/handle_audio", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> handleAudio(@RequestPart("audio") MultipartFile audio,
                                          @RequestPart("audioTranscript") String audioTranscript,
-                                         @RequestPart("language") String language) {
+                                         @RequestHeader(value = "Accept-Language", defaultValue = "en-US") String language) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = (String) authentication.getPrincipal();
         System.out.println(email);
@@ -114,12 +114,12 @@ public class WorkerController {
 
     @PreAuthorize("hasRole('WORKER')")
     @PostMapping("/end_session")
-    public ResponseEntity<?> endSession(){
+    public ResponseEntity<?> endSession(@RequestHeader(value = "Accept-Language", defaultValue = "en-US") String language){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = (String) authentication.getPrincipal();
 
         User user = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
-        FinalResponse response = sessionService.endSession(user);
+        FinalResponse response = sessionService.endSession(user, language);
         if (response != null) {
             System.out.println(response);
             return ResponseEntity.ok(response);
