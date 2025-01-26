@@ -676,7 +676,7 @@ const animateAudioVisualizer = () => {
   color: black; /* Colore arancione */
   text-align: center;
   right: 50px; /* Distanza dal bordo destro */
-  top: 165px; /* Distanza dal bordo superiore */
+  top: 20%; /* Distanza dal bordo superiore */
 }
 
 .progress-bar {
