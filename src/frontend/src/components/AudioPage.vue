@@ -25,7 +25,7 @@
       <img :src="selectedImage" alt="Cloud Image" class="cloud-image" />
     </div>
 
-    <div class="time-remaining-text">Audio remaining time</div>
+    <div class="time-remaining-text">{{ $t('audioRemainingTime') }}</div>
 
     <!-- Timer -->
     <div class="timer">

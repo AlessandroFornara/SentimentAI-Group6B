@@ -27,7 +27,7 @@
               </p>
               <img :src="badgeImage.path" :alt="`${key} level ${value}`" class="badge-image" style="height: 200px" />
               <p style="color: black">
-                {{ capitalizeWords(key) }} (Level {{ value }})
+                {{ capitalizeWords($t(key)) }} ({{ $t('level') }} {{ value }})
               </p>
             </div>
           </div>

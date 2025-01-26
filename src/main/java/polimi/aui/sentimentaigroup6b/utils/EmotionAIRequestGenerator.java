@@ -30,8 +30,10 @@ public class EmotionAIRequestGenerator {
     private String API_CONVERSATIONAL_STEP_ID;
     @Value("${ai.emotion.token}")
     private String API_TOKEN;
-    @Value("${ai.emotion.name}")
-    private String API_NAME;
+    @Value("${ai.emotion.name.italian}")
+    private String API_NAME_IT;
+    @Value("${ai.emotion.name.english}")
+    private String API_NAME_EN;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -100,7 +102,10 @@ public class EmotionAIRequestGenerator {
         System.out.println("language: " + language);
 
         JSONObject service = new JSONObject();
-        service.put("name", API_NAME);
+        if(language.equals("it-IT"))
+            service.put("name", API_NAME_IT);
+        else
+            service.put("name", API_NAME_EN);
         service.put("account", new JSONObject());
         service.put("serviceParams", new JSONObject());
         payload.put("service", service);

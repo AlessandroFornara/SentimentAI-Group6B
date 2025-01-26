@@ -18,6 +18,7 @@
   "level": "Livello",
   "noBadgesToDisplay": "Al momento non hai nessun badge da mostrare.",
   "sessionRemainingTime": "Tempo rimanente della sessione",
+  "audioRemainingTime": "Tempo rimanente per l'audio",
   "startAudioButton": "Inizia registrazione",
   "resultPageTitle": "La tua sessione è conclusa!",
   "resultPageSubtitle": "Ecco i tuoi risultati:",
@@ -34,5 +35,9 @@
   "Fear": "Paura",
   "Neutrality": "Neutralità",
   "Surprise": "Sorpresa",
-  "historyTitle": "Cronologia sessioni"
+  "historyTitle": "Cronologia sessioni",
+  "activityBasedBadge": "Badge basato sull'attività",
+  "topicBasedBadge": "Badge basato sull'argomento",
+  "levelBasedBadge": "Badge basato sul livello",
+  "timeBasedBadge": "Badge basato sul tempo"
 }

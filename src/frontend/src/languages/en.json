@@ -19,6 +19,7 @@
   "level": "Level",
   "noBadgesToDisplay": "You currently have no badges to display.",
   "sessionRemainingTime": "Session remaining time",
+  "audioRemainingTime": "Audio remaining time",
   "startAudioButton": "Start recording",
   "resultPageTitle": "Your session is concluded!",
   "resultPageSubtitle": "Here are your results:",
@@ -35,5 +36,9 @@
   "Fear": "Fear",
   "Neutrality": "Neutrality",
   "Surprise": "Surprise",
-  "historyTitle": "Session History"
+  "historyTitle": "Session History",
+  "activityBasedBadge": "Activity based badge",
+  "topicBasedBadge": "Topic based badge",
+  "levelBasedBadge": "Level based badge",
+  "timeBasedBadge": "Time based badge"
 }
