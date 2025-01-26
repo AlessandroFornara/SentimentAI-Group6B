@@ -25,8 +25,11 @@
       <img :src="selectedImage" alt="Cloud Image" class="cloud-image" />
     </div>
 
+    <div class="time-remaining-text">Audio remaining time</div>
+
     <!-- Timer -->
     <div class="timer">
+
       <div class="timer-progress">
         <div class="progress-bar" :style="progressBarStyle"></div>
       </div>
@@ -66,10 +69,10 @@
 
 <script setup>
 import microphoneImage from '@/assets/Microphone.png';
-import { ref, computed, onMounted } from 'vue';
+import {ref, computed, onMounted} from 'vue';
 import {useRoute, useRouter, onBeforeRouteLeave} from "vue-router";
 import questionImage from '@/assets/HappyCloud.png'
-import { i18n } from "@/main";
+import {i18n} from "@/main";
 
 // Stato iniziale
 const selectedImage = ref(null); // Per memorizzare l'immagine selezionata
@@ -412,7 +415,7 @@ const setupMicrophone = async () => {
           question.value = newQuestion;
           typeText();
           questionReady.value = true;
-        }else{
+        } else {
           alert('You registered an empty audio. Please try again.');
           questionReady.value = true;
         }
@@ -666,6 +669,16 @@ const animateAudioVisualizer = () => {
 
 }
 
+.time-remaining-text {
+  position: absolute;
+  font-size: 1rem; /* Dimensione del testo */
+  font-family: 'Lobster', cursive;
+  color: black; /* Colore arancione */
+  text-align: center;
+  right: 50px; /* Distanza dal bordo destro */
+  top: 165px; /* Distanza dal bordo superiore */
+}
+
 .progress-bar {
   background: linear-gradient(to bottom, #ff4500, #ffa500); /* Sfumatura arancione */
   transition: height 1s linear;
@@ -851,12 +864,5 @@ const animateAudioVisualizer = () => {
   width: 100%;
 }
 
-.time-remaining-text {
-  font-size: 1.5rem; /* Dimensione del testo */
-  font-weight: bold;
-  color: orange; /* Colore arancione */
-  text-align: center;
-  margin-bottom: 10px; /* Spazio sopra la barra del timer */
-}
 
 </style>
