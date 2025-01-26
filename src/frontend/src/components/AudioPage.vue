@@ -221,11 +221,12 @@ const generateBubble = () => {
   for (let i = 0; i < numberOfBubbles; i++) {
     const bubbleSize = Math.random() * 10 + 10; // Dimensione casuale
     const bubbleLeft = Math.random() * 100; // Posizione casuale
+    const animationDuration = Math.random() * 5 + 5;
     const bubbleStyle = {
       width: `${bubbleSize}px`,
       height: `${bubbleSize}px`,
       left: `${bubbleLeft}%`,
-      animationDuration: `${Math.random() * 3 + 2}s`, // Durata casuale
+      animationDuration: `${animationDuration}s`, // Durata casuale
       background: 'radial-gradient(circle, #ff7f50, #ffa500, #ff4500)', // Sfumatura arancione
     };
 
@@ -234,7 +235,7 @@ const generateBubble = () => {
     // Rimuovi la bolla dopo la fine dell'animazione
     setTimeout(() => {
       bubbles.value.shift();
-    }, 10000); // Le bolle durano 10 secondi
+    }, animationDuration*1000);
   }
 };
 
