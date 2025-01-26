@@ -365,7 +365,7 @@ const setupMicrophone = async () => {
     // Configura la trascrizione live
     if (!recognition) {
       recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-      recognition.lang = 'it-IT'; // Imposta la lingua in italiano
+      recognition.lang = i18n.global.locale; // Imposta la lingua
       recognition.interimResults = true; // Risultati parziali
 
       recognition.onresult = (event) => {
