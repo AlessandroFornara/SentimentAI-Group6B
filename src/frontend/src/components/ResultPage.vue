@@ -45,13 +45,13 @@ import {ref, onMounted, computed, onUnmounted} from 'vue';
 import {useRouter} from 'vue-router';
 import confetti from 'canvas-confetti';
 import {badgeImages, capitalizeWords} from '@/utils/badgeUtils';
-import AngerImage from '@/assets/Anger.png';
-import FearImage from '@/assets/Fear.png';
-import DisgustImage from '@/assets/Disgust.png';
-import NeutralImage from '@/assets/Neutral.png';
-import JoyImage from '@/assets/Joy.png';
-import SadnessImage from '@/assets/Sadness.png';
-import SurpriseImage from '@/assets/Surprise.png';
+import AngerImage from '@/assets/EmotionEmojis/Anger.png';
+import FearImage from '@/assets/EmotionEmojis/Fear.png';
+import DisgustImage from '@/assets/EmotionEmojis/Disgust.png';
+import NeutralImage from '@/assets/EmotionEmojis/Neutral.png';
+import JoyImage from '@/assets/EmotionEmojis/Joy.png';
+import SadnessImage from '@/assets/EmotionEmojis/Sadness.png';
+import SurpriseImage from '@/assets/EmotionEmojis/Surprise.png';
 import { i18n } from "@/main";
 
 const emotionImages = {

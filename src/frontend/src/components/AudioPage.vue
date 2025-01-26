@@ -71,7 +71,7 @@
 import microphoneImage from '@/assets/Microphone.png';
 import {ref, computed, onMounted} from 'vue';
 import {useRoute, useRouter, onBeforeRouteLeave} from "vue-router";
-import questionImage from '@/assets/HappyCloud.png'
+import questionImage from '@/assets/EmotionEmojis/HappyCloud.png'
 import {i18n} from "@/main";
 
 // Stato iniziale
@@ -498,56 +498,6 @@ const animateAudioVisualizer = () => {
   width: 100vw;
   position: relative;
   overflow: hidden;
-}
-
-.image-bubble {
-  width: 1000px;
-  height: 1000px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  -webkit-mask-image: url('/src/assets/cloud-shape.svg');
-  -webkit-mask-size: cover;
-  mask-image: url('/src/assets/cloud-shape.svg');
-  mask-size: cover;
-  background-color: white;
-  overflow: hidden;
-}
-
-.center-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-
-
-.bubble-shape {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-}
-
-.bubble-image {
-  position: absolute;
-  top: 10px; /* Offset interno */
-  left: 10px;
-  width: calc(100% - 20px); /* Per adattare l'immagine */
-  height: calc(100% - 20px);
-  object-fit: cover; /* Mantiene proporzioni */
-  border-radius: 15px; /* Per armonizzare */
-  z-index: 2;
-}
-
-
-
-.center-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* Mantiene proporzioni senza modifiche */
 }
 
 .question {
