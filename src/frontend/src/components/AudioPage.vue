@@ -14,7 +14,10 @@
     <div class="floating-sphere"></div>
 
     <!-- Frase Generata -->
-    <div class="question">
+    <div v-if="!questionReady" class="loading-dots">
+      <span>.</span><span>.</span><span>.</span>
+    </div>
+    <div v-else class="question">
       <img :src="questionImage" alt="Question Icon" class="question-image" />
       <p>{{ displayedText }}</p>
     </div>
@@ -270,7 +273,7 @@ const startRecording = () => {
   isRecording.value = true;
   bubbleMultiplier.value = 2; // Aumenta il numero di bolle
   showFinishButton.value = false;
-  questionReady.value = false;
+  //questionReady.value = false;
   timeRemaining.value = maxAudioTime;
   elapsedTime.value = 0;
   liveTranscript = '';
@@ -406,7 +409,7 @@ const setupMicrophone = async () => {
       recognition.onend(); // Termina la trascrizione
       try {
         console.log('Trascrizione finale:', completeTranscript);
-
+        questionReady.value = false;
         // Invia l'audio e la trascrizione al server
         const newQuestion = await sendAudioToServer(audioBlob, completeTranscript);
         if (newQuestion || endSession) {
@@ -415,8 +418,8 @@ const setupMicrophone = async () => {
             return;
           }
           question.value = newQuestion;
-          typeText();
           questionReady.value = true;
+          typeText();
         } else {
           alert('You registered an empty audio. Please try again.');
           questionReady.value = true;
@@ -816,5 +819,43 @@ const animateAudioVisualizer = () => {
   width: 100%;
 }
 
+.loading-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  font-family: 'Lobster', cursive;
+  color: #1666cb;
+  gap: 5px; /* Spazio tra i puntini */
+}
+
+.loading-dots span {
+  animation: blink 1.5s infinite;
+  opacity: 0;
+}
+
+.loading-dots span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.loading-dots span:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.loading-dots span:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+@keyframes blink {
+  0%, 20% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
 
 </style>
