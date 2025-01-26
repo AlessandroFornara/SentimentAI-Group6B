@@ -78,10 +78,10 @@ import {i18n} from "@/main";
 const selectedImage = ref(null); // Per memorizzare l'immagine selezionata
 const question = ref(''); // Prima domanda fissa
 
-const maxAudioTime = 80;
-const maxSessionTime = 360;
+const maxAudioTime = 60;
+const maxSessionTime = 300;
 const timeRemaining = ref(maxAudioTime);
-const minimumSessionTime = 120;
+const minimumSessionTime = 150;
 
 const shouldMask = ref(true)
 // Calcolo dei minuti e secondi mancanti
