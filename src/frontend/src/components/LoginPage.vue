@@ -124,7 +124,7 @@ const requestOptions = {
 };
 
 function register() {
-  this.registration = (!this.registration)
+  registration.value = (!registration.value)
 }
 
 function handleSubmit() {
