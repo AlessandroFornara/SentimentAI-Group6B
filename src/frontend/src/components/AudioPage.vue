@@ -79,6 +79,7 @@ const selectedImage = ref(null); // Per memorizzare l'immagine selezionata
 const question = ref(''); // Prima domanda fissa
 
 const maxAudioTime = 60;
+const minimumAudioTime = 30;
 const maxSessionTime = 300;
 const timeRemaining = ref(maxAudioTime);
 const minimumSessionTime = 150;
@@ -280,7 +281,7 @@ const startRecording = () => {
     if (isRecording.value) {
       showFinishButton.value = true;
     }
-  }, 5000);
+  }, minimumAudioTime*1000);
 
   // Genera bolle continuamente durante la registrazione
   const bubbleInterval = setInterval(() => {
