@@ -41,7 +41,6 @@ import { changeLanguage } from '@/main';
 const router = useRouter();
 const images = ref([]);
 
-// Funzione per caricare le immagini dal server
 async function loadImages() {
   try {
     const response = await fetch('/api/worker/create_session', {
@@ -59,7 +58,6 @@ async function loadImages() {
     const responseData = await response.json();
     console.log('Risposta dal server:', responseData);
 
-    // Converti Base64 in un formato utilizzabile
     images.value = responseData.map((item) => ({
       name: item.name,
       src: `data:${item.contentType};base64,${item.data}`
@@ -72,7 +70,6 @@ async function loadImages() {
 async function selectImage(index) {
   const selectedImage = images.value[index];
   console.log(selectedImage.name);
-  //console.log(`Selected Image: ${selectedImage}`);
   const response = await fetch('/api/worker/start_session', {
     method: 'POST',
     headers: {

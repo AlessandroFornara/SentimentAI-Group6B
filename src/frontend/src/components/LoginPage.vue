@@ -103,7 +103,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router'; // Importa il router
+import { useRouter } from 'vue-router';
 import { changeLanguage } from '@/main';
 
 const router = useRouter();
@@ -203,14 +203,14 @@ function handleRegister() {
   font-size: 70px;
   font-family: 'Lobster', cursive;
   margin: 0;
-  color: #1666cb; /* Blu scuro */
+  color: #1666cb;
 }
 
 .subtitle {
   font-size: 25px;
   font-weight: normal;
   font-family: 'Lobster', cursive;
-  color: #1666cb; /* Blu pastello */
+  color: #1666cb;
   text-align: center;
 }
 

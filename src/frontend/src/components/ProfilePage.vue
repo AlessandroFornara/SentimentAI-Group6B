@@ -99,8 +99,8 @@ const calculateProgress = () => {
   const progress = ((points.value - xpCurrentLevel) / xpForNextLevel) * 100;
 
   return {
-    progress: Math.max(0, Math.min(progress, 100)), // Percentuale limitata tra 0 e 100
-    currentXP: Math.max(0, points.value - xpCurrentLevel), // XP attuale
+    progress: Math.max(0, Math.min(progress, 100)),
+    currentXP: Math.max(0, points.value - xpCurrentLevel),
     xpForNextLevel,
   };
 };

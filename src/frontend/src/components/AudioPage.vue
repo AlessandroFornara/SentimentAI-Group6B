@@ -63,7 +63,7 @@
     </div>
 
     <!-- Pulsante Terminate Session -->
-    <div v-if="maxSessionTime - totalRemainingTime >= minimumSessionTime && !isRecording" class="terminate-session">
+    <div v-if="maxSessionTime - totalRemainingTime >= 0 && !isRecording" class="terminate-session">
       <button @click="goToResultPage" class="btn-terminate">{{$t('terminateSessionButton')}}</button>
     </div>
   </div>
@@ -77,18 +77,16 @@ import {useRoute, useRouter, onBeforeRouteLeave} from "vue-router";
 import questionImage from '@/assets/EmotionEmojis/HappyCloud.png'
 import {i18n} from "@/main";
 
-// Stato iniziale
-const selectedImage = ref(null); // Per memorizzare l'immagine selezionata
-const question = ref(''); // Prima domanda fissa
+const selectedImage = ref(null);
+const question = ref('');
 
 const maxAudioTime = 60;
 const minimumAudioTime = 30;
 const maxSessionTime = 300;
 const timeRemaining = ref(maxAudioTime);
-const minimumSessionTime = 150;
+//const minimumSessionTime = 150;
 
 const shouldMask = ref(true)
-// Calcolo dei minuti e secondi mancanti
 
 const isRecording = ref(false);
 const showFinishButton = ref(false);
@@ -96,20 +94,20 @@ const questionReady = ref(true);
 const displayedText = ref("")
 const typingSpeed = 50;
 const elapsedTime = ref(0);
-const totalRemainingTime = ref(maxSessionTime); // Tempo totale accumulato
+const totalRemainingTime = ref(maxSessionTime);
 let timerInterval = null;
 const microphoneAccessError = ref(false);
 const audioCanvas = ref(null);
 let analyser;
 let audioChunks = [];
 let mediaRecorder;
-let recognition; // Per la trascrizione Web Speech API
-let liveTranscript = ''; // Accumula la trascrizione live
-let completeTranscript = ''; // Trascrizione finale
+let recognition;
+let liveTranscript = '';
+let completeTranscript = '';
 const skipBeforeRouteLeave = ref(false);
 let endSession = false;
 
-const router = useRouter(); // Router per la navigazione
+const router = useRouter();
 
 function toggleMasking() {
   shouldMask.value = !shouldMask.value;
@@ -164,12 +162,11 @@ const closeSession = () => {
       });
 };
 
-// Funzione per avviare il conto alla rovescia
 const startTimer = () => {
   timerInterval = setInterval(() => {
     if (timeRemaining.value > 0 && totalRemainingTime.value > 0) {
-      timeRemaining.value--; // Riduci di un secondo
-      totalRemainingTime.value -= 1; // Incrementa il tempo totale
+      timeRemaining.value--;
+      totalRemainingTime.value -= 1;
     } else {
       if (totalRemainingTime.value === 0) {
         endSession = true;
@@ -194,8 +191,6 @@ const typeText = () => {
   }, typingSpeed);
 };
 
-
-// Recupera l'immagine salvata in sessionStorage all'avvio
 onMounted(() => {
   const route = useRoute();
   const backgroundImage = route.query.background;
@@ -205,7 +200,7 @@ onMounted(() => {
       question.value = i18n.global.locale === 'it-IT' ? 'Di cosa vuoi parlare oggi?' : 'What do you want to talk about today?';
     }else
       question.value = i18n.global.locale === 'it-IT' ? 'Ottima scelta. A cosa ti fa pensare questa immagine?' : 'Great choice. What does this image make you think of?';
-    selectedImage.value = backgroundImage;  // Salva l'immagine nel ref
+    selectedImage.value = backgroundImage;
     typeText();
   }else{
     skipBeforeRouteLeave.value = true;
@@ -221,22 +216,21 @@ onMounted(() => {
 });
 
 const generateBubble = () => {
-  const numberOfBubbles = Math.floor(5 * bubbleMultiplier.value); // Numero di bolle moltiplicato
+  const numberOfBubbles = Math.floor(5 * bubbleMultiplier.value);
   for (let i = 0; i < numberOfBubbles; i++) {
-    const bubbleSize = Math.random() * 10 + 10; // Dimensione casuale
-    const bubbleLeft = Math.random() * 100; // Posizione casuale
+    const bubbleSize = Math.random() * 10 + 10;
+    const bubbleLeft = Math.random() * 100;
     const animationDuration = Math.random() * 5 + 5;
     const bubbleStyle = {
       width: `${bubbleSize}px`,
       height: `${bubbleSize}px`,
       left: `${bubbleLeft}%`,
-      animationDuration: `${animationDuration}s`, // Durata casuale
-      background: 'radial-gradient(circle, #ff7f50, #ffa500, #ff4500)', // Sfumatura arancione
+      animationDuration: `${animationDuration}s`,
+      background: 'radial-gradient(circle, #ff7f50, #ffa500, #ff4500)',
     };
 
     bubbles.value.push({ style: bubbleStyle });
 
-    // Rimuovi la bolla dopo la fine dell'animazione
     setTimeout(() => {
       bubbles.value.shift();
     }, animationDuration*1000);
@@ -246,13 +240,13 @@ const generateBubble = () => {
 
 
 const progressBarStyle = computed(() => ({
-  height: `${(timeRemaining.value / maxAudioTime) * 100}%`, // Altezza dinamica basata sul tempo
-  backgroundColor: 'orange', // Verde chiaro
-  transition: 'height 1s linear', // Transizione fluida
+  height: `${(timeRemaining.value / maxAudioTime) * 100}%`,
+  backgroundColor: 'orange',
+  transition: 'height 1s linear',
 }));
 
-const bubbles = ref([]); // Array reattivo per gestire le bolle
-const bubbleMultiplier = ref(1); // Moltiplicatore per il numero di bolle
+const bubbles = ref([]);
+const bubbleMultiplier = ref(1);
 
 
 
@@ -271,22 +265,19 @@ const formattedSessionRemainingTime = computed(() => {
 const startRecording = () => {
   microphoneAccessError.value = false;
   isRecording.value = true;
-  bubbleMultiplier.value = 2; // Aumenta il numero di bolle
+  bubbleMultiplier.value = 2;
   showFinishButton.value = false;
-  //questionReady.value = false;
   timeRemaining.value = maxAudioTime;
   elapsedTime.value = 0;
   liveTranscript = '';
   completeTranscript = '';
 
-  // Mostra il pulsante Finish Audio dopo 30 secondi
   setTimeout(() => {
     if (isRecording.value) {
       showFinishButton.value = true;
     }
   }, minimumAudioTime*1000);
 
-  // Genera bolle continuamente durante la registrazione
   const bubbleInterval = setInterval(() => {
     if (isRecording.value) {
       generateBubble();
@@ -295,7 +286,6 @@ const startRecording = () => {
     }
   }, 1000);
 
-  // Avvia il timer
   startTimer();
   setupMicrophone();
 };
@@ -303,25 +293,22 @@ const startRecording = () => {
 
 const finishRecording = async () => {
   isRecording.value = false;
-  bubbleMultiplier.value = 1; // Torna al numero normale di bolle
+  bubbleMultiplier.value = 1;
   showFinishButton.value = false;
 
   clearInterval(timerInterval);
-  timeRemaining.value = maxAudioTime; // Reset del timer
+  timeRemaining.value = maxAudioTime;
 
-  // Ferma la registrazione
   mediaRecorder.stop();
   recognition.stop();
 };
 
 
 const goToResultPage = () => {
-  // Reindirizza alla pagina ResultPage
   skipBeforeRouteLeave.value = true;
   router.push('/result');
 };
 
-// Funzione per inviare l'audio e la trascrizione al server
 const sendAudioToServer = async (audioBlob, transcript) => {
   const formData = new FormData();
   formData.append('audio', audioBlob);
@@ -333,7 +320,7 @@ const sendAudioToServer = async (audioBlob, transcript) => {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
-        'Accept-Language': i18n.global.locale //
+        'Accept-Language': i18n.global.locale
       },
       body: formData,
     });
@@ -356,11 +343,10 @@ const sendAudioToServer = async (audioBlob, transcript) => {
   }
 };
 
-// Configura il microfono e registra audio
 const setupMicrophone = async () => {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({audio: true});
-    checkMicrophoneInput(stream); // Controllo input microfono
+    checkMicrophoneInput(stream);
 
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     analyser = audioContext.createAnalyser();
@@ -370,11 +356,10 @@ const setupMicrophone = async () => {
     mediaRecorder = new MediaRecorder(stream);
     audioChunks = [];
 
-    // Configura la trascrizione live
     if (!recognition) {
       recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-      recognition.lang = i18n.global.locale; // Imposta la lingua
-      recognition.interimResults = true; // Risultati parziali
+      recognition.lang = i18n.global.locale;
+      recognition.interimResults = true;
 
       recognition.onresult = (event) => {
         liveTranscript = Array.from(event.results)
@@ -406,11 +391,11 @@ const setupMicrophone = async () => {
 
     mediaRecorder.onstop = async () => {
       const audioBlob = new Blob(audioChunks, {type: 'audio/wav'});
-      recognition.onend(); // Termina la trascrizione
+      recognition.onend();
       try {
         console.log('Trascrizione finale:', completeTranscript);
         questionReady.value = false;
-        // Invia l'audio e la trascrizione al server
+
         const newQuestion = await sendAudioToServer(audioBlob, completeTranscript);
         if (newQuestion || endSession) {
           if(endSession){
@@ -442,7 +427,6 @@ const setupMicrophone = async () => {
   }
 };
 
-// Controllo input microfono
 const checkMicrophoneInput = (stream) => {
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
   const source = audioContext.createMediaStreamSource(stream);
@@ -453,10 +437,6 @@ const checkMicrophoneInput = (stream) => {
   analyser.getByteTimeDomainData(dataArray);
 };
 
-
-
-
-// Animazione della barra audio
 const animateAudioVisualizer = () => {
   const canvas = audioCanvas.value;
   const ctx = canvas.getContext('2d');
@@ -478,7 +458,7 @@ const animateAudioVisualizer = () => {
 
     for (let i = 0; i < bufferLength; i++) {
       barHeight = dataArray[i] / 2;
-      ctx.fillStyle = 'rgb(0, 0, 255)'; // Bianco
+      ctx.fillStyle = 'rgb(0, 0, 255)';
       ctx.fillRect(x, canvas.height - barHeight / 2, barWidth, barHeight);
 
       x += barWidth + 1;
@@ -506,25 +486,25 @@ const animateAudioVisualizer = () => {
 }
 
 .question {
-  display: flex; /* Disposizione orizzontale di immagine e testo */
-  align-items: center; /* Allinea verticalmente immagine e testo */
-  text-align: left; /* Allinea il contenitore a sinistra */
-  gap: 15px; /* Spazio tra immagine e testo */
-  margin: 20px 0; /* Spazio intorno al box */
+  display: flex;
+  align-items: center;
+  text-align: left;
+  gap: 15px;
+  margin: 20px 0;
   margin-top: 20px;
   font-size: 1.5rem;
   font-family: 'Lobster', cursive;
   text-align: center;
   color: #1666cb;
   font-weight: bold;
-  position: relative; /* Necessario per far funzionare il z-index */
-  z-index: 10; /* Garantisce che il testo sia sempre sopra altri elementi */
+  position: relative;
+  z-index: 10;
 }
 
 .question-image {
-  width: 100px; /* Larghezza immagine */
-  height: 100px; /* Altezza immagine */
-  object-fit: contain; /* Adatta l'immagine mantenendo proporzioni */
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
   animation: bounce 1s infinite;
 }
 
@@ -536,22 +516,21 @@ const animateAudioVisualizer = () => {
     transform: translateY(-15px);
   }
 }
-/* Box unico per la registrazione */
+
 .recording-box {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 15px; /* Spazio tra gli elementi */
-  padding: 20px; /* Padding interno */
+  gap: 15px;
+  padding: 20px;
 }
 
-/* Pulsante Start Audio */
 .btn-start {
   padding: 10px 20px;
   font-size: 1.2rem;
-  background: linear-gradient(45deg, #ffa500, #ff4500); /* Sfumatura arancione */
-  color: white; /* Testo bianco */
-  font-weight: bold; /* Grassetto */
+  background: linear-gradient(45deg, #ffa500, #ff4500);
+  color: white;
+  font-weight: bold;
   border: none;
   border-radius: 10px;
   cursor: pointer;
@@ -559,10 +538,9 @@ const animateAudioVisualizer = () => {
 }
 
 .btn-start:hover {
-  background: linear-gradient(45deg, #ff7f50, #ff6347); /* Sfumatura più chiara al passaggio del mouse */
+  background: linear-gradient(45deg, #ff7f50, #ff6347);
 }
 
-/* Icona del microfono */
 .microphone-container {
   width: 40px;
   height: 40px;
@@ -573,11 +551,9 @@ const animateAudioVisualizer = () => {
 
 .microphone-container img {
   width: 100%;
-  //height: 100%;
   object-fit: cover;
 }
 
-/* Barra audio */
 .audio-visualizer {
   width: 300px;
   height: 50px;
@@ -589,13 +565,12 @@ const animateAudioVisualizer = () => {
   height: 100%;
 }
 
-/* Pulsante Finish Audio */
 .btn-finish {
   padding: 10px 20px;
   font-size: 1.2rem;
-  background: linear-gradient(45deg, #ffa500, #ff4500); /* Azzurro */
-  color: white; /* Testo bianco */
-  font-weight: bold; /* Grassetto */
+  background: linear-gradient(45deg, #ffa500, #ff4500);
+  color: white;
+  font-weight: bold;
   border: none;
   border-radius: 10px;
   cursor: pointer;
@@ -603,22 +578,21 @@ const animateAudioVisualizer = () => {
 }
 
 .btn-finish:hover {
-  background:linear-gradient(45deg, #ff7f50, #ff6347);  /* Azzurro più scuro quando si passa sopra */
+  background:linear-gradient(45deg, #ff7f50, #ff6347);
 }
 
-/* Timer */
 .timer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Posiziona il contenuto verso l'alto */
+  justify-content: flex-start;
   position: absolute;
   right: 100px;
   top: 50%;
   transform: translateY(-50%);
   width: 50px;
   height: 300px;
-  background: rgba(255, 255, 255, 0.2); /* Sfondo trasparente */
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 10px;
   overflow: hidden;
 
@@ -626,20 +600,20 @@ const animateAudioVisualizer = () => {
 
 .time-remaining-text {
   position: absolute;
-  font-size: 1rem; /* Dimensione del testo */
+  font-size: 1rem;
   font-family: 'Lobster', cursive;
-  color: black; /* Colore arancione */
+  color: black;
   text-align: center;
-  right: 50px; /* Distanza dal bordo destro */
-  top: 20%; /* Distanza dal bordo superiore */
+  right: 50px;
+  top: 20%;
 }
 
 .progress-bar {
-  background: linear-gradient(to bottom, #ff4500, #ffa500); /* Sfumatura arancione */
+  background: linear-gradient(to bottom, #ff4500, #ffa500);
   transition: height 1s linear;
   width: 100%;
-  height: 100%; /* Partenza piena */
-  transform-origin: bottom; /* L'origine diventa il bordo superiore */
+  height: 100%;
+  transform-origin: bottom;
 }
 
 
@@ -647,8 +621,8 @@ const animateAudioVisualizer = () => {
 
 .time-remaining {
   position: absolute;
-  margin-bottom: 10px; /* Spazio tra il testo e la barra */
-  color: orange; /* Testo blu */
+  margin-bottom: 10px;
+  color: orange;
   font-size: 1rem;
   font-weight: bold;
 }
@@ -656,11 +630,10 @@ const animateAudioVisualizer = () => {
 
 .timer-progress {
   width: 100%;
-  height: 100%; /* Stessa altezza del timer */
+  height: 100%;
   position: relative;
 }
 
-/* Pulsante Terminate Session */
 .terminate-session {
   position: fixed;
   bottom: 20px;
@@ -705,7 +678,7 @@ const animateAudioVisualizer = () => {
   position: absolute;
   width: 100px;
   height: 100px;
-  background: radial-gradient(circle, #ff7f50, #ffa07a, #ff6347); /* Sfumature arancione-rosa */
+  background: radial-gradient(circle, #ff7f50, #ffa07a, #ff6347);
   border-radius: 50%;
   animation: floatUp 8s ease-in-out infinite;
   opacity: 0.8;
@@ -713,8 +686,8 @@ const animateAudioVisualizer = () => {
 
 .cloud-container {
   position: relative;
-  width: 500px; /* Larghezza della nuvola */
-  height: 300px; /* control the size */
+  width: 500px;
+  height: 300px;
   aspect-ratio: 1.8;
   --g: radial-gradient(50% 50%, #000 98%, #0000) no-repeat;
   mask: var(--g) 100% 100%/30% 60%,var(--g) 70% 0/50% 100%,var(--g) 0 100%/36% 68%,var(--g) 27% 18%/26% 40%,linear-gradient(#000 0 0) bottom/67% 58% no-repeat;
@@ -733,7 +706,7 @@ const animateAudioVisualizer = () => {
   -webkit-mask-size: cover;
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
-  background-color: #fff; /* Optional: background color inside the mask */
+  background-color: #fff;
 }
 
 .no-mask {
@@ -746,7 +719,7 @@ const animateAudioVisualizer = () => {
 .cloud-image {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Adatta l'immagine alla nuvola */
+  object-fit: cover;
 }
 
 @keyframes floatUp {
@@ -768,7 +741,7 @@ const animateAudioVisualizer = () => {
   position: absolute;
   width: 100px;
   height: 100px;
-  background: radial-gradient(circle, #ff7f50, #ffa07a, #ff6347); /* Sfumature arancione-rosa */
+  background: radial-gradient(circle, #ff7f50, #ffa07a, #ff6347);
   border-radius: 50%;
   animation: floatUp 8s ease-in-out infinite;
   opacity: 0.8;
@@ -811,8 +784,8 @@ const animateAudioVisualizer = () => {
 
 .time-numbers {
   position: absolute;
-  top: -25px; /* Posiziona sopra il timer */
-  color: orange; /* Testo arancione */
+  top: -25px;
+  color: orange;
   font-size: 1.2rem;
   font-weight: bold;
   text-align: center;
@@ -826,7 +799,7 @@ const animateAudioVisualizer = () => {
   font-size: 2rem;
   font-family: 'Lobster', cursive;
   color: #1666cb;
-  gap: 5px; /* Spazio tra i puntini */
+  gap: 5px;
 }
 
 .loading-dots span {

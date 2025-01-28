@@ -1,17 +1,14 @@
 <template>
   <div>
-    <!-- Contenitore delle nuvole animate -->
     <div class="cloud"></div>
     <div class="cloud"></div>
 
     <div class="homepage">
-      <!-- Titolo e sottotitolo in alto al centro -->
       <div class="header">
         <h1 class="title">{{ $t('titleHomePage') }} {{ username }}!</h1>
         <h2 class="subtitle">{{ $t('subtitleHomePage') }}</h2>
       </div>
 
-      <!-- Pulsante Logout in alto a destra -->
       <div class="top-right">
         <button class="logout-button" @click="logout">{{ $t('logoutButton') }}</button>
         <div class="language-buttons">
@@ -20,12 +17,10 @@
         </div>
       </div>
 
-      <!-- Foto in alto a sinistra -->
       <div class="top-left">
         <img src="@/assets/mic_emotino_noBack.png" width="150" alt="P">
       </div>
 
-      <!-- Contenuto centrale con bottoni -->
       <div class="center-buttons">
         <button @click="navigateTo('profile')">
           <span>{{ $t('profileButton') }}</span>
@@ -37,7 +32,6 @@
         </button>
       </div>
 
-      <!-- Bottone in basso al centro -->
       <div class="bottom-center">
         <button @click="startSession">{{ $t('startButton') }}</button>
       </div>
@@ -47,33 +41,29 @@
 
 <script setup>
 import { useRouter } from 'vue-router';
-import {ref} from "vue"; // Importa il router
+import {ref} from "vue";
 import { changeLanguage } from "@/main";
 
-const router = useRouter(); // Ottieni l'istanza del router
-const username = ref(localStorage.getItem('name')); // Nome utente
+const router = useRouter();
+const username = ref(localStorage.getItem('name'));
 
-// Funzione per navigare tra le pagine
 function navigateTo(page) {
   console.log(`Navigating to ${page}...`);
-  router.push(`/${page}`); // Naviga dinamicamente verso la pagina specificata
+  router.push(`/${page}`);
 }
 
-// Funzione per iniziare la sessione
 function startSession() {
   console.log('Starting a new session...');
-  router.push('/session'); // Naviga alla pagina "session"
+  router.push('/session');
 }
 
-// Funzione per gestire il logout
 function logout() {
   console.log('User logged out');
-  router.push('/'); // Riporta l'utente alla schermata di login
+  router.push('/');
 }
 </script>
 
 <style scoped>
-/* Contenitore per l'intera homepage */
 .homepage {
   display: flex;
   flex-direction: column;
@@ -113,7 +103,6 @@ function logout() {
   }
 }
 
-/* Titolo e sottotitolo */
 .header {
   position: absolute;
   top: 20px;
@@ -134,9 +123,6 @@ function logout() {
   margin: 30px 0 0 0;
 }
 
-
-
-/* Bottoni centrali */
 .center-buttons {
   display: flex;
   flex-direction: row;
@@ -187,7 +173,6 @@ function logout() {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Bottone in basso al centro */
 .bottom-center {
   position: absolute;
   bottom: 20px;
@@ -206,19 +191,19 @@ function logout() {
   transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   min-width: 240px;
   min-height: 70px;
-  box-shadow: 0px 8px 20px rgba(30, 144, 255, 0.3); /* Dodgerblue shadow */
+  box-shadow: 0px 8px 20px rgba(30, 144, 255, 0.3);
 }
 
 .bottom-center button:hover {
   transform: scale(1.05);
-  box-shadow: 0px 12px 30px rgba(30, 144, 255, 0.4); /* Brighter dodgerblue shadow */
-  background: linear-gradient(90deg, #1e90ff, #0073e6); /* Lighter dodgerblue gradient */
+  box-shadow: 0px 12px 30px rgba(30, 144, 255, 0.4);
+  background: linear-gradient(90deg, #1e90ff, #0073e6);
 }
 
 .bottom-center button:active {
   transform: scale(0.98);
-  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow for active state */
-  background: linear-gradient(90deg, #005bb5, #004a99); /* Darker dodgerblue gradient */
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(90deg, #005bb5, #004a99);
 }
 
 </style>
