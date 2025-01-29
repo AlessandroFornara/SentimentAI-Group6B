@@ -85,9 +85,21 @@ async function selectImage(index) {
   }
 }
 
-function freeModeOption() {
+async function freeModeOption() {
   console.log('Free Mode Option Selected');
-  router.push({name: 'AudioPage', query: {background: freeModeImage, mask: false}});
+  const response = await fetch('/api/worker/start_session', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+    body: JSON.stringify('Free Mode'),
+  });
+  if (!response.ok) {
+    throw new Error('Errore durante l\'avvio della sessione.');
+  }else{
+    await router.push({name: 'AudioPage', query: {background: freeModeImage, mask: false}});
+  }
 }
 
 function goBack() {
