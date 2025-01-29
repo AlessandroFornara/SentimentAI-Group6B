@@ -63,7 +63,7 @@
     </div>
 
     <!-- Pulsante Terminate Session -->
-    <div v-if="maxSessionTime - totalRemainingTime >= 0 && !isRecording" class="terminate-session">
+    <div v-if="maxSessionTime - totalRemainingTime >= minimumSessionTime && !isRecording" class="terminate-session">
       <button @click="goToResultPage" class="btn-terminate">{{$t('terminateSessionButton')}}</button>
     </div>
   </div>
@@ -84,7 +84,7 @@ const maxAudioTime = 60;
 const minimumAudioTime = 30;
 const maxSessionTime = 300;
 const timeRemaining = ref(maxAudioTime);
-//const minimumSessionTime = 150;
+const minimumSessionTime = 150;
 
 const shouldMask = ref(true)
 
