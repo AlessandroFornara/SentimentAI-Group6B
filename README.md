@@ -2,6 +2,7 @@
 This project is the final test of "[Advanced User Interfaces](https://onlineservices.polimi.it/manifesti/manifesti/controller/ManifestoPublic.do?EVN_DETTAGLIO_RIGA_MANIFESTO=evento&aa=2024&k_cf=225&k_corso_la=481&k_indir=T2A&codDescr=097685&lang=IT&semestre=1&idGruppo=4935&idRiga=308198)", course of **"Computer Science Engineering"** held at Politecnico di Milano (2024/2025).
 
 **Teacher**: Franca Garzotto
+
 **Tutor**: Francesco Piferi
 
 ## Team Composition
