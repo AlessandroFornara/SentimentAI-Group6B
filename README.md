@@ -22,4 +22,4 @@ This project is the final test of "[Advanced User Interfaces](https://onlineserv
 Emotino is built as a full-stack web application, consisting of a **Vue.js** front-end for the user interface and a **Spring Boot** back-end that handles API logic, database interactions, and AI integration.  
 The system uses **PostgreSQL** for data storage and leverages **OpenAI GPT-4** and a custom emotion recognition model to generate context-aware, emotionally sensitive responses.
 
-You can find the specification [here](https://github.com/AlessandroFornara/SentimentAI-Group6B/blob/main/documents).
+You can find the specification [here](https://github.com/AlessandroFornara/SentimentAI-Group6B/blob/master/documents).
