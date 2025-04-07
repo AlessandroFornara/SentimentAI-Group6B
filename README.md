@@ -3,7 +3,7 @@ This project is the final test of "[Advanced User Interfaces](https://onlineserv
 
 **Teacher**: Franca Garzotto
 
-**Tutor**: Francesco Piferi
+**Tutor**: [Francesco Piferi](https://github.com/francescopiferi99)
 
 ## Team Composition
 - [Chiara Barone](https://github.com/Chiaaa17)
@@ -17,9 +17,9 @@ This project is the final test of "[Advanced User Interfaces](https://onlineserv
 - 🎙️ AI-guided emotional sessions based on speech input
 - 📊 Personal emotional history tracking with session summaries
 - 🏅 A gamified experience with badges, levels, and points
-- 🧠 Tailored activity suggestions based on users' emotional state
+- 🧠 Personalized activity suggestions based on users' emotional state
 
 Emotino is built as a full-stack web application, consisting of a **Vue.js** front-end for the user interface and a **Spring Boot** back-end that handles API logic, database interactions, and AI integration.  
-The system uses **PostgreSQL** for data storage and leverages **OpenAI GPT-4** and a custom emotion recognition model to generate context-aware, emotionally sensitive responses.
+The system uses **PostgreSQL** for data storage and employs **OpenAI GPT-4** and a custom emotion recognition model to generate context-aware, emotionally sensitive responses.
 
 You can find the specification [here](https://github.com/AlessandroFornara/SentimentAI-Group6B/blob/master/documents).
